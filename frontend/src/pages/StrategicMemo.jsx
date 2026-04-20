@@ -1,14 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
+  Check,
   FileText,
   Fingerprint,
   Globe,
+  Link as LinkIcon,
   Lock,
   MapPin,
   Scale,
+  Send,
   Server,
   ShieldAlert,
   Users,
@@ -18,6 +21,21 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Eyebrow, useReveal, scrollToId } from "@/components/landing/shared";
+
+const MEMO_URL =
+  typeof window !== "undefined"
+    ? `${window.location.origin}/memo`
+    : "https://thirdrailsystems.ee/memo";
+
+const track = (event, props = {}) => {
+  if (typeof window !== "undefined" && window.posthog) {
+    try {
+      window.posthog.capture(event, props);
+    } catch (_) {
+      // swallow analytics failures
+    }
+  }
+};
 
 const TOC = [
   { id: "thesis", label: "I. The Thesis" },
@@ -68,17 +86,104 @@ function Callout({ icon: Icon, label, children }) {
 export default function StrategicMemo() {
   useReveal();
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Update document title for SEO / tabs
     const prev = document.title;
     document.title =
       "The Strategic Memo — Resolving the ISO 31030 Catch-22 · Third Rail Systems OÜ";
+    track("memo_viewed");
     return () => {
       document.title = prev;
     };
   }, []);
+
+  // Scroll-depth + completion tracking
+  useEffect(() => {
+    const milestones = [25, 50, 75];
+    const fired = new Set();
+    let completedFired = false;
+
+    const onScroll = () => {
+      const article = document.getElementById("memo-article-root");
+      if (!article) return;
+      const rect = article.getBoundingClientRect();
+      const articleHeight = article.offsetHeight;
+      const viewportH = window.innerHeight;
+      // How much of the article has scrolled past the viewport top?
+      const scrolledPast = Math.max(
+        0,
+        Math.min(articleHeight, viewportH - rect.top),
+      );
+      const pct = Math.round((scrolledPast / articleHeight) * 100);
+
+      milestones.forEach((m) => {
+        if (pct >= m && !fired.has(m)) {
+          fired.add(m);
+          track("memo_read_progress", { percent: m });
+        }
+      });
+      if (!completedFired && pct >= 85) {
+        completedFired = true;
+        track("memo_read_completed");
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleTocClick = (id) => {
+    track("memo_toc_click", { section: id });
+    scrollToId(id);
+  };
+
+  const handleMemoCta = () => {
+    track("memo_cta_click", { location: "bottom" });
+    navigate("/#contact");
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: "The Strategic Memo: Resolving the ISO 31030 Catch-22",
+      text:
+        "Third Rail Systems' founding paper on how to fulfill duty-of-care for marginalized travelers without creating a GDPR Article 9 liability.",
+      url: MEMO_URL,
+    };
+    track("memo_share_click");
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        track("memo_share_success", { channel: "native" });
+        return;
+      } catch (_) {
+        // user cancelled — fall through to mailto
+      }
+    }
+
+    const subject = encodeURIComponent(
+      "Worth a read: Third Rail Systems — Strategic Memo",
+    );
+    const body = encodeURIComponent(
+      `I thought this might be useful for your Security / Privacy / ERG conversations.\n\n"${shareData.title}"\n\n${shareData.text}\n\n${shareData.url}\n`,
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    track("memo_share_success", { channel: "mailto" });
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(MEMO_URL);
+      setCopied(true);
+      track("memo_copy_link");
+      setTimeout(() => setCopied(false), 1800);
+    } catch (_) {
+      // ignore
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200" data-testid="memo-root">
@@ -147,7 +252,7 @@ export default function StrategicMemo() {
                 {TOC.map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => scrollToId(item.id)}
+                    onClick={() => handleTocClick(item.id)}
                     className="text-left text-sm text-slate-400 hover:text-cyan-400"
                     data-testid={`memo-toc-${item.id}`}
                   >
@@ -170,6 +275,7 @@ export default function StrategicMemo() {
 
           <article
             className="lg:col-span-9"
+            id="memo-article-root"
             data-testid="memo-article"
           >
             <MemoSection id="thesis" number="I" title="The Thesis">
@@ -355,13 +461,62 @@ export default function StrategicMemo() {
                   </div>
                 </div>
                 <Button
-                  onClick={() => navigate("/#contact")}
+                  onClick={handleMemoCta}
                   className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
                   data-testid="memo-cta-contact"
                 >
                   Request Pilot Assessment
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
+              </div>
+
+              {/* Share to a colleague */}
+              <div
+                className="mt-6 rounded-lg border border-slate-800 bg-slate-900/60 p-6"
+                data-testid="memo-share-card"
+              >
+                <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                  Forward
+                </div>
+                <div className="mt-2 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="text-sm font-semibold text-white sm:text-base">
+                      Email this memo to a colleague
+                    </div>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-400 sm:text-sm">
+                      Hand it to your DPO, ERG lead, or Global Travel Risk
+                      team. Pre-filled subject and pitch.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={handleCopyLink}
+                      variant="outline"
+                      className="h-10 border-slate-700 bg-slate-950/60 px-4 text-slate-100 hover:bg-slate-800 hover:text-white"
+                      data-testid="memo-copy-link-button"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="mr-1 h-4 w-4 text-cyan-400" />
+                          Copied
+                        </>
+                      ) : (
+                        <>
+                          <LinkIcon className="mr-1 h-4 w-4" />
+                          Copy link
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={handleShare}
+                      className="btn-glow h-10 bg-cyan-500 px-4 text-slate-950 hover:bg-cyan-400"
+                      data-testid="memo-share-button"
+                    >
+                      <Send className="mr-1 h-4 w-4" />
+                      Share
+                    </Button>
+                  </div>
+                </div>
               </div>
 
               <p className="mt-10 text-xs text-slate-500 mono uppercase tracking-[0.2em]">

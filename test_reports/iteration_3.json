@@ -1,0 +1,62 @@
+{
+  "summary": "Iteration 3 — anti-spam (honeypot, fast-submit, per-IP rate limit), PostHog memo analytics, and the /memo share card. Backend pytest 12/12 PASSED. Frontend Playwright e2e covering /memo share+analytics and the contact form anti-spam flow ALL PASSED. All iteration 1+2 testids still resolve (regression clean).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_pilot_requests.py",
+    "/app/test_reports/pytest/iteration_3.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py: in-memory rate limiter (_rate_buckets dict + deque) is per-process. Acceptable for single-uvicorn deployment as documented in code comments. If horizontally scaling, swap for Redis. Also there is no cleanup of empty buckets — unique IPs accumulate indefinitely; consider periodic GC or a TTL-cache.",
+    "server.py: honeypot/too-fast rejections still consume CPU but bypass rate-limiting. A bot can therefore spam honeypot submissions infinitely without hitting 429. Consider counting rejected attempts toward the per-IP bucket too, OR add a separate connection-level WAF rule.",
+    "server.py: _client_ip parses only the first hop in X-Forwarded-For. Behind a trusted proxy (Kubernetes ingress) this is correct; behind an untrusted CDN, an attacker could spoof the IP and rotate to bypass the rate limit. Document the trust assumption.",
+    "ContactSection.jsx: submission_ms is computed from mountedAt which is reset on contact-section IntersectionObserver fire. If a user scrolls past the contact section then back up, the timer is NOT reset (io.disconnect() after first intersect). This is intentional and correct.",
+    "StrategicMemo.jsx: handleShare's mailto fallback fires memo_share_success(channel='mailto') unconditionally even if window.location.href = mailto:... is blocked by browser/popup-blocker. Minor — analytics will slightly over-count successes.",
+    "StrategicMemo.jsx: scroll-depth math uses `Math.min(articleHeight, viewportH - rect.top)`. On very tall viewports (viewportH > articleHeight) this clamps correctly. Verified milestones 25/50/75 and 85% completion all fire."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_pilot_requests.py (added 6 anti-spam tests + admin gating + per-IP regression)"
+  ],
+  "success_rate": {
+    "backend": "100% (12/12)",
+    "frontend": "100% (all critical assertions passed)"
+  },
+  "test_credentials": "N/A — no auth in this app. ADMIN_TOKEN env unset → /api/pilot-requests GET correctly returns 404 (fail-closed).",
+  "seed_data_creation": "Several TEST_-prefixed pilot_requests inserted into Mongo `pilot_requests` collection during testing (email_status='stubbed'). Honeypot/too-fast attempts intentionally NOT persisted (verified via response shape).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests run with: REACT_APP_BACKEND_URL=<external> pytest backend/tests/test_pilot_requests.py -v. Each test uses a unique X-Forwarded-For (TEST-NET-3 range 203.0.113.x or TEST-NET-2 198.51.100.x) to isolate rate-limit buckets. Don't restart backend during/between tests if you want bucket isolation; the in-memory dict resets on restart. Frontend rate-limit test uses a single source IP (the proxy chain) so 5 valid submits + 1 will trigger 429 — that's verified working.",
+  "rca of the issue": "No bugs found in iteration 3.",
+  "verified_assertions": {
+    "backend": [
+      "POST /api/pilot-requests with company_website='https://...' → 201, email_status='rejected', email_error='honeypot' (NOT persisted, NOT emailed)",
+      "POST with submission_ms=100 → 201, email_status='rejected', email_error='submission_too_fast'",
+      "POST with submission_ms=2400 + empty company_website → 201, email_status='stubbed' (normal path)",
+      "6 rapid POSTs from same X-Forwarded-For: first 5 = 201, 6th = 429 with Retry-After header (positive int)",
+      "Different X-Forwarded-For IPs maintain independent rate buckets (no cross-IP blocking)",
+      "Bad email → 422; missing required field → 422 (validation intact)",
+      "GET /api/pilot-requests with no ADMIN_TOKEN env → 404 (fail-closed, no PII leak)",
+      "SEO assets (og.png, robots.txt, sitemap.xml, JSON-LD, og: meta) all 200 (regression)"
+    ],
+    "frontend": [
+      "Contact form network payload now includes company_website='' and submission_ms (numeric, ~2610ms in test) > 1200",
+      "Form success returns 201, success toast 'Pilot assessment request received.' shows, fields reset, mountedAt resets",
+      "After 5 successful submits, 6th submit shows 'Too many requests.' toast (matches backend 429)",
+      "honeypot input has data-testid='honeypot-field', tabIndex=-1, and is positioned at left:-9511px (offscreen, not user-visible)",
+      "/memo renders with new testids: memo-share-card, memo-copy-link-button, memo-share-button (plus existing memo-root, memo-title, memo-toc, memo-cta-contact, memo-back-link)",
+      "Copy link writes `${origin}/memo` to clipboard and button text changes to 'Copied' for ~1.8s",
+      "Share button: navigator.share undefined in headless → mailto fallback executes → memo_share_success captured with channel='mailto'",
+      "PostHog analytics: spied window.posthog.capture and confirmed events memo_viewed, memo_toc_click {section:'architecture'}, memo_read_progress {percent:25/50/75}, memo_read_completed, memo_copy_link, memo_share_click, memo_share_success {channel:'mailto'}, memo_cta_click {location:'bottom'}, pilot_request_submitted {role:'CSO / Security Leadership'}",
+      "Iteration 1+2 testids still resolve: site-navbar, hero-primary-cta, hero-secondary-cta, contact-section, pilot-form, problem-card-1, platform-feature-1, persona-card-1, compliance-row-1, founder-ceo, founder-cto, estonia-advantage, nav-link-memo, footer-memo-link",
+      "Console errors: only the expected 'Failed to load resource: 429' from the rate-limit test (no JS exceptions)"
+    ]
+  }
+}

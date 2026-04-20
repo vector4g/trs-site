@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ArrowRight, Scale, Server, UserCheck } from "lucide-react";
 import { toast } from "sonner";
@@ -24,8 +24,28 @@ export default function ContactSection() {
     lastName: "",
     email: "",
     role: "",
+    companyWebsite: "", // honeypot — must stay empty
   });
   const [errors, setErrors] = useState({});
+  const mountedAt = useRef(Date.now());
+
+  // Reset mount timer when section scrolls into view for the first time so
+  // the submission_ms reflects real fill-in time, not total page dwell.
+  useEffect(() => {
+    const el = document.getElementById("contact");
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          mountedAt.current = Date.now();
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const validate = () => {
     const e = {};
@@ -54,19 +74,39 @@ export default function ContactSection() {
         last_name: form.lastName.trim(),
         corporate_email: form.email.trim(),
         role: roleLabel,
+        company_website: form.companyWebsite, // honeypot (empty for humans)
+        submission_ms: Date.now() - mountedAt.current,
       });
+      if (window.posthog) {
+        window.posthog.capture("pilot_request_submitted", { role: roleLabel });
+      }
       toast.success("Pilot assessment request received.", {
         description:
           "A member of the team will respond within 1 business day.",
       });
-      setForm({ firstName: "", lastName: "", email: "", role: "" });
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        role: "",
+        companyWebsite: "",
+      });
       setErrors({});
+      mountedAt.current = Date.now();
     } catch (err) {
-      const detail =
-        err?.response?.data?.detail ||
-        err?.message ||
-        "Could not submit the request. Please try again.";
-      toast.error("Submission failed.", { description: String(detail) });
+      const status = err?.response?.status;
+      if (status === 429) {
+        toast.error("Too many requests.", {
+          description:
+            "Please wait a few minutes before submitting again.",
+        });
+      } else {
+        const detail =
+          err?.response?.data?.detail ||
+          err?.message ||
+          "Could not submit the request. Please try again.";
+        toast.error("Submission failed.", { description: String(detail) });
+      }
     } finally {
       setSubmitting(false);
     }
@@ -113,6 +153,34 @@ export default function ContactSection() {
               data-testid="pilot-form"
               noValidate
             >
+              {/* Honeypot field — visually hidden, bots see it. */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  left: "-10000px",
+                  top: "auto",
+                  width: "1px",
+                  height: "1px",
+                  overflow: "hidden",
+                }}
+              >
+                <label htmlFor="company_website">
+                  Company Website (leave blank)
+                </label>
+                <input
+                  id="company_website"
+                  name="company_website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={form.companyWebsite}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, companyWebsite: e.target.value }))
+                  }
+                  data-testid="honeypot-field"
+                />
+              </div>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
                   <Label

@@ -1,10 +1,12 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Header
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Request
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import asyncio
 import logging
+import time
+from collections import deque
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional
@@ -62,6 +64,11 @@ class PilotRequestCreate(BaseModel):
     last_name: str = Field(..., min_length=1, max_length=80)
     corporate_email: EmailStr
     role: str = Field(..., min_length=1, max_length=80)
+    # Honeypot: genuine users leave this blank. Bots that fill every field
+    # will populate it. Named innocuously so scrapers don't skip it.
+    company_website: Optional[str] = Field(default="", max_length=200)
+    # Client-side time-to-submit in milliseconds. Humans rarely submit in <1.5s.
+    submission_ms: Optional[int] = Field(default=None, ge=0, le=60 * 60 * 1000)
 
 
 class PilotRequest(BaseModel):
@@ -74,6 +81,36 @@ class PilotRequest(BaseModel):
     email_status: str = "queued"  # queued | sent | stubbed | failed
     email_error: Optional[str] = None
     submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# ---- In-memory sliding-window rate limiter (per-IP) ----
+# 5 submissions per 15 minutes per IP. Good enough for a single-process uvicorn
+# deployment. Swap for Redis if horizontally scaling.
+RATE_LIMIT_MAX = 5
+RATE_LIMIT_WINDOW_S = 15 * 60
+_rate_buckets: dict[str, deque] = {}
+
+
+def _rate_limit_check(ip: str) -> tuple[bool, int]:
+    """Return (allowed, retry_after_seconds)."""
+    now = time.time()
+    bucket = _rate_buckets.setdefault(ip, deque())
+    # Drop expired entries
+    while bucket and now - bucket[0] > RATE_LIMIT_WINDOW_S:
+        bucket.popleft()
+    if len(bucket) >= RATE_LIMIT_MAX:
+        retry_after = int(RATE_LIMIT_WINDOW_S - (now - bucket[0])) + 1
+        return False, max(retry_after, 1)
+    bucket.append(now)
+    return True, 0
+
+
+def _client_ip(request: Request) -> str:
+    # Honour the common proxy headers first, then fall back to the direct peer.
+    fwd = request.headers.get("x-forwarded-for") or request.headers.get("x-real-ip")
+    if fwd:
+        return fwd.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
 
 
 # ---- Routes ----
@@ -155,7 +192,46 @@ async def _send_notification(req: PilotRequest) -> tuple[str, Optional[str]]:
 
 
 @api_router.post("/pilot-requests", response_model=PilotRequest, status_code=201)
-async def create_pilot_request(payload: PilotRequestCreate):
+async def create_pilot_request(payload: PilotRequestCreate, request: Request):
+    # --- Anti-spam guard 1: honeypot.
+    # We respond with the same 201 shape a bot would see for a good submission,
+    # but we neither persist nor email. Confuses naive scrapers.
+    if payload.company_website and payload.company_website.strip():
+        logger.warning(f"Honeypot triggered from {_client_ip(request)}")
+        return PilotRequest(
+            first_name=payload.first_name.strip() or "honeypot",
+            last_name=payload.last_name.strip() or "honeypot",
+            corporate_email=payload.corporate_email,
+            role=payload.role.strip() or "honeypot",
+            email_status="rejected",
+            email_error="honeypot",
+        )
+
+    # --- Anti-spam guard 2: time-to-submit.
+    # Humans take >1s to fill the form. If the client passed submission_ms and
+    # it's too fast, treat as bot.
+    if payload.submission_ms is not None and payload.submission_ms < 1200:
+        logger.warning(f"Fast-submit blocked from {_client_ip(request)} ({payload.submission_ms}ms)")
+        return PilotRequest(
+            first_name=payload.first_name.strip() or "fast",
+            last_name=payload.last_name.strip() or "fast",
+            corporate_email=payload.corporate_email,
+            role=payload.role.strip() or "fast",
+            email_status="rejected",
+            email_error="submission_too_fast",
+        )
+
+    # --- Anti-spam guard 3: per-IP sliding-window rate limit.
+    ip = _client_ip(request)
+    allowed, retry_after = _rate_limit_check(ip)
+    if not allowed:
+        logger.warning(f"Rate limit hit from {ip}; retry after {retry_after}s")
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests. Please try again later.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
     req = PilotRequest(
         first_name=payload.first_name.strip(),
         last_name=payload.last_name.strip(),
