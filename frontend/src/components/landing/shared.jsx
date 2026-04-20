@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 
+export const MEMO_READ_STORAGE_KEY = "trs.memo_read";
+export const ADMIN_TOKEN_STORAGE_KEY = "trs.admin_token";
+
 export const LOGO_URL =
   "https://customer-assets.emergentagent.com/job_eu-travel-risk/artifacts/xlq21bpc_Third%20Rail%20Logo.jpg";
 

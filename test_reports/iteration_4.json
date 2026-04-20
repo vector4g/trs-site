@@ -1,0 +1,82 @@
+{
+  "summary": "Iteration 4 — admin dashboard (auth + list with filters/stats), memo_read flag end-to-end, 4 legal pages with shared LegalLayout, redesigned Footer, robots.txt /admin disallow, sitemap with 6 URLs. Backend pytest 25/25 PASSED. Frontend Playwright covering admin login flow, /memo→/contact memo_read propagation, all 8 legal routes (4 canonical + 4 shortcuts), footer redesign, and regression testids ALL PASSED.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_admin_and_legal.py",
+    "/app/backend/tests/test_pilot_requests.py",
+    "/app/test_reports/pytest/iteration_4.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "AdminDashboard.jsx uses data-testid='admin-refresh' and 'admin-logout' (NOT 'admin-refresh-button'/'admin-signout-button' as listed in the review request's example). Functional, but the review-request testid names are slightly inconsistent with code. Either is fine as long as the team agrees on a convention.",
+    "server.py admin_list_pilot_requests: rejected stat is hard-wired to 0 because honeypot/too-fast paths early-return without persisting. This is correct per design but the field name 'rejected' is potentially misleading — consider renaming to 'rejected_persisted' or document inline.",
+    "server.py admin endpoints duplicate the 'if not ADMIN_TOKEN: 404 / if mismatch: 401' guard 3 times across /api/pilot-requests, /api/admin/auth/verify, /api/admin/pilot-requests. Extract into a FastAPI dependency for DRY (e.g. Depends(require_admin)).",
+    "Admin token is stored in localStorage (XSS-exfiltratable). Acceptable for an internal tool gated by an opaque shared secret, but document this trade-off — consider httpOnly cookie if scope expands.",
+    "robots.txt only Disallows /admin and /admin/, but /admin/login is also indexable by some crawlers that strip trailing-slash matching. Disallow: /admin/login explicitly OR rely on Disallow: /admin (most bots treat this as a prefix). Current behavior is safe-enough but worth verifying with Google Search Console.",
+    "LegalLayout 'DRAFT — FOR COUNSEL REVIEW' banner is a feature, not a bug — do NOT remove before legal sign-off. Strongly recommend adding a CI/build check that fails if this string is missing from any /legal/* route, so it can't be accidentally deleted.",
+    "ContactSection initializes memo_read by reading localStorage on mount. If a user opens the form, then in another tab finishes /memo, the original tab will still send memo_read:false until they refresh. Minor — acceptable lead-quality trade-off."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_admin_and_legal.py (NEW — 13 tests for admin + memo_read + legal SEO)",
+    "/app/backend/.env (temporarily set ADMIN_TOKEN='test-admin-xyz' during testing, restored to '' after)"
+  ],
+  "success_rate": {
+    "backend": "100% (25/25 — 13 new + 12 regression from iter 3)",
+    "frontend": "100% (admin login/dashboard/signout, memo_read true+false, all 8 legal routes, footer redesign, regression testids)"
+  },
+  "test_credentials": "ADMIN_TOKEN='test-admin-xyz' was used during this run, then reverted to empty string in /app/backend/.env. Backend was restarted after revert and admin endpoints confirmed returning 404 (fail-closed). /app/memory/test_credentials.md is empty — no permanent credentials to record.",
+  "seed_data_creation": "Multiple TEST_-prefixed pilot_requests (TEST_AdminSeedA/B with memo_read true/false, TEST_MemoTrue, TEST_MemoDef, TEST_Mike Reader from frontend submits) inserted into Mongo `pilot_requests` collection during this run. All have email_status='stubbed' since RESEND_API_KEY is empty.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "To run the admin tests yourself: (1) sed -i 's/ADMIN_TOKEN=\"\"/ADMIN_TOKEN=\"test-admin-xyz\"/' /app/backend/.env (2) sudo supervisorctl restart backend (3) export REACT_APP_BACKEND_URL=<external> (4) pytest /app/backend/tests/ -v (5) revert ADMIN_TOKEN to '' and restart backend. CRITICAL: pytest defaults BASE_URL to localhost:8001 if REACT_APP_BACKEND_URL is unset in shell — the SEO tests (/robots.txt, /sitemap.xml, /og.png, /) WILL fail with 404 against backend because those are served by the frontend dev server. Always export REACT_APP_BACKEND_URL before running pytest. Backend in-memory rate-limit state resets on restart, so admin-set/restore restart sequence is fine for fresh runs.",
+  "rca of the issue": "No bugs found in iteration 4. All 16 review-request feature checkpoints verified (3 backend admin auth states, 4 admin list query variants, 1 memo_read round-trip, 3 admin UI flows, 2 memo_read frontend flows, 8 legal-page routes, footer redesign, sitemap 6 URLs + robots.txt admin disallow, regression testids).",
+  "verified_assertions": {
+    "backend": [
+      "POST /api/admin/auth/verify with ADMIN_TOKEN unset → 404 (fail-closed, verified after revert)",
+      "POST /api/admin/auth/verify with X-Admin-Token=WRONG → 401",
+      "POST /api/admin/auth/verify with no header → 401",
+      "POST /api/admin/auth/verify with correct token → 200 {ok:true}",
+      "GET /api/admin/pilot-requests with wrong token → 401; without ADMIN_TOKEN env → 404",
+      "GET /api/admin/pilot-requests with correct token → 200 {items, stats:{total, delivered, rejected, memo_read, memo_read_rate}}; rejected always 0",
+      "GET /api/admin/pilot-requests?role=CSO → all returned items have role starting with CSO (case-insensitive regex)",
+      "GET /api/admin/pilot-requests?status=stubbed → all returned items have email_status='stubbed'",
+      "GET /api/admin/pilot-requests?q=AdminSeedA → returns matching record (searches first_name/last_name/corporate_email/role)",
+      "GET /api/admin/pilot-requests?limit=1 → returns ≤1 item",
+      "POST /api/pilot-requests with memo_read:true → 201 response echoes memo_read:true",
+      "POST /api/pilot-requests without memo_read field → 201 response has memo_read:false (default)",
+      "GET /robots.txt → 200, contains 'Disallow: /admin'",
+      "GET /sitemap.xml → 200, contains all 6 URLs (/, /memo, /legal/{privacy,terms,cookies,imprint}), exactly 6 <loc> entries",
+      "All 12 iteration-3 regression tests still PASS (root, anti-spam honeypot/fast-submit/rate-limit, per-IP buckets, validation, SEO assets)"
+    ],
+    "frontend": [
+      "Visiting /admin without localStorage.trs.admin_token redirects to /admin/login (verified URL after navigation)",
+      "/admin/login with WRONG token → 'Invalid token' shown; no localStorage write; no /admin navigation",
+      "/admin/login with correct token → localStorage.trs.admin_token='test-admin-xyz' set, navigates to /admin",
+      "/admin shows 4 stat cards (Total submissions, Last 7 days, Delivered/queued, Memo-read conversion) and table cols Name/Email/Role/Memo/Status/Submitted",
+      "Admin search box filters server-side (typed 'AdminSeedA' → only matching row shown; backend query verified via test_admin_list_filter_q_email)",
+      "Sign-out clears localStorage.trs.admin_token (verified ===null) and navigates back to /admin/login",
+      "/memo: scrolling past 85% writes localStorage['trs.memo_read']='1' (verified via page.evaluate after scrolling 20×80% viewport)",
+      "Pilot form on / WITHOUT memo flag set → POST body memo_read:false (network intercept captured exact JSON: {...,'memo_read':false}); response 201",
+      "Pilot form on / WITH localStorage.trs.memo_read='1' (set + reload) → POST body memo_read:true (intercepted); response 201; success toast 'Pilot assessment request received.' visible",
+      "All 4 canonical legal routes (/legal/privacy|terms|cookies|imprint) render with 'Draft — for counsel review' chip, page title, TOC sidebar (4 links), and substantial content",
+      "All 4 shortcut routes (/privacy → Privacy, /terms → Terms, /cookies → Cookies, /legal → Imprint) render the same components",
+      "TOC click on /legal/privacy targeting /legal/terms navigates correctly",
+      "[data-testid=legal-back-link] returns to / from any legal page",
+      "Footer testids footer-legal-{privacy,terms,cookies,imprint} all present (count=1 each)",
+      "Footer brand has logo + 'TALLINN, ESTONIA · EU-NATIVE'; Company section has 'Strategic Memo' + 'Request Pilot Assessment'; Legal section has 4 links; bottom strip has 'Registered in the Republic of Estonia'",
+      "Regression: site-navbar, nav-link-memo, hero-primary-cta, pilot-form, submit-pilot-form, contact-section, site-footer, memo-share-card all resolve",
+      "No JS console errors during any flow (only the expected 401 from the 'wrong token' admin-login test)"
+    ]
+  },
+  "minor_naming_inconsistency_notes": [
+    "Review request mentions testids 'admin-refresh-button' and 'admin-signout-button'; actual code uses 'admin-refresh' and 'admin-logout'. Tests still passed via role-based fallback. Recommend aligning code or doc."
+  ]
+}

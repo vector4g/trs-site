@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Eyebrow, ROLE_OPTIONS } from "./shared";
+import { Eyebrow, ROLE_OPTIONS, MEMO_READ_STORAGE_KEY } from "./shared";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -69,6 +69,12 @@ export default function ContactSection() {
     try {
       const roleLabel =
         ROLE_OPTIONS.find((r) => r.value === form.role)?.label || form.role;
+      let memoRead = false;
+      try {
+        memoRead = localStorage.getItem(MEMO_READ_STORAGE_KEY) === "1";
+      } catch (_) {
+        memoRead = false;
+      }
       await axios.post(`${API}/pilot-requests`, {
         first_name: form.firstName.trim(),
         last_name: form.lastName.trim(),
@@ -76,9 +82,13 @@ export default function ContactSection() {
         role: roleLabel,
         company_website: form.companyWebsite, // honeypot (empty for humans)
         submission_ms: Date.now() - mountedAt.current,
+        memo_read: memoRead,
       });
       if (window.posthog) {
-        window.posthog.capture("pilot_request_submitted", { role: roleLabel });
+        window.posthog.capture("pilot_request_submitted", {
+          role: roleLabel,
+          memo_read: memoRead,
+        });
       }
       toast.success("Pilot assessment request received.", {
         description:

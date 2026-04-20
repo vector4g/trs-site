@@ -69,6 +69,9 @@ class PilotRequestCreate(BaseModel):
     company_website: Optional[str] = Field(default="", max_length=200)
     # Client-side time-to-submit in milliseconds. Humans rarely submit in <1.5s.
     submission_ms: Optional[int] = Field(default=None, ge=0, le=60 * 60 * 1000)
+    # Whether the user completed reading /memo before submitting (tracked in
+    # localStorage when `memo_read_completed` fires). Helps qualify leads.
+    memo_read: Optional[bool] = Field(default=False)
 
 
 class PilotRequest(BaseModel):
@@ -78,8 +81,9 @@ class PilotRequest(BaseModel):
     last_name: str
     corporate_email: EmailStr
     role: str
-    email_status: str = "queued"  # queued | sent | stubbed | failed
+    email_status: str = "queued"  # queued | sent | stubbed | failed | rejected
     email_error: Optional[str] = None
+    memo_read: bool = False
     submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
@@ -236,6 +240,7 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
         last_name=payload.last_name.strip(),
         corporate_email=payload.corporate_email,
         role=payload.role.strip(),
+        memo_read=bool(payload.memo_read),
     )
 
     status, err = await _send_notification(req)
@@ -269,6 +274,67 @@ async def list_pilot_requests(limit: int = 100, x_admin_token: Optional[str] = H
         if isinstance(ts, str):
             d["submitted_at"] = datetime.fromisoformat(ts)
     return docs
+
+
+# ---- Admin endpoints ----
+@api_router.post("/admin/auth/verify")
+async def admin_verify(x_admin_token: Optional[str] = Header(default=None)):
+    """Lightweight endpoint used by the /admin UI to confirm a token is valid."""
+    if not ADMIN_TOKEN:
+        raise HTTPException(status_code=404, detail="Not found")
+    if x_admin_token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return {"ok": True}
+
+
+@api_router.get("/admin/pilot-requests")
+async def admin_list_pilot_requests(
+    limit: int = 500,
+    q: Optional[str] = None,
+    role: Optional[str] = None,
+    status: Optional[str] = None,
+    x_admin_token: Optional[str] = Header(default=None),
+):
+    """Admin-gated list with filters/search. Returns raw dicts so the UI can
+    render arbitrary extra fields without tight coupling to the pydantic model."""
+    if not ADMIN_TOKEN:
+        raise HTTPException(status_code=404, detail="Not found")
+    if x_admin_token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    query: dict = {}
+    if status:
+        query["email_status"] = status
+    if role:
+        query["role"] = {"$regex": f"^{role}", "$options": "i"}
+    if q:
+        qr = {"$regex": q, "$options": "i"}
+        query["$or"] = [
+            {"first_name": qr},
+            {"last_name": qr},
+            {"corporate_email": qr},
+            {"role": qr},
+        ]
+
+    cursor = db.pilot_requests.find(query, {"_id": 0}).sort("submitted_at", -1).limit(max(1, min(limit, 1000)))
+    docs = await cursor.to_list(length=limit)
+
+    # Stats summary
+    total = await db.pilot_requests.count_documents({})
+    delivered = await db.pilot_requests.count_documents({"email_status": {"$in": ["sent", "stubbed"]}})
+    rejected = await db.pilot_requests.count_documents({"email_status": "rejected"})
+    memo_read = await db.pilot_requests.count_documents({"memo_read": True})
+
+    return {
+        "items": docs,
+        "stats": {
+            "total": total,
+            "delivered": delivered,
+            "rejected": rejected,
+            "memo_read": memo_read,
+            "memo_read_rate": round((memo_read / total) * 100, 1) if total else 0.0,
+        },
+    }
 
 
 # Include the router in the main app

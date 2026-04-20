@@ -3,6 +3,12 @@ import { useEffect } from "react";
 import "@/App.css";
 import LandingPage from "@/pages/LandingPage";
 import StrategicMemo from "@/pages/StrategicMemo";
+import AdminLogin from "@/pages/AdminLogin";
+import AdminDashboard from "@/pages/AdminDashboard";
+import Privacy from "@/pages/legal/Privacy";
+import Terms from "@/pages/legal/Terms";
+import Cookies from "@/pages/legal/Cookies";
+import Imprint from "@/pages/legal/Imprint";
 import { Toaster } from "@/components/ui/sonner";
 
 /**
@@ -33,6 +39,16 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/memo" element={<StrategicMemo />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/legal/privacy" element={<Privacy />} />
+          <Route path="/legal/terms" element={<Terms />} />
+          <Route path="/legal/cookies" element={<Cookies />} />
+          <Route path="/legal/imprint" element={<Imprint />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/legal" element={<Imprint />} />
         </Routes>
       </BrowserRouter>
       <Toaster

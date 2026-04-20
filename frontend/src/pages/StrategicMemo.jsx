@@ -127,6 +127,11 @@ export default function StrategicMemo() {
       if (!completedFired && pct >= 85) {
         completedFired = true;
         track("memo_read_completed");
+        try {
+          localStorage.setItem("trs.memo_read", "1");
+        } catch (_) {
+          // ignore storage errors (private mode etc.)
+        }
       }
     };
 
