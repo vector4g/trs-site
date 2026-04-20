@@ -193,11 +193,23 @@ async def _send_notification(req: PilotRequest) -> tuple[str, Optional[str]]:
 
 @api_router.post("/pilot-requests", response_model=PilotRequest, status_code=201)
 async def create_pilot_request(payload: PilotRequestCreate, request: Request):
-    # --- Anti-spam guard 1: honeypot.
-    # We respond with the same 201 shape a bot would see for a good submission,
-    # but we neither persist nor email. Confuses naive scrapers.
+    # --- Anti-spam guard 1: per-IP sliding-window rate limit.
+    # Applied FIRST so honeypot/fast-submit bots can't spam rejected payloads
+    # indefinitely to burn CPU / pollute logs.
+    ip = _client_ip(request)
+    allowed, retry_after = _rate_limit_check(ip)
+    if not allowed:
+        logger.warning(f"Rate limit hit from {ip}; retry after {retry_after}s")
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests. Please try again later.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    # --- Anti-spam guard 2: honeypot.
+    # Tarpit response — looks like success to the bot, no persistence, no email.
     if payload.company_website and payload.company_website.strip():
-        logger.warning(f"Honeypot triggered from {_client_ip(request)}")
+        logger.warning(f"Honeypot triggered from {ip}")
         return PilotRequest(
             first_name=payload.first_name.strip() or "honeypot",
             last_name=payload.last_name.strip() or "honeypot",
@@ -207,11 +219,9 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
             email_error="honeypot",
         )
 
-    # --- Anti-spam guard 2: time-to-submit.
-    # Humans take >1s to fill the form. If the client passed submission_ms and
-    # it's too fast, treat as bot.
+    # --- Anti-spam guard 3: time-to-submit.
     if payload.submission_ms is not None and payload.submission_ms < 1200:
-        logger.warning(f"Fast-submit blocked from {_client_ip(request)} ({payload.submission_ms}ms)")
+        logger.warning(f"Fast-submit blocked from {ip} ({payload.submission_ms}ms)")
         return PilotRequest(
             first_name=payload.first_name.strip() or "fast",
             last_name=payload.last_name.strip() or "fast",
@@ -219,17 +229,6 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
             role=payload.role.strip() or "fast",
             email_status="rejected",
             email_error="submission_too_fast",
-        )
-
-    # --- Anti-spam guard 3: per-IP sliding-window rate limit.
-    ip = _client_ip(request)
-    allowed, retry_after = _rate_limit_check(ip)
-    if not allowed:
-        logger.warning(f"Rate limit hit from {ip}; retry after {retry_after}s")
-        raise HTTPException(
-            status_code=429,
-            detail="Too many requests. Please try again later.",
-            headers={"Retry-After": str(retry_after)},
         )
 
     req = PilotRequest(
