@@ -1,0 +1,38 @@
+{
+  "summary": "Iteration 2 review for Third Rail Systems OÜ — backend API + /memo route + SEO assets + form integration. Backend pytest 7/7 PASSED. Frontend Playwright e2e 14/14 PASSED on desktop (1920x1080) and mobile (390x844). All previously-required testids still present (problem-card-1..3, platform-feature-1..3, persona-card-1..3, compliance-row-1..3, founder-ceo, founder-cto, estonia-advantage, site-navbar, hero-primary-cta, hero-secondary-cta). Hero secondary CTA navigates correctly to /memo (no longer scroll). Form POSTs to /api/pilot-requests, gets 201 with email_status='stubbed' as expected (RESEND_API_KEY empty), shows the exact success toast 'Pilot assessment request received.' and resets fields. Empty-form submit does NOT call API and shows inline 'Required'/'Select a role' validation. Memo page renders with all 6 TOC items, TOC scroll works, memo-back-link returns to /, memo-cta-contact navigates to /#contact and the contact section is in view (HashScrollHandler works). nav-link-memo, mobile-nav-link-memo, footer-memo-link all navigate to /memo. SEO: /og.png (image/png 200), /robots.txt (200), /sitemap.xml (200 XML), index.html contains application/ld+json blocks and og: meta tags. Zero console errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_pilot_requests.py",
+    "/app/test_reports/pytest/iteration_2.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py: logger is defined AFTER `_send_notification` uses it (logger.info on line 127). At module load this works because the function body is only evaluated at call time, but it's fragile — move logging.basicConfig + logger=getLogger above the function definitions.",
+    "server.py: PilotRequest model uses default email_status='queued' but route always overwrites it after _send_notification — minor confusion, fine as-is.",
+    "GET /api/pilot-requests is unauthenticated and returns up to 100 raw submissions including emails. For production, this endpoint must be auth-gated (admin only) or removed; right now anyone can enumerate pilot requests — privacy concern given the company's GDPR/duty-of-care positioning.",
+    "PilotRequestCreate has no anti-spam (rate limiting / honeypot / hcaptcha). With only stub emails today this is OK, but once Resend is wired live the public form will be abusable.",
+    "StrategicMemo.jsx: useReveal hook applied but article is rendered server-side — fine, just confirms reveal animations work on TOC clicks too.",
+    "App.js HashScrollHandler uses 50ms setTimeout to wait for mount — works in this app but a more robust approach is to scroll on the target section's mount via ref."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_pilot_requests.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7)",
+    "frontend": "100% (14/14)"
+  },
+  "test_credentials": "N/A — no auth in app",
+  "seed_data_creation": "Two TEST_-prefixed pilot requests inserted into Mongo `pilot_requests` collection during testing (email_status='stubbed'). Safe to leave or purge.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend tests live at /app/backend/tests/test_pilot_requests.py. Run with `REACT_APP_BACKEND_URL=<external_url> pytest backend/tests/test_pilot_requests.py -v`. Form testids (note these for future): input-first-name, input-last-name, input-email (NOT input-corporate-email), select-role-trigger, select-role-option-<value>, submit-pilot-form. RESEND_API_KEY is intentionally empty → email_status='stubbed' is correct.",
+  "rca of the issue": "No bugs found in this iteration."
+}
