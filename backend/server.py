@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Header
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -16,6 +16,13 @@ import resend
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Configure logging first so helpers below can use `logger`.
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
@@ -26,6 +33,7 @@ RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev').strip()
 NOTIFICATION_RECIPIENT = os.environ.get('NOTIFICATION_RECIPIENT', '').strip()
 FALLBACK_RECIPIENT = os.environ.get('FALLBACK_RECIPIENT', '').strip()
+ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', '').strip()
 
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
@@ -171,7 +179,14 @@ async def create_pilot_request(payload: PilotRequestCreate):
 
 
 @api_router.get("/pilot-requests", response_model=List[PilotRequest])
-async def list_pilot_requests(limit: int = 100):
+async def list_pilot_requests(limit: int = 100, x_admin_token: Optional[str] = Header(default=None)):
+    # Gate this endpoint — it contains lead PII. If ADMIN_TOKEN is unset the
+    # endpoint is disabled entirely (fail-closed).
+    if not ADMIN_TOKEN:
+        raise HTTPException(status_code=404, detail="Not found")
+    if x_admin_token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     cursor = db.pilot_requests.find({}, {"_id": 0}).sort("submitted_at", -1).limit(limit)
     docs = await cursor.to_list(limit)
     for d in docs:
@@ -191,13 +206,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 
 @app.on_event("shutdown")

@@ -38,10 +38,20 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - Form validation (client-side) + success/error Sonner toasts.
 - Testing agent iteration_1: 14/14 checks passed, 0 console errors, 0 UI bugs.
 
+## Iteration 2 — 2026-04-20 (P1 + P2 + P3)
+- **P1 Backend**: `POST /api/pilot-requests` persists submissions to Mongo `pilot_requests` collection. Resend email notification sender integrated (`resend>=2.0.0`); currently STUBBED because `RESEND_API_KEY` is empty. When Levi adds the key to `backend/.env`, emails will dispatch to `levi@thirdrailsystems.ee` (falls back to `levi@intersectionalsafety.org`) via `onboarding@resend.dev` as the verified sender.
+- **P1 Admin endpoint**: `GET /api/pilot-requests` is now gated: returns 404 if `ADMIN_TOKEN` is unset (fail-closed), 401 on wrong `X-Admin-Token` header, 200 only with correct token. Addresses testing-agent privacy flag.
+- **P2 Strategic Memo page**: `/memo` route renders `StrategicMemo.jsx` — long-form 6-section memo ("The Strategic Memo: Resolving the ISO 31030 Catch-22") with sticky TOC, back link, contact CTA. Hero's "Read Strategic Memo" button and navbar/footer links navigate here.
+- **P2 Component split**: `LandingPage.jsx` broken into `/components/landing/{Navbar, Hero, ProblemSection, PlatformSection, PersonasSection, ComplianceSection, AboutSection, ContactSection, Footer, shared}.jsx`. LandingPage is now a thin composer.
+- **P3 SEO**: Branded OG image generated at `/og.png` (1200×630, cyan accent on slate-950), `robots.txt`, `sitemap.xml`. `index.html` includes JSON-LD Organization + SoftwareApplication schemas, Open Graph + Twitter Card meta tags. Canonical domain: `https://thirdrailsystems.ee`.
+- **Routing**: `App.js` now uses `BrowserRouter` with `HashScrollHandler` so `/#contact` from the memo page scrolls correctly to the form.
+- **Testing agent iteration_2**: 21/21 checks passed (7 backend + 14 frontend), 0 console errors, 0 UI bugs. Privacy concern on admin endpoint raised & fixed post-report.
+
 ## Backlog / Next Actions
-- **P1** Wire the intake form to a real backend (FastAPI + MongoDB submissions collection) and an email notification (Resend or SendGrid) when the company is ready to capture pilots.
-- **P2** Add an actual "Strategic Memo" PDF/page rather than just scrolling to the Compliance section.
-- **P2** Split `LandingPage.jsx` into `/components/landing/` subfiles for maintainability (per reviewer note).
-- **P2** Add basic analytics events (Request Pilot clicks, section reveal) — PostHog is already loaded in index.html.
-- **P3** SEO: OG image, sitemap.xml, robots.txt, JSON-LD Organization schema with Tallinn address.
-- **P3** Add a dedicated `/privacy` and `/terms` page (currently only an email link in footer).
+- **P0** Levi to add `RESEND_API_KEY` (and optionally `ADMIN_TOKEN`) to `backend/.env` when ready to go live.
+- **P1** Anti-spam on the public form: honeypot field + rate-limiting (IP-based, 5/min) or hCaptcha. Will be abusable once Resend goes live.
+- **P1** Verify the `.ee` sender domain in Resend so emails land from `levi@thirdrailsystems.ee` instead of `onboarding@resend.dev`.
+- **P2** Simple `/admin` page that uses `ADMIN_TOKEN` to view pilot submissions (currently requires curl).
+- **P2** Add analytics events on Request-Pilot clicks + memo read-time (PostHog is already loaded).
+- **P3** Verified-domain DKIM/SPF records on `.ee`, custom `og.png` redesign with the hero logo artwork.
+- **P3** /privacy and /terms pages (currently only email link in footer).
