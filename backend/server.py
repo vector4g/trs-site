@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Header, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Header, Request, Depends
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -115,6 +115,21 @@ def _client_ip(request: Request) -> str:
     if fwd:
         return fwd.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
+
+
+def require_admin(x_admin_token: Optional[str] = Header(default=None)) -> str:
+    """FastAPI dependency gating admin endpoints.
+
+    Behavior:
+      - ADMIN_TOKEN unset in env → 404 (endpoint appears not to exist; no info leak).
+      - Token missing or incorrect → 401.
+      - Correct token → returns the token (dependency is truthy).
+    """
+    if not ADMIN_TOKEN:
+        raise HTTPException(status_code=404, detail="Not found")
+    if x_admin_token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return x_admin_token
 
 
 # ---- Routes ----
@@ -259,14 +274,7 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
 
 
 @api_router.get("/pilot-requests", response_model=List[PilotRequest])
-async def list_pilot_requests(limit: int = 100, x_admin_token: Optional[str] = Header(default=None)):
-    # Gate this endpoint — it contains lead PII. If ADMIN_TOKEN is unset the
-    # endpoint is disabled entirely (fail-closed).
-    if not ADMIN_TOKEN:
-        raise HTTPException(status_code=404, detail="Not found")
-    if x_admin_token != ADMIN_TOKEN:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+async def list_pilot_requests(limit: int = 100, _admin: str = Depends(require_admin)):
     cursor = db.pilot_requests.find({}, {"_id": 0}).sort("submitted_at", -1).limit(limit)
     docs = await cursor.to_list(limit)
     for d in docs:
@@ -278,12 +286,8 @@ async def list_pilot_requests(limit: int = 100, x_admin_token: Optional[str] = H
 
 # ---- Admin endpoints ----
 @api_router.post("/admin/auth/verify")
-async def admin_verify(x_admin_token: Optional[str] = Header(default=None)):
+async def admin_verify(_admin: str = Depends(require_admin)):
     """Lightweight endpoint used by the /admin UI to confirm a token is valid."""
-    if not ADMIN_TOKEN:
-        raise HTTPException(status_code=404, detail="Not found")
-    if x_admin_token != ADMIN_TOKEN:
-        raise HTTPException(status_code=401, detail="Unauthorized")
     return {"ok": True}
 
 
@@ -293,15 +297,9 @@ async def admin_list_pilot_requests(
     q: Optional[str] = None,
     role: Optional[str] = None,
     status: Optional[str] = None,
-    x_admin_token: Optional[str] = Header(default=None),
+    _admin: str = Depends(require_admin),
 ):
-    """Admin-gated list with filters/search. Returns raw dicts so the UI can
-    render arbitrary extra fields without tight coupling to the pydantic model."""
-    if not ADMIN_TOKEN:
-        raise HTTPException(status_code=404, detail="Not found")
-    if x_admin_token != ADMIN_TOKEN:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+    """Admin-gated list with filters/search."""
     query: dict = {}
     if status:
         query["email_status"] = status
@@ -319,10 +317,8 @@ async def admin_list_pilot_requests(
     cursor = db.pilot_requests.find(query, {"_id": 0}).sort("submitted_at", -1).limit(max(1, min(limit, 1000)))
     docs = await cursor.to_list(length=limit)
 
-    # Stats summary
     total = await db.pilot_requests.count_documents({})
     delivered = await db.pilot_requests.count_documents({"email_status": {"$in": ["sent", "stubbed"]}})
-    rejected = await db.pilot_requests.count_documents({"email_status": "rejected"})
     memo_read = await db.pilot_requests.count_documents({"memo_read": True})
 
     return {
@@ -330,7 +326,6 @@ async def admin_list_pilot_requests(
         "stats": {
             "total": total,
             "delivered": delivered,
-            "rejected": rejected,
             "memo_read": memo_read,
             "memo_read_rate": round((memo_read / total) * 100, 1) if total else 0.0,
         },

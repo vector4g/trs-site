@@ -47,7 +47,13 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - **Routing**: `App.js` now uses `BrowserRouter` with `HashScrollHandler` so `/#contact` from the memo page scrolls correctly to the form.
 - **Testing agent iteration_2**: 21/21 checks passed (7 backend + 14 frontend), 0 console errors, 0 UI bugs.
 
-## Iteration 3 — 2026-04-20 (anti-spam + memo analytics + share CTA)
+## Iteration 4 — 2026-04-20 (admin dashboard + legal pages + memo_read flag)
+- **Admin console** at `/admin` (list + filters + stats) and `/admin/login` (token auth stored in `localStorage.trs.admin_token`). Backed by `POST /api/admin/auth/verify` and `GET /api/admin/pilot-requests` (query params: `q`, `role`, `status`, `limit`). Stats: total, delivered, memo-read count & conversion %, plus client-side today/last-7d rollups. Admin guards consolidated into a single `require_admin` FastAPI dependency (DRY).
+- **Memo-read qualification**: `/memo` writes `localStorage['trs.memo_read']='1'` on completion; `ContactSection` reads it and sends `memo_read:boolean` to `POST /api/pilot-requests`. The admin table shows a "Read" badge per lead — Levi can see who did their reading before the call.
+- **Legal pages** (all marked `Draft — for counsel review`): `/legal/privacy` (full GDPR notice grounded in the architecture), `/legal/terms` (Estonian-law ToS scoped to the website — NOT the pilot contract), `/legal/cookies` (PostHog + localStorage disclosures per ePrivacy), `/legal/imprint` (Estonian-law imprint with registered address, TBC placeholders for registry code + VAT). Shortcut routes: `/privacy`, `/terms`, `/cookies`, `/legal` → Imprint.
+- **Footer redesigned** into a 3-column layout (Brand + address, Company, Legal) with a bottom "Registered in the Republic of Estonia" strip.
+- **robots.txt** now disallows `/admin`, `/admin/`, `/admin/login`. **sitemap.xml** extended to 6 URLs including the legal pages.
+- **Testing agent iteration_4**: **25/25 backend** pytest + **all frontend** Playwright PASSED, regression-clean on iterations 1–3.
 - **Anti-spam** on `POST /api/pilot-requests`:
   - Per-IP sliding-window rate limit (5 req / 15 min, X-Forwarded-For aware) applied FIRST so bots can't bypass it by spamming rejected payloads.
   - Honeypot field `company_website` (hidden off-screen via `left:-10000px`, `tabIndex=-1`). When filled, server tarpits with a 201+`email_status='rejected'` response but does not persist or email.
@@ -58,10 +64,12 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - **Testing agent iteration_3**: 12/12 backend + all frontend assertions passed. Regression-clean on iteration 1+2 testids.
 
 ## Backlog / Next Actions
-- **P0** Levi to add `RESEND_API_KEY` (and optionally `ADMIN_TOKEN`) to `backend/.env` when ready to go live.
-- **P1** Verify the `.ee` sender domain in Resend so emails land from `levi@thirdrailsystems.ee` instead of `onboarding@resend.dev`.
-- **P2** Simple `/admin` page that uses `ADMIN_TOKEN` to view pilot submissions (currently requires curl).
-- **P2** Persist rate-limit bucket to Redis when horizontally scaling (in-memory dict is per-process).
-- **P2** Periodic cleanup of idle IP buckets in `_rate_buckets` to avoid unbounded memory growth.
-- **P3** Verified-domain DKIM/SPF records on `.ee`, custom `og.png` redesign with the hero logo artwork.
-- **P3** `/privacy` and `/terms` pages (currently only email link in footer).
+- **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend. Everything else is ready.
+- **P0** Submit all 4 `/legal/*` drafts to Estonian counsel (suggested: TGS Baltic, COBALT, or Sorainen). Replace `[TBC]` registry code + VAT placeholders on `/legal/imprint` when counsel returns the binder.
+- **P1** Verify the `.ee` sender domain in Resend and switch `SENDER_EMAIL` from `onboarding@resend.dev` to `levi@thirdrailsystems.ee`.
+- **P1** Add a CI/build check that fails if the "Draft — for counsel review" banner string is removed from any `/legal/*` route (prevents accidental premature publication).
+- **P1** Cookie consent banner compliant with EDPB Guidelines 03/2022 before PostHog capture loads in the EU (currently relies on strictly-necessary + Cookies page disclosure).
+- **P2** Redis-backed rate limiter + periodic cleanup of idle IP buckets (in-memory dict is per-process).
+- **P2** PostHog `identify()` on form submit with hashed email, then surface per-lead memo read-time in the admin via the PostHog API.
+- **P3** DKIM/SPF records on `.ee`, redesigned `og.png` with the full logo artwork.
+- **P3** Rename admin testids to `admin-refresh-button` / `admin-signout-button` for consistency (minor).
