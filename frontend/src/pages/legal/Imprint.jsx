@@ -25,8 +25,7 @@ export default function Imprint() {
         Harju maakond, Tallinn, Lasnamäe linnaosa, Sepapaja tn 6, 15551, Estonia.
       </Definition>
       <Definition term="Registry code">
-        [TBC — Estonian Commercial Register (Äriregister) code to be
-        inserted by counsel.]
+        17488655 (Estonian Commercial Register — <em>Äriregister</em>).
       </Definition>
       <Definition term="VAT identification">
         [TBC — EE VAT number if/when registered. Until registration, VAT is

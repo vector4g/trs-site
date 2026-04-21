@@ -54,7 +54,7 @@ export default function Privacy() {
         Harju maakond, Tallinn, Lasnamäe linnaosa, Sepapaja tn 6, 15551, Estonia.
       </Definition>
       <Definition term="Registry code">
-        [TBC — Estonian Commercial Register code to be inserted by counsel.]
+        17488655 (Estonian Commercial Register).
       </Definition>
       <Definition term="VAT">
         [TBC — EE VAT number if/when registered.]

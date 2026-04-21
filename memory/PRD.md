@@ -65,7 +65,7 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 
 ## Backlog / Next Actions
 - **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend. Everything else is ready.
-- **P0** Submit all 4 `/legal/*` drafts to Estonian counsel (suggested: TGS Baltic, COBALT, or Sorainen). Replace `[TBC]` registry code + VAT placeholders on `/legal/imprint` when counsel returns the binder.
+- **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number (if registered) to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`. Registry code `17488655` already populated.
 - **P1** Verify the `.ee` sender domain in Resend and switch `SENDER_EMAIL` from `onboarding@resend.dev` to `levi@thirdrailsystems.ee`.
 - **P1** Add a CI/build check that fails if the "Draft — for counsel review" banner string is removed from any `/legal/*` route (prevents accidental premature publication).
 - **P1** Cookie consent banner compliant with EDPB Guidelines 03/2022 before PostHog capture loads in the EU (currently relies on strictly-necessary + Cookies page disclosure).
