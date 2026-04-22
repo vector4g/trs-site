@@ -10,6 +10,7 @@ import {
   Users,
   Mail,
   Clock,
+  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ADMIN_TOKEN_STORAGE_KEY } from "@/components/landing/shared";
+import BriefingDialog from "@/components/admin/BriefingDialog";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -71,6 +73,7 @@ export default function AdminDashboard() {
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [briefingLead, setBriefingLead] = useState(null);
 
   useEffect(() => {
     document.title = "Pilot Pipeline · Admin · Third Rail Systems OÜ";
@@ -324,6 +327,23 @@ export default function AdminDashboard() {
                       <td className="px-4 py-3 mono text-xs text-slate-400">
                         {fmtDate(r.submitted_at)}
                       </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setBriefingLead(r)}
+                          className="h-8 border-slate-700 bg-slate-950/60 text-slate-200 hover:bg-slate-800 hover:text-white"
+                          data-testid={`admin-briefing-${r.id.slice(0, 8)}`}
+                        >
+                          <Sparkles className="mr-1 h-3.5 w-3.5 text-cyan-400" />
+                          Briefing
+                          {r.briefings_generated > 0 && (
+                            <span className="ml-2 rounded-full bg-cyan-500/10 px-1.5 text-[10px] text-cyan-300">
+                              {r.briefings_generated}
+                            </span>
+                          )}
+                        </Button>
+                      </td>
                     </tr>
                   ))}
               </tbody>
@@ -336,6 +356,13 @@ export default function AdminDashboard() {
           are applied server-side.
         </p>
       </main>
+
+      <BriefingDialog
+        open={briefingLead !== null}
+        onOpenChange={(v) => !v && setBriefingLead(null)}
+        lead={briefingLead}
+        token={token}
+      />
     </div>
   );
 }

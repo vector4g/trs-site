@@ -1,10 +1,12 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Header, Request, Depends
+from fastapi.responses import Response
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import asyncio
 import logging
+import re
 import time
 from collections import deque
 from pathlib import Path
@@ -13,6 +15,9 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 import resend
+
+from brandfetch import domain_from_email, fetch_brand
+from briefing import generate_briefing_pdf
 
 
 ROOT_DIR = Path(__file__).parent
@@ -85,6 +90,21 @@ class PilotRequest(BaseModel):
     email_error: Optional[str] = None
     memo_read: bool = False
     submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class BriefingGenerateRequest(BaseModel):
+    pilot_request_id: str
+    variant: str = Field(default="exec", pattern="^(exec|full)$")
+    prospect_company_override: Optional[str] = Field(default=None, max_length=200)
+    prospect_logo_url_override: Optional[str] = Field(default=None, max_length=1000)
+
+
+class BriefingPreview(BaseModel):
+    lead_name: str
+    lead_email: EmailStr
+    inferred_company: Optional[str] = None
+    inferred_logo_url: Optional[str] = None
+    domain: Optional[str] = None
 
 
 # ---- In-memory sliding-window rate limiter (per-IP) ----
@@ -330,6 +350,99 @@ async def admin_list_pilot_requests(
             "memo_read_rate": round((memo_read / total) * 100, 1) if total else 0.0,
         },
     }
+
+
+@api_router.get("/admin/briefings/preview/{pilot_request_id}", response_model=BriefingPreview)
+async def admin_briefing_preview(pilot_request_id: str, _admin: str = Depends(require_admin)):
+    """Resolve the prospect's inferred company name + logo for the admin modal
+    so Levi can confirm or override before generating the PDF."""
+    doc = await db.pilot_requests.find_one({"id": pilot_request_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Pilot request not found")
+
+    email = doc.get("corporate_email") or ""
+    domain = domain_from_email(email)
+    inferred_name, inferred_logo = await fetch_brand(domain) if domain else (None, None)
+
+    return BriefingPreview(
+        lead_name=f"{doc.get('first_name','')} {doc.get('last_name','')}".strip() or "—",
+        lead_email=email,
+        inferred_company=inferred_name,
+        inferred_logo_url=inferred_logo,
+        domain=domain,
+    )
+
+
+_FILENAME_SAFE = re.compile(r"[^A-Za-z0-9._-]+")
+
+
+@api_router.post("/admin/briefings/generate")
+async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str = Depends(require_admin)):
+    """Generate and stream a co-branded briefing PDF for the given pilot request."""
+    doc = await db.pilot_requests.find_one({"id": payload.pilot_request_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Pilot request not found")
+
+    email = doc.get("corporate_email") or ""
+    domain = domain_from_email(email)
+    lead_name = f"{doc.get('first_name','')} {doc.get('last_name','')}".strip() or "—"
+
+    # Resolve prospect company + logo (override > brandfetch > fallback)
+    company = payload.prospect_company_override
+    logo_url = payload.prospect_logo_url_override
+
+    if (not company or not logo_url) and domain:
+        inferred_name, inferred_logo = await fetch_brand(domain)
+        company = company or inferred_name or (domain.split(".")[0].title() if domain else None)
+        logo_url = logo_url or inferred_logo
+    elif not company and domain:
+        company = domain.split(".")[0].title()
+
+    briefing_id = f"EB-{uuid.uuid4().hex[:10].upper()}"
+
+    try:
+        pdf_bytes = await generate_briefing_pdf(
+            lead_name=lead_name,
+            prospect_company=company or "Prospective Partner",
+            prospect_domain=domain,
+            prospect_logo_url=logo_url,
+            variant=payload.variant,
+            briefing_id=briefing_id,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"PDF generation failed for {payload.pilot_request_id}: {exc}")
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {exc}") from exc
+
+    # Record that a briefing was generated (for audit/admin visibility)
+    try:
+        await db.pilot_requests.update_one(
+            {"id": payload.pilot_request_id},
+            {
+                "$set": {
+                    "last_briefing_at": datetime.now(timezone.utc).isoformat(),
+                    "last_briefing_id": briefing_id,
+                    "last_briefing_variant": payload.variant,
+                },
+                "$inc": {"briefings_generated": 1},
+            },
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(f"Failed to update briefing audit fields: {exc}")
+
+    safe_company = _FILENAME_SAFE.sub("-", (company or "prospect")).strip("-") or "prospect"
+    variant_tag = "ExecSummary" if payload.variant == "exec" else "FullMemo"
+    filename = f"ThirdRail-{variant_tag}-{safe_company}-{briefing_id}.pdf"
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "X-Briefing-Id": briefing_id,
+        },
+    )
+
+
 
 
 # Include the router in the main app

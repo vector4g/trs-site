@@ -1,0 +1,236 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  FileText,
+  Loader2,
+  Download,
+  Building2,
+  X,
+  Sparkles,
+} from "lucide-react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
+/** Modal that resolves prospect branding then generates a co-branded PDF. */
+export default function BriefingDialog({ open, onOpenChange, lead, token }) {
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [company, setCompany] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [generating, setGenerating] = useState(null); // "exec" | "full" | null
+
+  useEffect(() => {
+    if (!open || !lead) return;
+    setPreview(null);
+    setCompany("");
+    setLogoUrl("");
+    setLoading(true);
+    axios
+      .get(`${API}/admin/briefings/preview/${lead.id}`, {
+        headers: { "X-Admin-Token": token },
+      })
+      .then(({ data }) => {
+        setPreview(data);
+        setCompany(data.inferred_company || "");
+        setLogoUrl(data.inferred_logo_url || "");
+      })
+      .catch((err) => {
+        toast.error("Preview failed.", { description: err?.message });
+      })
+      .finally(() => setLoading(false));
+  }, [open, lead, token]);
+
+  const handleGenerate = async (variant) => {
+    if (!lead) return;
+    setGenerating(variant);
+    try {
+      const resp = await axios.post(
+        `${API}/admin/briefings/generate`,
+        {
+          pilot_request_id: lead.id,
+          variant,
+          prospect_company_override: company.trim() || null,
+          prospect_logo_url_override: logoUrl.trim() || null,
+        },
+        {
+          headers: { "X-Admin-Token": token },
+          responseType: "blob",
+        },
+      );
+      // Extract filename from Content-Disposition
+      const cd = resp.headers["content-disposition"] || "";
+      const match = cd.match(/filename="([^"]+)"/);
+      const filename =
+        (match && match[1]) ||
+        `ThirdRail-${variant === "exec" ? "ExecSummary" : "FullMemo"}.pdf`;
+
+      const blob = new Blob([resp.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success(
+        variant === "exec"
+          ? "Executive summary generated."
+          : "Full briefing generated.",
+        { description: `Downloaded: ${filename}` },
+      );
+      onOpenChange(false);
+    } catch (err) {
+      toast.error("Generation failed.", { description: err?.message });
+    } finally {
+      setGenerating(null);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="max-w-lg border-slate-800 bg-slate-950 text-slate-200"
+        data-testid="briefing-dialog"
+      >
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-white">
+            <Sparkles className="h-4 w-4 text-cyan-400" />
+            Generate Executive Briefing
+          </DialogTitle>
+          <DialogDescription className="text-slate-400">
+            {lead
+              ? `For ${lead.first_name} ${lead.last_name} · ${lead.corporate_email}`
+              : ""}
+          </DialogDescription>
+        </DialogHeader>
+
+        {loading && (
+          <div className="flex items-center gap-2 py-6 text-sm text-slate-400">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Resolving prospect branding via Brandfetch…
+          </div>
+        )}
+
+        {!loading && preview && (
+          <div className="space-y-5">
+            {/* Preview card */}
+            <div className="flex items-center gap-4 rounded-lg border border-slate-800 bg-slate-900/60 p-4">
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={company || preview.domain || "Prospect"}
+                  className="h-12 w-12 rounded-md border border-slate-800 bg-slate-950 object-contain p-1"
+                  data-testid="briefing-prospect-logo"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              ) : (
+                <div className="flex h-12 w-12 items-center justify-center rounded-md border border-slate-800 bg-slate-950 text-cyan-400">
+                  <Building2 className="h-5 w-5" />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                  Prospect
+                </div>
+                <div className="truncate text-sm font-semibold text-white">
+                  {company || preview.inferred_company || preview.domain || "—"}
+                </div>
+                <div className="mono text-[11px] text-slate-500">
+                  {preview.domain || "no domain"}
+                </div>
+              </div>
+            </div>
+
+            {/* Overrides */}
+            <div className="space-y-3">
+              <div>
+                <Label className="mono text-[10px] uppercase tracking-[0.2em] text-slate-400">
+                  Company name
+                </Label>
+                <Input
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  placeholder={preview.inferred_company || "Override name"}
+                  className="mt-2 h-10 border-slate-800 bg-slate-900 text-slate-100 focus-visible:ring-cyan-500"
+                  data-testid="briefing-company-input"
+                />
+              </div>
+              <div>
+                <Label className="mono text-[10px] uppercase tracking-[0.2em] text-slate-400">
+                  Logo URL (override)
+                </Label>
+                <Input
+                  value={logoUrl}
+                  onChange={(e) => setLogoUrl(e.target.value)}
+                  placeholder="https://…/logo.svg"
+                  className="mt-2 h-10 border-slate-800 bg-slate-900 text-slate-100 focus-visible:ring-cyan-500"
+                  data-testid="briefing-logo-input"
+                />
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Leave blank to keep the Brandfetch result. SVG or PNG
+                  recommended.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <DialogFooter className="gap-2 sm:flex-row">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 hover:text-white"
+            data-testid="briefing-cancel"
+          >
+            <X className="mr-1 h-4 w-4" />
+            Cancel
+          </Button>
+          <Button
+            variant="outline"
+            disabled={loading || generating !== null}
+            onClick={() => handleGenerate("exec")}
+            className="border-slate-700 bg-slate-900/60 text-slate-100 hover:bg-slate-800 hover:text-white"
+            data-testid="briefing-generate-exec"
+          >
+            {generating === "exec" ? (
+              <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+            ) : (
+              <FileText className="mr-1 h-4 w-4" />
+            )}
+            Exec summary
+          </Button>
+          <Button
+            disabled={loading || generating !== null}
+            onClick={() => handleGenerate("full")}
+            className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+            data-testid="briefing-generate-full"
+          >
+            {generating === "full" ? (
+              <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-1 h-4 w-4" />
+            )}
+            Full briefing
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
