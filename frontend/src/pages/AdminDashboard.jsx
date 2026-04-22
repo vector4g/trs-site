@@ -267,19 +267,22 @@ export default function AdminDashboard() {
                       <Clock className="h-3 w-3" /> Submitted
                     </span>
                   </th>
+                  <th className="px-4 py-3 font-medium text-right">
+                    <span className="sr-only">Actions</span>Briefing
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {loading && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-10 text-center text-slate-500">
+                    <td colSpan={7} className="px-4 py-10 text-center text-slate-500">
                       Loading…
                     </td>
                   </tr>
                 )}
                 {!loading && rows.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-10 text-center text-slate-500" data-testid="admin-empty">
+                    <td colSpan={7} className="px-4 py-10 text-center text-slate-500" data-testid="admin-empty">
                       No submissions match these filters.
                     </td>
                   </tr>

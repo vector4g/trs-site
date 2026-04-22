@@ -95,7 +95,24 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
       );
       onOpenChange(false);
     } catch (err) {
-      toast.error("Generation failed.", { description: err?.message });
+      // err.response.data is a Blob because we requested responseType='blob'.
+      // Parse it so we can surface the actual server error detail.
+      let detail = err?.message || "Unknown error";
+      const blob = err?.response?.data;
+      if (blob instanceof Blob) {
+        try {
+          const text = await blob.text();
+          try {
+            const json = JSON.parse(text);
+            detail = json.detail || text || detail;
+          } catch {
+            detail = text || detail;
+          }
+        } catch {
+          // fallthrough
+        }
+      }
+      toast.error("Generation failed.", { description: detail });
     } finally {
       setGenerating(null);
     }

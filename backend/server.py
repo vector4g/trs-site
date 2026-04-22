@@ -395,8 +395,8 @@ async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str 
         inferred_name, inferred_logo = await fetch_brand(domain)
         company = company or inferred_name or (domain.split(".")[0].title() if domain else None)
         logo_url = logo_url or inferred_logo
-    elif not company and domain:
-        company = domain.split(".")[0].title()
+    if not company:
+        company = domain.split(".")[0].title() if domain else "Prospective Partner"
 
     briefing_id = f"EB-{uuid.uuid4().hex[:10].upper()}"
 

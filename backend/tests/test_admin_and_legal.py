@@ -6,7 +6,7 @@ import requests
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "http://localhost:8001").rstrip("/")
 API = f"{BASE_URL}/api"
-ADMIN_TOKEN = "test-admin-xyz"  # must match value temporarily set in /app/backend/.env
+ADMIN_TOKEN = os.environ.get("TEST_ADMIN_TOKEN") or "test-admin-xyz"  # override via TEST_ADMIN_TOKEN if the running env rotates
 
 
 def _ip(prefix: str = "203.0.114") -> str:
