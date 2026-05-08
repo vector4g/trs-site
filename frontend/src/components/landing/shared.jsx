@@ -11,6 +11,7 @@ export const NAV_LINKS = [
   { id: "solutions", label: "Solutions" },
   { id: "compliance", label: "Compliance" },
   { id: "about", label: "About" },
+  { id: "advisory", label: "Advisory" },
 ];
 
 export const ROLE_OPTIONS = [

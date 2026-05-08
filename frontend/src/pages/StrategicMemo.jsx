@@ -353,10 +353,24 @@ export default function StrategicMemo() {
                 years watching enterprise programs buckle under the weight of
                 data they should never have centralized in the first place.
               </p>
+              <p>
+                Our scientific posture is anchored by{" "}
+                <span className="text-white">Dr. Sidra Azmat Butt</span> (PhD,
+                Information Technology, TalTech), Researcher in the Next Gen
+                Digital State Research Group at Tallinn University of
+                Technology and our{" "}
+                <span className="text-white">Head of Algorithmic Validation</span>.
+                She provides independent oversight on EU AI Act conformity,
+                GDPR privacy-by-design, and the academic translation of our
+                transient-processing architecture. The architecture is not
+                only commercially defensible — it is academically inspectable.
+              </p>
               <Callout icon={Users} label="Why this matters commercially">
                 Enterprises buy from founders who have stood on the other side
-                of the problem. Our thesis is not borrowed from a pitch deck —
-                it was paid for in career risk.
+                of the problem, and from architectures an independent
+                academic is willing to put their name on. Our thesis is not
+                borrowed from a pitch deck — it was paid for in career risk
+                and in published peer review.
               </Callout>
             </MemoSection>
 

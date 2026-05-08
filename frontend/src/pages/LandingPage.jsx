@@ -7,6 +7,7 @@ import PlatformSection from "@/components/landing/PlatformSection";
 import PersonasSection from "@/components/landing/PersonasSection";
 import ComplianceSection from "@/components/landing/ComplianceSection";
 import AboutSection from "@/components/landing/AboutSection";
+import AdvisoryBoard from "@/components/landing/AdvisoryBoard";
 import ContactSection from "@/components/landing/ContactSection";
 import Footer from "@/components/landing/Footer";
 import { useReveal, scrollToId } from "@/components/landing/shared";
@@ -28,6 +29,7 @@ export default function LandingPage() {
         <PersonasSection onCtaClick={scrollToContact} />
         <ComplianceSection />
         <AboutSection />
+        <AdvisoryBoard />
         <ContactSection />
       </main>
       <Footer />
