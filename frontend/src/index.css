@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    background-color: #0b0f14;
+    background-color: #16181D;
     font-family:
         "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
         "Helvetica Neue", Arial, sans-serif;
@@ -20,27 +20,29 @@ code {
 
 @layer base {
     :root {
-        /* Dark-mode first tokens (applied at root so shadcn inherits them) */
-        --background: 220 26% 6%;
+        /* Dark-mode first tokens (applied at root so shadcn inherits them).
+           Brand-guide aligned: Sovereign Slate #16181D background, Cyan Core
+           #00E5FF accent. */
+        --background: 225 14% 11%;
         --foreground: 210 20% 96%;
-        --card: 222 23% 9%;
+        --card: 222 17% 14%;
         --card-foreground: 210 20% 96%;
-        --popover: 222 23% 9%;
+        --popover: 222 17% 14%;
         --popover-foreground: 210 20% 96%;
-        --primary: 189 94% 55%;
+        --primary: 186 100% 50%;
         --primary-foreground: 220 40% 8%;
         --secondary: 217 19% 16%;
         --secondary-foreground: 210 20% 96%;
         --muted: 217 19% 14%;
         --muted-foreground: 215 16% 65%;
-        --accent: 189 94% 55%;
+        --accent: 186 100% 50%;
         --accent-foreground: 220 40% 8%;
         --destructive: 0 72% 51%;
         --destructive-foreground: 210 20% 98%;
         --border: 217 19% 18%;
         --input: 217 19% 18%;
-        --ring: 189 94% 55%;
-        --chart-1: 189 94% 55%;
+        --ring: 186 100% 50%;
+        --chart-1: 186 100% 50%;
         --chart-2: 173 58% 45%;
         --chart-3: 197 37% 40%;
         --chart-4: 43 74% 66%;

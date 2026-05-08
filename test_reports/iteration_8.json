@@ -1,0 +1,51 @@
+{
+  "summary": "Iteration 8 brand-color migration validated end-to-end. All 11 acceptance criteria pass: body bg = rgb(22,24,29) on /, /memo, /legal/{privacy,terms,cookies,imprint}, /admin/login. Tailwind overrides resolve correctly: text-cyan-400 = rgb(0,229,255) Cyan Core, bg-cyan-500 = rgb(0,229,255), text-cyan-300 = rgb(91,238,255). nav-cta-button (Request Pilot Assessment) renders bg=Cyan Core (rgb(0,229,255)) with text-slate-950 (rgb(22,24,29)). Architecture-section Sparkles/icon accents render rgb(0,229,255). ::selection on /memo = rgba(0,229,255,0.25) with color rgb(236,254,255) (cyan-50). All landing sections (architecture, validation, advisory, about, contact) resolve and render. Backend PDF generation still works: POST /api/admin/briefings/generate (variant=full) returned 200 with %PDF-1.4 magic bytes and 219,837-byte body (>50KB). briefing.py _PRINT_CSS confirmed updated to #16181D backgrounds and #00E5FF accents (16 occurrences). Console clean — zero errors/warnings on /, /memo, /legal/*, /admin/login. Iter7 Radix a11y warning on mobile drawer no longer surfaced in this run. Two minor non-blocking observations below.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Hero secondary CTA",
+        "issues": [
+          "Hero secondary button 'Read Strategic Memo' computed text color is rgb(241,245,249) (slate-100), NOT Cyan Core. The review_request states 'hero secondary button (Read Strategic Memo) text ... are Cyan Core'. Source: /app/frontend/src/components/landing/Hero.jsx:69 className uses text-slate-100. This is a deviation from the brand-guide spec but may be intentional (outline variant default). Flagging for main agent decision: change to text-cyan-400 if spec is binding."
+        ]
+      },
+      {
+        "screen": "/memo",
+        "issues": [
+          "Review_request mentions 'DRAFT banner amber-on-amber' on /memo, but page.locator('text=/DRAFT/i').count() returned 0 on /memo. The DRAFT banner is either not rendered, gated by an env flag, or located on a different route. Not a regression caused by this iteration (no banner code touched), just flagging that the requested visual could not be verified."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_briefings.py",
+    "/app/test_reports/pytest/iter8_briefings.xml"
+  ],
+  "action_items": [
+    "(Optional) Decide whether Hero 'Read Strategic Memo' should be text-cyan-400 per brand-guide intent or kept as slate-100 (current outline-style).",
+    "(Optional) Confirm whether /memo DRAFT banner was intentionally removed or is gated by a flag — review_request expected it to be visible."
+  ],
+  "critical_code_review_comments": [
+    "tailwind.config.js overrides slate.950 → #16181D and cyan.{300,400,500} cleanly without breaking any existing utility class names — minimal, surgical change.",
+    "index.css HSL tokens (--background 225 14% 11% = #16181D, --primary/--accent/--ring 186 100% 50% = #00E5FF) match the hex constants used in raw CSS (App.css, briefing.py print CSS). Cross-token consistency verified.",
+    "App.css ::selection rule scoped under .App means it applies only inside the React tree root; works correctly because the entire app is wrapped. Computed style on memo content confirmed.",
+    "briefing.py uses hard-coded hex (#16181D, #00E5FF) — acceptable because WeasyPrint print pipeline doesn't share Tailwind tokens. 16 references aligned with brand guide.",
+    "Hero.jsx still uses text-slate-100 on secondary CTA — call out for explicit decision (not a regression but a spec gap)."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "100% (2/2 PDF generation tests + manual curl 200 with valid PDF)",
+    "frontend": "95% (palette migration: 11/11 token checks pass; 2 spec-deviation observations are not regressions)"
+  },
+  "test_credentials": "ADMIN_TOKEN was set to e2e-test-token-7321 in /app/backend/.env, backend restarted, PDF generation verified, then ADMIN_TOKEN reverted to '' and backend restarted. Final state: ADMIN_TOKEN='' (matches initial).",
+  "seed_data_creation": "None new. test_briefings.py seeds patrick@stripe.com pilot request via existing fixture if missing.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iter8 is a pure design-token migration. All Tailwind classes resolve correctly to the new brand palette (#16181D + #00E5FF). Backend PDF print pipeline unaffected. Two minor spec/implementation gaps remain: (1) Hero secondary CTA text uses slate-100 not cyan-400; (2) /memo DRAFT banner not currently rendered. Both are non-blocking and require product/design decisions, not code fixes. ADMIN_TOKEN env was toggled and correctly reverted. Iter7's flagged ValidationSection eyebrow '05'→'06' was not re-verified this iteration but was independently reported as fixed in iter7 retest.",
+  "rca of the issue": "N/A — no bugs found. Both flagged design observations are spec/intent ambiguities, not defects. Hero.jsx:69 has used text-slate-100 since before this iteration; the review_request mentions Cyan Core for that element but the migration did not touch Hero classes (out of scope per 'Tailwind class names are unchanged — we just override what slate-950 and cyan-400/500 RESOLVE to')."
+}

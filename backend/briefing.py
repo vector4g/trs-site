@@ -310,21 +310,21 @@ _PRINT_CSS = """
 @page { size: A4; margin: 0; }
 :root { color-scheme: dark; }
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: #0B0F14; color: #E2E8F0;
+html, body { margin: 0; padding: 0; background: #16181D; color: #E2E8F0;
   font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
   -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 .mono { font-family: 'JetBrains Mono', 'Menlo', monospace; letter-spacing: 0.02em; }
-.accent { color: #22D3EE; }
+.accent { color: #00E5FF; }
 .muted { color: #94A3B8; }
 
-.page { width: 210mm; min-height: 297mm; padding: 22mm 20mm; background: #0B0F14;
+.page { width: 210mm; min-height: 297mm; padding: 22mm 20mm; background: #16181D;
   page-break-after: always; position: relative; }
 .page:last-child { page-break-after: auto; }
 .page h2 { font-size: 22pt; color: #FFFFFF; margin: 18pt 0 8pt; letter-spacing: -0.01em; }
 .page p { font-size: 10.5pt; line-height: 1.65; color: #CBD5E1; margin: 6pt 0; }
 .page strong { color: #FFFFFF; font-weight: 600; }
 
-.section-num { font-family: 'JetBrains Mono', monospace; font-size: 10pt; color: #22D3EE;
+.section-num { font-family: 'JetBrains Mono', monospace; font-size: 10pt; color: #00E5FF;
   letter-spacing: 0.24em; text-transform: uppercase; margin-bottom: 4pt; }
 
 .running-header { position: absolute; top: 10mm; left: 20mm; right: 20mm;
@@ -345,15 +345,15 @@ html, body { margin: 0; padding: 0; background: #0B0F14; color: #E2E8F0;
   justify-content: space-between; }
 .cover-header { }
 .brand-pair { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 16mm;
-  align-items: start; border: 1px solid #1E293B; background: #0F172A; padding: 12mm; border-radius: 6pt; }
+  align-items: start; border: 1px solid #1E293B; background: #1B1E25; padding: 12mm; border-radius: 6pt; }
 .brand { display: flex; flex-direction: column; gap: 4pt; align-items: flex-start; }
 .brand-divider { background: #1E293B; width: 1px; height: 100%; }
 .brand-label { font-family: 'JetBrains Mono', monospace; font-size: 7.5pt;
   letter-spacing: 0.22em; text-transform: uppercase; color: #64748B; margin-bottom: 4pt; }
 .brand-logo { max-width: 36mm; max-height: 14mm; object-fit: contain;
   background: transparent; margin-bottom: 4pt; }
-.brand-placeholder { width: 14mm; height: 14mm; border: 1px solid #22D3EE;
-  background: rgba(34,211,238,0.08); color: #22D3EE;
+.brand-placeholder { width: 14mm; height: 14mm; border: 1px solid #00E5FF;
+  background: rgba(0,229,255,0.08); color: #00E5FF;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 12pt; margin-bottom: 4pt; border-radius: 4pt; }
 .brand-name { color: #FFFFFF; font-weight: 600; font-size: 11pt; }
@@ -361,8 +361,8 @@ html, body { margin: 0; padding: 0; background: #0B0F14; color: #E2E8F0;
 
 .cover-body { margin-top: 18mm; }
 .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9pt;
-  letter-spacing: 0.22em; text-transform: uppercase; color: #22D3EE;
-  border-left: 2px solid #22D3EE; padding-left: 8pt; }
+  letter-spacing: 0.22em; text-transform: uppercase; color: #00E5FF;
+  border-left: 2px solid #00E5FF; padding-left: 8pt; }
 .cover-title { color: #FFFFFF; font-size: 34pt; line-height: 1.08; letter-spacing: -0.02em;
   margin: 8mm 0 6mm; font-weight: 600; }
 .cover-lede { color: #94A3B8; font-size: 12pt; max-width: 140mm; line-height: 1.55; }
@@ -374,17 +374,17 @@ html, body { margin: 0; padding: 0; background: #0B0F14; color: #E2E8F0;
   letter-spacing: 0.22em; text-transform: uppercase; color: #64748B; }
 
 /* Callout */
-.callout { border: 1px solid #1E293B; border-left: 3px solid #22D3EE;
-  background: #0F172A; padding: 10pt 12pt; margin: 10pt 0; border-radius: 2pt; }
+.callout { border: 1px solid #1E293B; border-left: 3px solid #00E5FF;
+  background: #1B1E25; padding: 10pt 12pt; margin: 10pt 0; border-radius: 2pt; }
 .callout-label { font-family: 'JetBrains Mono', monospace; font-size: 8pt;
-  letter-spacing: 0.22em; text-transform: uppercase; color: #22D3EE; display: block; }
+  letter-spacing: 0.22em; text-transform: uppercase; color: #00E5FF; display: block; }
 .callout p { margin-top: 4pt; color: #E2E8F0; }
 
 /* Feature grid */
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 10pt 0; }
-.feature { border: 1px solid #1E293B; background: #0F172A; padding: 10pt; border-radius: 2pt; }
+.feature { border: 1px solid #1E293B; background: #1B1E25; padding: 10pt; border-radius: 2pt; }
 .feature-num { font-family: 'JetBrains Mono', monospace; font-size: 8pt;
-  letter-spacing: 0.22em; text-transform: uppercase; color: #22D3EE; }
+  letter-spacing: 0.22em; text-transform: uppercase; color: #00E5FF; }
 .feature-title { color: #FFFFFF; font-weight: 600; font-size: 11pt; margin-top: 4pt; }
 .feature p { font-size: 9.5pt; line-height: 1.55; color: #94A3B8; margin-top: 6pt; }
 
@@ -393,13 +393,13 @@ html, body { margin: 0; padding: 0; background: #0B0F14; color: #E2E8F0;
   border-top: 1px solid #1E293B; padding: 8pt 0; align-items: start; }
 .gov-row:first-of-type { border-top: none; }
 .gov-tag { font-family: 'JetBrains Mono', monospace; font-size: 9pt;
-  letter-spacing: 0.22em; text-transform: uppercase; color: #22D3EE; padding-top: 2pt; }
+  letter-spacing: 0.22em; text-transform: uppercase; color: #00E5FF; padding-top: 2pt; }
 
 /* CTA */
-.cta { margin-top: 14pt; border: 1px solid #22D3EE; background: rgba(34,211,238,0.06);
+.cta { margin-top: 14pt; border: 1px solid #00E5FF; background: rgba(0,229,255,0.06);
   padding: 10pt 12pt; border-radius: 2pt; }
 .cta-label { font-family: 'JetBrains Mono', monospace; font-size: 8pt;
-  letter-spacing: 0.22em; text-transform: uppercase; color: #22D3EE; }
+  letter-spacing: 0.22em; text-transform: uppercase; color: #00E5FF; }
 .cta-body { color: #FFFFFF; font-size: 11pt; margin-top: 4pt; }
 """
 
