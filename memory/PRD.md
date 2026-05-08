@@ -78,6 +78,15 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - Surgical, low-risk migration — every existing component, including `/memo`, `/admin`, all four `/legal/*` pages, `BriefingDialog`, and the rendered briefing PDFs, picks up the new palette with zero per-component edits.
 - **Testing agent iteration_8**: 11/11 token checks pass (body bg = `rgb(22,24,29)`; `text-cyan-400` = `rgb(0,229,255)`; selection = `rgba(0,229,255,0.25)`); backend PDF generation still produces valid 219 KB `%PDF-1.4` files; console clean across `/`, `/memo`, `/legal/*`, `/admin/login`. No regressions.
 
+## Iteration 9 — 2026-05-08 (Catch-22 long-form brief + core team expansion)
+- New long-form page `/catch-22` (alias `/duty-of-care`) renders the full "Duty of Care vs. Data Privacy Catch-22" liability analysis: Executive Overview + I. The Hammer (UK CMCHA / FR faute inexcusable / DE Fürsorgepflicht) + II. The Anvil (Loi de Vigilance, LkSG, RAD class actions) + III. The Trap (GDPR Art. 9, Shadow HR/AI) + IV. Market Scale & Stateless Architecture + V. Pilot CTA. Three Sovereign Slate / Cyan Core comparison tables, sticky TOC, share/copy-link, PostHog events (`brief_viewed`, `brief_read_progress`, `brief_read_completed`, `brief_toc_click`, `brief_cta_click`, `brief_share_*`).
+- Hero stat strip on `/catch-22`: Hammer / Anvil / Trap one-line callouts.
+- Landing page `ProblemSection` now ends with a cyan-bordered teaser card linking to `/catch-22` ("The Hammer · The Anvil · The Trap — Liability Brief · 14-min read").
+- `AboutSection` restructured to three core-team cards: **Levi Hankins (CEO)**, **Jeremy Stabile (CTO)**, **Dr. Sidra Azmat Butt (Head of Algorithmic Validation)** with TalTech badge + "See full advisory profile →" link to `#advisory`. Estonia Advantage retained as full-width row.
+- Advisory Board section preserves Dr. Butt's full academic profile (peer review, EU-funded programmes, advisory scope) — independent posture intact.
+- Footer: new `Liability Brief` link. Sitemap: `/catch-22` added.
+- Testing agent iteration_9: 13/13 frontend scenarios passed (100%).
+
 ## Backlog / Next Actions
 - **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend.
 - **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number when registered to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`.
@@ -89,4 +98,5 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - **P2** `BriefingDialog`: pass `AbortController.signal` to axios so a mid-flight "Cancel" actually aborts the render (currently the PDF still arrives in the background).
 - **P2** Redis-backed rate limiter + periodic cleanup of idle IP buckets (in-memory dict is per-process).
 - **P2** PostHog `identify()` on form submit with hashed email, then surface per-lead memo read-time in admin.
+- **P2** Optional refactor: split `CatchTwentyTwo.jsx` (~1100 lines) into reusable `BriefSection`/`Callout`/`ComparisonTable` primitives in `/components/brief/` — also reusable from `/memo`.
 - **P3** DKIM/SPF records on `.ee`, redesigned `og.png` with the full logo artwork.

@@ -17,7 +17,6 @@ import {
   ShieldAlert,
   Skull,
   Triangle,
-  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
