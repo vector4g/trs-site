@@ -380,7 +380,12 @@ export default function StrategicMemo() {
                 <span className="text-white">
                   identity-bearing inputs never leave the traveler's device.
                 </span>{" "}
-                Everything else follows from that one constraint.
+                Everything else follows from that one constraint. Internally
+                we call this the{" "}
+                <span className="text-white">DReaMAD Protocol</span> — a
+                stateless, multi-agent debate engine that processes a
+                traveler's traits in transient memory and writes none of
+                them to a database.
               </p>
 
               <div className="my-6 grid gap-4 sm:grid-cols-3">
@@ -424,6 +429,16 @@ export default function StrategicMemo() {
                 collecting less identity data — and by refusing to retain any
                 of it at the synthesis layer.
               </p>
+              <Callout icon={Server} label="Independently evidenced">
+                Third Rail Systems OÜ has been evidenced under the{" "}
+                <span className="text-white">KTH Royal Institute of
+                Technology Innovation Readiness Level (IRL) framework</span>.
+                The DReaMAD 8-Agent Debate Engine core logic has been fully
+                engineered and validated against a sovereign 30-country risk
+                database (ILGA, U.S. State Department, Wheelmap, TGEU) —
+                proving the stateless concept functions without persistent
+                data storage.
+              </Callout>
             </MemoSection>
 
             <MemoSection id="governance" number="V" title="Governance Posture">

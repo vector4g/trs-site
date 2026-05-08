@@ -12,7 +12,7 @@ export default function AboutSection() {
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="reveal lg:col-span-5">
             <SectionHeader
-              index="05"
+              index="07"
               eyebrow="About & origin"
               title="Built on Earned Secrets"
             />

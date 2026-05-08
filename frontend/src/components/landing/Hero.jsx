@@ -79,17 +79,17 @@ export default function Hero({ onPrimary, onSecondary }) {
           >
             <span className="flex items-center gap-2">
               <Globe className="h-3.5 w-3.5 text-cyan-400" />
-              EU-Native Architecture
+              ISO 31030
             </span>
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
             <span className="flex items-center gap-2">
               <MapPin className="h-3.5 w-3.5 text-cyan-400" />
-              Built in Tallinn, Estonia
+              GDPR Article 9
             </span>
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
             <span className="flex items-center gap-2">
               <Cpu className="h-3.5 w-3.5 text-cyan-400" />
-              Stateless AI Synthesis
+              EU AI Act · Annex IV
             </span>
           </div>
         </div>

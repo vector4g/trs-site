@@ -51,7 +51,7 @@ export default function AdvisoryBoard() {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <SectionHeader
-          index="06"
+          index="08"
           eyebrow="Scientific Advisory"
           title="Independent algorithmic validation"
           description="A working scientific advisor — not a logo — providing public-sector-grade oversight of our AI conformity posture."

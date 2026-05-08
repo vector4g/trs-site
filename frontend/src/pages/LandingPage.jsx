@@ -4,8 +4,10 @@ import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import ProblemSection from "@/components/landing/ProblemSection";
 import PlatformSection from "@/components/landing/PlatformSection";
+import ArchitectureDiagram from "@/components/landing/ArchitectureDiagram";
 import PersonasSection from "@/components/landing/PersonasSection";
 import ComplianceSection from "@/components/landing/ComplianceSection";
+import ValidationSection from "@/components/landing/ValidationSection";
 import AboutSection from "@/components/landing/AboutSection";
 import AdvisoryBoard from "@/components/landing/AdvisoryBoard";
 import ContactSection from "@/components/landing/ContactSection";
@@ -26,8 +28,10 @@ export default function LandingPage() {
         <Hero onPrimary={scrollToContact} onSecondary={openMemo} />
         <ProblemSection />
         <PlatformSection />
+        <ArchitectureDiagram />
         <PersonasSection onCtaClick={scrollToContact} />
         <ComplianceSection />
+        <ValidationSection />
         <AboutSection />
         <AdvisoryBoard />
         <ContactSection />

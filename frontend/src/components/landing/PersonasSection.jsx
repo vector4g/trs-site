@@ -39,7 +39,7 @@ export default function PersonasSection({ onCtaClick }) {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <SectionHeader
-          index="03"
+          index="04"
           eyebrow="Solutions by persona"
           title="Bridging Security, Privacy, and Inclusion"
           description="Three mandates. One architecture. Each function keeps its own remit intact."

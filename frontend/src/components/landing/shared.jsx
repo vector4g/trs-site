@@ -8,9 +8,10 @@ export const LOGO_URL =
 
 export const NAV_LINKS = [
   { id: "platform", label: "Platform" },
+  { id: "architecture", label: "Architecture" },
   { id: "solutions", label: "Solutions" },
   { id: "compliance", label: "Compliance" },
-  { id: "about", label: "About" },
+  { id: "validation", label: "Validation" },
   { id: "advisory", label: "Advisory" },
 ];
 

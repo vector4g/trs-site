@@ -31,7 +31,7 @@ export default function ComplianceSection() {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <SectionHeader
-          index="04"
+          index="05"
           eyebrow="Governance"
           title="Engineered for the Modern Regulatory Landscape"
           description="Every architectural decision maps to a defensible compliance artefact."

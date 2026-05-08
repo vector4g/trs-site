@@ -132,7 +132,7 @@ export default function ContactSection() {
         <div className="reveal rounded-lg border border-slate-800 bg-slate-900/60 p-8 sm:p-12">
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-5">
-              <Eyebrow index="06">Intake</Eyebrow>
+              <Eyebrow index="09">Intake</Eyebrow>
               <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
                 Initiate a Pilot Assessment
               </h2>
