@@ -1,4 +1,5 @@
-import { ShieldAlert, Lock, Users } from "lucide-react";
+import { ShieldAlert, Lock, Users, ArrowRight, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
 import { SectionHeader } from "./shared";
 
 const ITEMS = [
@@ -63,6 +64,36 @@ export default function ProblemSection() {
             </div>
           ))}
         </div>
+
+        {/* Long-form brief teaser */}
+        <Link
+          to="/catch-22"
+          className="reveal group mt-10 flex flex-col items-start justify-between gap-5 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-6 transition-colors hover:border-cyan-400/60 hover:bg-cyan-500/10 sm:flex-row sm:items-center sm:p-7"
+          data-testid="catch22-teaser"
+        >
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-cyan-500/30 bg-slate-950/60 text-cyan-400">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                Liability Brief · 14-min read
+              </div>
+              <div className="mt-1 text-base font-semibold text-white sm:text-lg">
+                The Hammer · The Anvil · The Trap
+              </div>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+                Read the full liability analysis: executive criminal exposure
+                across UK / France / Germany, €30M+ vigilance fines, and why
+                stateless architecture is the only resolution.
+              </p>
+            </div>
+          </div>
+          <span className="mono inline-flex shrink-0 items-center gap-2 text-xs uppercase tracking-[0.18em] text-cyan-300 transition-transform group-hover:translate-x-1">
+            Read the brief
+            <ArrowRight className="h-4 w-4" />
+          </span>
+        </Link>
       </div>
     </section>
   );

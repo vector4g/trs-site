@@ -68,6 +68,15 @@ export default function Footer() {
               </Link>
             </li>
             <li>
+              <Link
+                to="/catch-22"
+                className="hover:text-cyan-400"
+                data-testid="footer-catch22-link"
+              >
+                Liability Brief
+              </Link>
+            </li>
+            <li>
               <a
                 href="/#contact"
                 className="hover:text-cyan-400"

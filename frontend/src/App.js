@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import "@/App.css";
 import LandingPage from "@/pages/LandingPage";
 import StrategicMemo from "@/pages/StrategicMemo";
+import CatchTwentyTwo from "@/pages/CatchTwentyTwo";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import Privacy from "@/pages/legal/Privacy";
@@ -39,6 +40,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/memo" element={<StrategicMemo />} />
+          <Route path="/catch-22" element={<CatchTwentyTwo />} />
+          <Route path="/duty-of-care" element={<CatchTwentyTwo />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/legal/privacy" element={<Privacy />} />
