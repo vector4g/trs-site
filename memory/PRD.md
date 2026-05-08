@@ -67,6 +67,17 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - **A11y polish**: mobile Sheet now includes `SheetDescription` (silences Radix Dialog warning).
 - **Testing agent iteration_7**: 62/64 frontend checks → fixed both flagged issues post-report (Validation eyebrow 05→06, mobile Sheet a11y description). No backend changes; admin endpoints remain fail-closed.
 
+## Iteration 8 — 2026-05-08 (Brand-guide color migration)
+- **Sovereign Slate `#16181D`** is now the canonical site background; **Cyan Core `#00E5FF`** the canonical accent.
+- Implemented as a **token-only** override — no Tailwind class changed:
+  - `tailwind.config.js` extends `colors.slate.950 = #16181D` and `colors.cyan.{300,400,500}` to brand values. Every existing utility (`bg-slate-950`, `text-cyan-400`, `bg-cyan-500`, etc.) now resolves to the brand palette automatically.
+  - `index.css` shadcn HSL tokens updated: `--background 225 14% 11%`, `--primary/--accent/--ring 186 100% 50%`, `--card 222 17% 14%`. Component primitives (Button, Input, Select, Sheet, Dialog) inherit the new values.
+  - `App.css` body bg, `::selection`, and `.btn-glow` shadow rewritten to Cyan Core RGBA.
+  - `briefing.py` print CSS aligned (cover background, callout strip, accent borders, CTA box).
+  - `og.png` regenerated with `(22,24,29)` bg + `(0,229,255)` accent.
+- Surgical, low-risk migration — every existing component, including `/memo`, `/admin`, all four `/legal/*` pages, `BriefingDialog`, and the rendered briefing PDFs, picks up the new palette with zero per-component edits.
+- **Testing agent iteration_8**: 11/11 token checks pass (body bg = `rgb(22,24,29)`; `text-cyan-400` = `rgb(0,229,255)`; selection = `rgba(0,229,255,0.25)`); backend PDF generation still produces valid 219 KB `%PDF-1.4` files; console clean across `/`, `/memo`, `/legal/*`, `/admin/login`. No regressions.
+
 ## Backlog / Next Actions
 - **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend.
 - **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number when registered to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`.
