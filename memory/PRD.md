@@ -50,6 +50,14 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - Container: `PLAYWRIGHT_BROWSERS_PATH=/pw-browsers` set at `briefing.py` import (supervisor doesn't forward container env vars).
 - Tests: 12/12 new backend + frontend E2E passed. `tests/test_admin_and_legal.py` parameterized via `TEST_ADMIN_TOKEN` env. Thead/colspan mismatch fixed post-review.
 
+## Iteration 6 — 2026-05-08 (Scientific Advisor onboarding)
+- Added **Dr. Sidra Azmat Butt** (PhD, Information Technology, TalTech; Researcher, Next Gen Digital State Research Group, Department of Software Science) as **Scientific Advisor / Head of Algorithmic Validation**.
+- New `/components/landing/AdvisoryBoard.jsx` — single-advisor card with TalTech badge, credentials list (PhD, research domains, 16 peer-reviewed pubs + reviewer roles, three EU-funded programmes — Interreg OSIRIS / ESF IT Academy / Erasmus+ EGov4Youth), and an advisory-scope panel (EU AI Act conformity, GDPR privacy-by-design, transient-processing architecture). Independence disclaimer included.
+- Section inserted between About and Contact; navbar gains `nav-link-advisory` (desktop + mobile); `id="advisory"` for hash-anchor navigation.
+- Strategic Memo Section III ("Earned Secrets") gains a Sidra paragraph + revised callout linking commercial trust to peer-review.
+- All facts sourced verbatim from her LinkedIn profile + the Scientific Advisor Briefing PDF supplied by the user. No fabricated quotes.
+- Testing agent iteration_6: 11/11 frontend checks passed, zero issues, zero regressions on iter1–iter5 testids.
+
 ## Backlog / Next Actions
 - **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend.
 - **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number when registered to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`.
