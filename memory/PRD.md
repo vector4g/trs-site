@@ -58,6 +58,15 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - All facts sourced verbatim from her LinkedIn profile + the Scientific Advisor Briefing PDF supplied by the user. No fabricated quotes.
 - Testing agent iteration_6: 11/11 frontend checks passed, zero issues, zero regressions on iter1–iter5 testids.
 
+## Iteration 7 — 2026-05-08 (Brand Guide + ISI Architecture + KTH IRL Validation)
+- **Hero trust bar** updated to brand-guide language: `ISO 31030 · GDPR Article 9 · EU AI Act · Annex IV` (replaces the original "EU-Native Architecture / Tallinn / Stateless AI Synthesis" line).
+- **ISI Architecture Diagram** (`/components/landing/ArchitectureDiagram.jsx`): in-page rendering of the three-layer flow — L1 Context & Intelligence Grounding (Zero-Knowledge App, Sovereign DB, Federated Router), L2 DReaMAD Protocol (TRS-01 Grandin / TRS-02 Heumann / TRS-03 Crenshaw + 6 parallel agents), L3 Output Synthesis & Regulatory Alignment. Compliance mapping cards (GDPR Art. 9 / EU AI Act Annex IV / ISO 31030) and a prominent Zero-retention boundary callout. "Download full schematic (PDF)" links to the user's CDN-hosted ISI Architecture Diagram.
+- **KTH IRL Evidence Validation** (`/components/landing/ValidationSection.jsx`): six-row IRL scorecard (TRL 4, CRL 4, BRL 4, IPRL 4, TMRL 5, FRL 3) with verbatim 1-line evaluator findings + 5-pip score indicator. Pull-quote ("The DReaMAD 8-Agent Debate Engine core logic has been fully engineered and validated") attributed to "KTH IRL Evidence Report · Third Rail Systems OÜ". Patentable-priority callout + "View full IRL Evidence Report" link to the original DOCX.
+- **Strategic Memo** Section IV gains a DReaMAD Protocol paragraph and a new "Independently evidenced" callout citing the KTH IRL framework + the 30-country sovereign risk database (ILGA, U.S. State Dept, Wheelmap, TGEU).
+- **Navbar** gains `Architecture` and `Validation` links (desktop + mobile drawer). All section eyebrow indexes renumbered: Architecture 03 (new), Solutions 04, Compliance 05, Validation 06 (new), About 07, Advisory 08, Contact 09.
+- **A11y polish**: mobile Sheet now includes `SheetDescription` (silences Radix Dialog warning).
+- **Testing agent iteration_7**: 62/64 frontend checks → fixed both flagged issues post-report (Validation eyebrow 05→06, mobile Sheet a11y description). No backend changes; admin endpoints remain fail-closed.
+
 ## Backlog / Next Actions
 - **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend.
 - **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number when registered to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`.

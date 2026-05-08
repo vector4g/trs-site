@@ -81,7 +81,7 @@ export default function ValidationSection() {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <SectionHeader
-          index="05"
+          index="06"
           eyebrow="Independent validation"
           title="KTH Innovation Readiness Level (IRL) — Evidence Report"
           description="Third Rail Systems OÜ has been evidenced under KTH Royal Institute of Technology's Deeptech Startup Network IRL framework — six structured dimensions of readiness, scored against the international standard."

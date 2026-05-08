@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -106,6 +107,9 @@ export default function Navbar({ onCtaClick }) {
                 <SheetTitle className="text-left text-slate-100">
                   Third Rail Systems OÜ
                 </SheetTitle>
+                <SheetDescription className="sr-only">
+                  Site navigation and primary call-to-action
+                </SheetDescription>
               </SheetHeader>
               <div className="mt-6 flex flex-col">
                 {NAV_LINKS.map((l) => (
