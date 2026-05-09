@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import asyncio
+import base64
 import logging
 import re
 import time
@@ -362,6 +363,10 @@ async def _send_briefing_to_lead(
     """
 
     reply_to = REPLY_TO_EMAIL or NOTIFICATION_RECIPIENT or FALLBACK_RECIPIENT
+    # Resend accepts the attachment `content` as a base64 string. Encoding once
+    # here avoids materialising ~N Python ints from list(pdf_bytes) for a
+    # multi-hundred-KB PDF.
+    encoded_pdf = base64.b64encode(pdf_bytes).decode("ascii")
     params = {
         "from": SENDER_EMAIL,
         "to": [recipient],
@@ -370,7 +375,7 @@ async def _send_briefing_to_lead(
         "attachments": [
             {
                 "filename": pdf_filename,
-                "content": list(pdf_bytes),  # Resend SDK accepts list[int]
+                "content": encoded_pdf,
             }
         ],
     }
