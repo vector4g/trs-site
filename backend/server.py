@@ -78,6 +78,8 @@ class PilotRequestCreate(BaseModel):
     # Whether the user completed reading /memo before submitting (tracked in
     # localStorage when `memo_read_completed` fires). Helps qualify leads.
     memo_read: Optional[bool] = Field(default=False)
+    # Whether the user completed reading the long-form Catch-22 brief.
+    catch22_read: Optional[bool] = Field(default=False)
 
 
 class PilotRequest(BaseModel):
@@ -90,6 +92,7 @@ class PilotRequest(BaseModel):
     email_status: str = "queued"  # queued | sent | stubbed | failed | rejected
     email_error: Optional[str] = None
     memo_read: bool = False
+    catch22_read: bool = False
     submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
@@ -108,17 +111,62 @@ class BriefingPreview(BaseModel):
     domain: Optional[str] = None
 
 
-# ---- In-memory sliding-window rate limiter (per-IP) ----
-# 5 submissions per 15 minutes per IP. Good enough for a single-process uvicorn
-# deployment. Swap for Redis if horizontally scaling.
+# ---- Sliding-window rate limiter (per-IP) ----
+# Backed by Redis when REDIS_URL is set; falls back to in-memory deque so the
+# limiter still works in dev/test environments without Redis.
 RATE_LIMIT_MAX = 5
 RATE_LIMIT_WINDOW_S = 15 * 60
 _rate_buckets: dict[str, deque] = {}
 
+REDIS_URL = os.environ.get('REDIS_URL', '').strip()
+_redis_client = None
+if REDIS_URL:
+    try:
+        import redis as _redis_lib
+        _redis_client = _redis_lib.Redis.from_url(
+            REDIS_URL, socket_timeout=0.5, socket_connect_timeout=0.5,
+            decode_responses=False,
+        )
+        # Verify connectivity at startup; logs once.
+        _redis_client.ping()
+        logger.info("Rate limiter: Redis backend at %s", REDIS_URL)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Rate limiter: Redis unavailable (%s) — falling back to in-memory", exc)
+        _redis_client = None
+
 
 def _rate_limit_check(ip: str) -> tuple[bool, int]:
-    """Return (allowed, retry_after_seconds)."""
+    """Return (allowed, retry_after_seconds).
+
+    Redis path uses an atomic ZSET sliding-window pipeline; falls back to an
+    in-process deque when Redis is unreachable.
+    """
     now = time.time()
+    if _redis_client is not None:
+        key = f"rl:pilot:{ip}"
+        cutoff = now - RATE_LIMIT_WINDOW_S
+        try:
+            pipe = _redis_client.pipeline()
+            pipe.zremrangebyscore(key, 0, cutoff)
+            pipe.zcard(key)
+            pipe.zrange(key, 0, 0, withscores=True)
+            _, count, oldest = pipe.execute()
+            if count >= RATE_LIMIT_MAX:
+                first_score = oldest[0][1] if oldest else now
+                retry_after = int(RATE_LIMIT_WINDOW_S - (now - first_score)) + 1
+                return False, max(retry_after, 1)
+            # Record this submission with a unique member so duplicate
+            # timestamps within the same second don't collapse.
+            member = f"{now}:{uuid.uuid4().hex[:8]}".encode()
+            add_pipe = _redis_client.pipeline()
+            add_pipe.zadd(key, {member: now})
+            add_pipe.expire(key, RATE_LIMIT_WINDOW_S + 60)
+            add_pipe.execute()
+            return True, 0
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Redis rate-limit failure (%s) — falling back to in-memory", exc)
+            # fall through to in-memory below
+
     bucket = _rate_buckets.setdefault(ip, deque())
     # Drop expired entries
     while bucket and now - bucket[0] > RATE_LIMIT_WINDOW_S:
@@ -264,6 +312,91 @@ def _build_prospect_confirmation_html(req: PilotRequest) -> str:
     """
 
 
+async def _send_briefing_to_lead(
+    req_doc: dict,
+    pdf_bytes: bytes,
+    pdf_filename: str,
+    variant: str,
+    briefing_id: str,
+) -> tuple[str, Optional[str]]:
+    """Email the generated briefing PDF to the lead as a Resend attachment.
+
+    Reply-To routes to Levi's inbox so a "Reply" from the prospect lands
+    directly in the founder's mailbox.
+    """
+    if not RESEND_API_KEY:
+        logger.info(f"[EMAIL STUB] would email briefing {briefing_id} to {req_doc.get('corporate_email')}")
+        return ("stubbed", None)
+
+    first_name = (req_doc.get("first_name") or "there").strip()
+    recipient = req_doc.get("corporate_email")
+    if not recipient:
+        return ("failed", "Lead has no corporate_email")
+
+    variant_label = (
+        "Executive Summary" if variant == "exec" else "Full Strategic Briefing"
+    )
+    subject = f"{variant_label} — Third Rail Systems OÜ"
+
+    html_body = f"""
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
+      <tr><td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #1f2937;border-radius:8px;padding:32px;">
+          <tr><td style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22d3ee;">Third Rail Systems · Briefing</td></tr>
+          <tr><td style="padding-top:14px;font-size:22px;font-weight:600;color:#ffffff;line-height:1.3;">
+            Your {variant_label.lower()} is attached.
+          </td></tr>
+          <tr><td style="padding-top:18px;font-size:14px;line-height:1.7;color:#cbd5e1;">
+            Hi {_escape_html(first_name)},<br/><br/>
+            As discussed, please find attached your co-branded {variant_label.lower()}
+            (briefing reference <span style="font-family:monospace;color:#22d3ee;">{briefing_id}</span>).<br/><br/>
+            Reply directly to this email to schedule a 20-minute architecture fit-call —
+            no HRIS integration is required for the pilot.
+          </td></tr>
+          <tr><td style="padding-top:24px;border-top:1px solid #1f2937;font-size:11px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;">
+            Third Rail Systems OÜ · Tallinn, Estonia · EU-Native
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+    """
+
+    reply_to = REPLY_TO_EMAIL or NOTIFICATION_RECIPIENT or FALLBACK_RECIPIENT
+    params = {
+        "from": SENDER_EMAIL,
+        "to": [recipient],
+        "subject": subject,
+        "html": html_body,
+        "attachments": [
+            {
+                "filename": pdf_filename,
+                "content": list(pdf_bytes),  # Resend SDK accepts list[int]
+            }
+        ],
+    }
+    if reply_to:
+        params["reply_to"] = reply_to
+
+    try:
+        await asyncio.to_thread(resend.Emails.send, params)
+        return ("sent", None)
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"Resend briefing-to-lead failed for {briefing_id}: {exc}")
+        return ("failed", str(exc))
+
+
+def _escape_html(s: Optional[str]) -> str:
+    if s is None:
+        return ""
+    return (
+        str(s)
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+
+
 async def _send_prospect_confirmation(req: PilotRequest) -> tuple[str, Optional[str]]:
     """Confirmation email sent TO the prospect with Reply-To = Levi's inbox."""
     if not RESEND_API_KEY:
@@ -334,6 +467,7 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
         corporate_email=payload.corporate_email,
         role=payload.role.strip(),
         memo_read=bool(payload.memo_read),
+        catch22_read=bool(payload.catch22_read),
     )
 
     status, err = await _send_notification(req)
@@ -407,6 +541,10 @@ async def admin_list_pilot_requests(
     total = await db.pilot_requests.count_documents({})
     delivered = await db.pilot_requests.count_documents({"email_status": {"$in": ["sent", "stubbed"]}})
     memo_read = await db.pilot_requests.count_documents({"memo_read": True})
+    catch22_read = await db.pilot_requests.count_documents({"catch22_read": True})
+    both_read = await db.pilot_requests.count_documents(
+        {"memo_read": True, "catch22_read": True}
+    )
 
     return {
         "items": docs,
@@ -415,6 +553,9 @@ async def admin_list_pilot_requests(
             "delivered": delivered,
             "memo_read": memo_read,
             "memo_read_rate": round((memo_read / total) * 100, 1) if total else 0.0,
+            "catch22_read": catch22_read,
+            "catch22_read_rate": round((catch22_read / total) * 100, 1) if total else 0.0,
+            "both_read": both_read,
         },
     }
 
@@ -443,9 +584,12 @@ async def admin_briefing_preview(pilot_request_id: str, _admin: str = Depends(re
 _FILENAME_SAFE = re.compile(r"[^A-Za-z0-9._-]+")
 
 
-@api_router.post("/admin/briefings/generate")
-async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str = Depends(require_admin)):
-    """Generate and stream a co-branded briefing PDF for the given pilot request."""
+async def _render_briefing(payload: BriefingGenerateRequest) -> tuple[bytes, str, str, dict]:
+    """Resolve prospect branding, render the PDF, persist audit fields.
+
+    Returns (pdf_bytes, filename, briefing_id, lead_doc).
+    Raises HTTPException on lookup or render failure.
+    """
     doc = await db.pilot_requests.find_one({"id": payload.pilot_request_id}, {"_id": 0})
     if not doc:
         raise HTTPException(status_code=404, detail="Pilot request not found")
@@ -454,7 +598,6 @@ async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str 
     domain = domain_from_email(email)
     lead_name = f"{doc.get('first_name','')} {doc.get('last_name','')}".strip() or "—"
 
-    # Resolve prospect company + logo (override > brandfetch > fallback)
     company = payload.prospect_company_override
     logo_url = payload.prospect_logo_url_override
 
@@ -480,7 +623,6 @@ async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str 
         logger.error(f"PDF generation failed for {payload.pilot_request_id}: {exc}")
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {exc}") from exc
 
-    # Record that a briefing was generated (for audit/admin visibility)
     try:
         await db.pilot_requests.update_one(
             {"id": payload.pilot_request_id},
@@ -500,6 +642,13 @@ async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str 
     variant_tag = "ExecSummary" if payload.variant == "exec" else "FullMemo"
     filename = f"ThirdRail-{variant_tag}-{safe_company}-{briefing_id}.pdf"
 
+    return pdf_bytes, filename, briefing_id, doc
+
+
+@api_router.post("/admin/briefings/generate")
+async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str = Depends(require_admin)):
+    """Generate and stream a co-branded briefing PDF for the given pilot request."""
+    pdf_bytes, filename, briefing_id, _doc = await _render_briefing(payload)
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
@@ -508,6 +657,34 @@ async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str 
             "X-Briefing-Id": briefing_id,
         },
     )
+
+
+@api_router.post("/admin/briefings/email-to-lead")
+async def admin_briefing_email_to_lead(payload: BriefingGenerateRequest, _admin: str = Depends(require_admin)):
+    """Generate the PDF AND email it to the lead's corporate inbox.
+
+    Reply-To routes to the founder so the prospect's reply lands directly
+    in Levi's mailbox.
+    """
+    pdf_bytes, filename, briefing_id, doc = await _render_briefing(payload)
+
+    status, err = await _send_briefing_to_lead(
+        req_doc=doc,
+        pdf_bytes=pdf_bytes,
+        pdf_filename=filename,
+        variant=payload.variant,
+        briefing_id=briefing_id,
+    )
+    if err:
+        raise HTTPException(status_code=502, detail=f"Email send failed: {err}")
+
+    return {
+        "ok": True,
+        "email_status": status,
+        "briefing_id": briefing_id,
+        "filename": filename,
+        "recipient": doc.get("corporate_email"),
+    }
 
 
 

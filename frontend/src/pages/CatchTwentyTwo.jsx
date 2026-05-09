@@ -25,6 +25,7 @@ import {
   Eyebrow,
   useReveal,
   scrollToId,
+  CATCH22_READ_STORAGE_KEY,
   LINKEDIN_ARTICLE_URL,
   linkedinShareUrl,
 } from "@/components/landing/shared";
@@ -213,6 +214,11 @@ export default function CatchTwentyTwo() {
       if (!completedFired && pct >= 85) {
         completedFired = true;
         track("brief_read_completed", { brief: "catch-22" });
+        try {
+          localStorage.setItem(CATCH22_READ_STORAGE_KEY, "1");
+        } catch (_) {
+          // ignore storage errors (private mode etc.)
+        }
       }
     };
 

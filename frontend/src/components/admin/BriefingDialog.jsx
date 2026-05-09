@@ -5,6 +5,7 @@ import {
   Loader2,
   Download,
   Building2,
+  Mail,
   X,
   Sparkles,
 } from "lucide-react";
@@ -31,6 +32,7 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
   const [company, setCompany] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [generating, setGenerating] = useState(null); // "exec" | "full" | null
+  const [emailing, setEmailing] = useState(null); // "exec" | "full" | null
 
   useEffect(() => {
     if (!open || !lead) return;
@@ -115,6 +117,40 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
       toast.error("Generation failed.", { description: detail });
     } finally {
       setGenerating(null);
+    }
+  };
+
+  const handleEmailToLead = async (variant) => {
+    if (!lead) return;
+    setEmailing(variant);
+    try {
+      const { data } = await axios.post(
+        `${API}/admin/briefings/email-to-lead`,
+        {
+          pilot_request_id: lead.id,
+          variant,
+          prospect_company_override: company.trim() || null,
+          prospect_logo_url_override: logoUrl.trim() || null,
+        },
+        { headers: { "X-Admin-Token": token } },
+      );
+      toast.success(
+        variant === "exec"
+          ? "Executive summary emailed to lead."
+          : "Full briefing emailed to lead.",
+        {
+          description: `${data?.recipient || lead.corporate_email} · ${
+            data?.briefing_id || ""
+          }`,
+        },
+      );
+      onOpenChange(false);
+    } catch (err) {
+      const detail =
+        err?.response?.data?.detail || err?.message || "Unknown error";
+      toast.error("Email send failed.", { description: String(detail) });
+    } finally {
+      setEmailing(null);
     }
   };
 
@@ -209,43 +245,82 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
           </div>
         )}
 
-        <DialogFooter className="gap-2 sm:flex-row">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 hover:text-white"
-            data-testid="briefing-cancel"
-          >
-            <X className="mr-1 h-4 w-4" />
-            Cancel
-          </Button>
-          <Button
-            variant="outline"
-            disabled={loading || generating !== null}
-            onClick={() => handleGenerate("exec")}
-            className="border-slate-700 bg-slate-900/60 text-slate-100 hover:bg-slate-800 hover:text-white"
-            data-testid="briefing-generate-exec"
-          >
-            {generating === "exec" ? (
-              <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-            ) : (
-              <FileText className="mr-1 h-4 w-4" />
-            )}
-            Exec summary
-          </Button>
-          <Button
-            disabled={loading || generating !== null}
-            onClick={() => handleGenerate("full")}
-            className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
-            data-testid="briefing-generate-full"
-          >
-            {generating === "full" ? (
-              <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-1 h-4 w-4" />
-            )}
-            Full briefing
-          </Button>
+        <DialogFooter className="flex-col gap-2 sm:flex-col sm:items-stretch">
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 hover:text-white"
+              data-testid="briefing-cancel"
+            >
+              <X className="mr-1 h-4 w-4" />
+              Cancel
+            </Button>
+            <Button
+              variant="outline"
+              disabled={loading || generating !== null || emailing !== null}
+              onClick={() => handleGenerate("exec")}
+              className="border-slate-700 bg-slate-900/60 text-slate-100 hover:bg-slate-800 hover:text-white"
+              data-testid="briefing-generate-exec"
+            >
+              {generating === "exec" ? (
+                <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+              ) : (
+                <FileText className="mr-1 h-4 w-4" />
+              )}
+              Download exec
+            </Button>
+            <Button
+              disabled={loading || generating !== null || emailing !== null}
+              onClick={() => handleGenerate("full")}
+              className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+              data-testid="briefing-generate-full"
+            >
+              {generating === "full" ? (
+                <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-1 h-4 w-4" />
+              )}
+              Download full
+            </Button>
+          </div>
+
+          {/* Email-to-lead row */}
+          <div className="flex flex-col gap-2 border-t border-slate-800 pt-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+              <Mail className="mr-1 inline h-3 w-3 text-cyan-400" />
+              Email PDF directly to lead
+            </div>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button
+                variant="outline"
+                disabled={loading || generating !== null || emailing !== null}
+                onClick={() => handleEmailToLead("exec")}
+                className="border-slate-700 bg-slate-950/60 text-slate-100 hover:bg-slate-800 hover:text-white"
+                data-testid="briefing-email-exec"
+              >
+                {emailing === "exec" ? (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="mr-1 h-4 w-4" />
+                )}
+                Email exec
+              </Button>
+              <Button
+                disabled={loading || generating !== null || emailing !== null}
+                onClick={() => handleEmailToLead("full")}
+                className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+                data-testid="briefing-email-full"
+              >
+                {emailing === "full" ? (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="mr-1 h-4 w-4" />
+                )}
+                Email full
+              </Button>
+            </div>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

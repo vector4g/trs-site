@@ -13,9 +13,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Eyebrow, ROLE_OPTIONS, MEMO_READ_STORAGE_KEY } from "./shared";
+import { Eyebrow, ROLE_OPTIONS, MEMO_READ_STORAGE_KEY, CATCH22_READ_STORAGE_KEY } from "./shared";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
+const CONSENT_STORAGE_KEY = "trs.consent";
+
+/** Stable, low-entropy hash of an email so we can `identify()` without
+ *  storing PII in PostHog. djb2 hash → hex. */
+function hashEmail(email) {
+  const s = (email || "").trim().toLowerCase();
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  }
+  return `lead_${(h >>> 0).toString(16)}`;
+}
 
 export default function ContactSection() {
   const [submitting, setSubmitting] = useState(false);
@@ -70,10 +83,15 @@ export default function ContactSection() {
       const roleLabel =
         ROLE_OPTIONS.find((r) => r.value === form.role)?.label || form.role;
       let memoRead = false;
+      let catch22Read = false;
+      let consent = "";
       try {
         memoRead = localStorage.getItem(MEMO_READ_STORAGE_KEY) === "1";
+        catch22Read = localStorage.getItem(CATCH22_READ_STORAGE_KEY) === "1";
+        consent = localStorage.getItem(CONSENT_STORAGE_KEY) || "";
       } catch (_) {
         memoRead = false;
+        catch22Read = false;
       }
       await axios.post(`${API}/pilot-requests`, {
         first_name: form.firstName.trim(),
@@ -83,11 +101,26 @@ export default function ContactSection() {
         company_website: form.companyWebsite, // honeypot (empty for humans)
         submission_ms: Date.now() - mountedAt.current,
         memo_read: memoRead,
+        catch22_read: catch22Read,
       });
+      // Only identify in PostHog if the visitor explicitly accepted analytics.
+      // EDPB Guidelines 03/2022 — no enriched profiles pre-consent.
+      if (window.posthog && consent === "accepted") {
+        try {
+          window.posthog.identify(hashEmail(form.email), {
+            role: roleLabel,
+            memo_read: memoRead,
+            catch22_read: catch22Read,
+          });
+        } catch (_) {
+          // analytics must never break submission UX
+        }
+      }
       if (window.posthog) {
         window.posthog.capture("pilot_request_submitted", {
           role: roleLabel,
           memo_read: memoRead,
+          catch22_read: catch22Read,
         });
       }
       toast.success("Pilot assessment request received.", {

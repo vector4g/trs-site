@@ -150,6 +150,43 @@ export default function AdminDashboard() {
     return `${stats.memo_read}/${stats.total} · ${stats.memo_read_rate}%`;
   }, [stats]);
 
+  const briefReadDisplay = useMemo(() => {
+    if (!stats) return "—";
+    const c22 = stats.catch22_read ?? 0;
+    const rate = stats.catch22_read_rate ?? 0;
+    return `${c22}/${stats.total} · ${rate}%`;
+  }, [stats]);
+
+  const readBadge = (memoRead, catchRead) => {
+    if (memoRead && catchRead) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] mono uppercase tracking-[0.15em] text-emerald-300">
+          <CheckCircle2 className="h-3 w-3" />
+          Both
+        </span>
+      );
+    }
+    if (memoRead) {
+      return (
+        <span className="inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[11px] mono uppercase tracking-[0.15em] text-cyan-300">
+          Memo
+        </span>
+      );
+    }
+    if (catchRead) {
+      return (
+        <span className="inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[11px] mono uppercase tracking-[0.15em] text-cyan-300">
+          Catch-22
+        </span>
+      );
+    }
+    return (
+      <span className="mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
+        —
+      </span>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200" data-testid="admin-dashboard-root">
       <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
@@ -186,15 +223,21 @@ export default function AdminDashboard() {
 
       <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
         {/* Stats */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="admin-stats">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-testid="admin-stats">
           <Stat label="Total submissions" value={stats?.total ?? "…"} Icon={Users} />
           <Stat label="Last 7 days" value={activity?.last7d ?? "…"} Icon={Clock} hint={`${activity?.today ?? 0} today`} />
           <Stat label="Delivered / queued" value={stats?.delivered ?? "…"} Icon={Mail} hint="sent + stubbed" />
           <Stat
-            label="Memo-read conversion"
+            label="Memo read"
             value={memoReadDisplay}
             Icon={FileText}
-            hint="read /memo before submitting"
+            hint="completed /memo before submitting"
+          />
+          <Stat
+            label="Catch-22 read"
+            value={briefReadDisplay}
+            Icon={FileText}
+            hint="completed /catch-22 before submitting"
           />
         </div>
 
@@ -260,7 +303,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Email</th>
                   <th className="px-4 py-3 font-medium">Role</th>
-                  <th className="px-4 py-3 font-medium">Memo</th>
+                  <th className="px-4 py-3 font-medium">Read</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">
                     <span className="inline-flex items-center gap-1">
@@ -306,17 +349,11 @@ export default function AdminDashboard() {
                         </a>
                       </td>
                       <td className="px-4 py-3 text-slate-300">{r.role}</td>
-                      <td className="px-4 py-3">
-                        {r.memo_read ? (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[11px] text-cyan-300">
-                            <CheckCircle2 className="h-3 w-3" />
-                            Read
-                          </span>
-                        ) : (
-                          <span className="mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
-                            —
-                          </span>
-                        )}
+                      <td
+                        className="px-4 py-3"
+                        data-testid={`admin-read-${r.id.slice(0, 8)}`}
+                      >
+                        {readBadge(r.memo_read, r.catch22_read)}
                       </td>
                       <td className="px-4 py-3">
                         <span

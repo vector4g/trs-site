@@ -1,0 +1,30 @@
+{
+  "summary": "Iteration 10 backend + frontend deltas verified end-to-end. All 14 acceptance scenarios pass: catch22_read persistence, admin stats schema (catch22_read + catch22_read_rate + both_read), email-to-lead 200/401/404, BriefingDialog Email exec/full buttons, PostHog consent gating, Redis-backed sliding-window rate limiter (5+1=>429 with Retry-After), favicon family, 1200x630 og.png, and full route regression. 10/10 backend tests pass; frontend smoke clean across /, /memo, /catch-22, /admin, /legal/*.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter10_deltas.py",
+    "/app/test_reports/pytest/iter10_deltas.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py is now ~707 lines and contains models, helpers, rate-limiter, brand resolution, PDF generation orchestration, and 8 routes. Recommend splitting into routers/admin.py + services/email.py + services/rate_limit.py before further growth.",
+    "_send_briefing_to_lead passes the PDF as list[int] via list(pdf_bytes); for a 200KB+ PDF this materialises ~200K Python ints temporarily. Resend SDK also accepts bytes/base64 — switching to base64.b64encode(pdf_bytes).decode() is more memory-efficient at scale.",
+    "Rate-limit Redis path uses synchronous redis-py inside an async endpoint; the 0.5s socket_timeout caps the worst case but a tight retry loop under load could still block the event loop. Consider redis.asyncio when traffic grows.",
+    "POST /api/admin/briefings/email-to-lead returns 502 only when err is truthy; if Resend returns ('stubbed', None) (missing RESEND_API_KEY) the lead never actually receives the email but the endpoint reports 200 ok:true email_status:'stubbed'. Acceptable in dev/test but should warn loudly in prod (e.g., refuse to start without RESEND_API_KEY in prod env)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter10_deltas.py (new)"
+  ],
+  "success_rate": {"backend": "100% (10/10 in test_iter10_deltas.py)", "frontend": "100% (14/14 acceptance scenarios)"},
+  "test_credentials": "ADMIN_TOKEN='dev-admin-trs-2026' (from /app/backend/.env, matches /app/memory/test_credentials.md). Used in HTTP X-Admin-Token and admin/login form.",
+  "seed_data_creation": "Created TEST_-prefixed pilot requests for catch22_read persistence (2), email-to-lead seed (1), and rate-limit smoke (5) — all isolated by unique TEST-NET X-Forwarded-For IPs in 198.51.100.0/24 and 203.0.113.0/24. No production data touched.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Verified at https://eu-travel-risk.preview.emergentagent.com. KEY CONFIRMATIONS: (1) /catch-22 sets localStorage['trs.catch22_read']='1' on >85% scroll and persists across reload. (2) Admin dashboard renders 5 stat cards via lg:grid-cols-5 with new 'Catch-22 read' card showing '2/112 · 1.8%'; table column order is Name | Email | Role | Read | Status | Submitted | Briefing; admin-read-<id8> badges count=112 (one per row, default '—' badge for leads with no flags). (3) BriefingDialog data-testid map: admin-briefing-<id8> opens dialog; inside: briefing-generate-exec, briefing-generate-full, briefing-email-exec ('Email exec'), briefing-email-full ('Email full'), briefing-cancel. Dialog closes on successful email send. (4) PostHog consent gating: localStorage['trs.consent']='rejected' → window.posthog.__loaded stays false; 'accepted' → __loaded=true and get_distinct_id() returns a UUIDv7 anonymous id; the 'lead_'-prefixed distinct_id is only set AFTER form submission via posthog.identify() (not after page-load). (5) Redis rate limiter live: redis-cli ZCARD rl:pilot:<ip> returned 5 after the 6-rapid-POST burst; 6th POST returned 429 with Retry-After header. (6) /og.png = 1200x630 PNG, 489KB. (7) /favicon.ico, /favicon-16.png, /favicon-32.png, /apple-touch-icon.png all 200; index.html includes all four <link rel> tags. SUPERVISOR programs running: backend, frontend, mongodb, redis (program:redis at /etc/supervisor/conf.d/supervisord_redis.conf, port 127.0.0.1:6379).",
+  "rca of the issue": "N/A — no defects found this iteration. One minor observation worth flagging: the email-to-lead endpoint returns 200 ok:true even when RESEND_API_KEY is missing (email_status='stubbed'). In the current preview env RESEND_API_KEY is set so emails actually send; just a guardrail to consider for prod hardening."
+}
