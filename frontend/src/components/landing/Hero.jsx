@@ -42,18 +42,24 @@ export default function Hero({ onPrimary, onSecondary }) {
                     "radial-gradient(60% 60% at 50% 50%, rgba(34,211,238,0.18) 0%, rgba(11,15,20,0) 75%)",
                 }}
               />
+              {/* Cyan core line — draws top→bottom, then fades as the mark dissolves in */}
+              <span
+                className="trs-line-draw pointer-events-none absolute left-1/2 top-[6%] bottom-[6%] -translate-x-1/2 w-[2px] bg-cyan-400"
+                style={{ boxShadow: "0 0 12px 1px rgba(34,211,238,0.55)" }}
+                aria-hidden="true"
+              />
               <img
                 src={LOGO_URL}
                 alt="Third Rail Systems OÜ"
-                className="h-full w-full object-contain opacity-90"
+                className="trs-mark-in h-full w-full object-contain"
               />
             </span>
             <div className="flex flex-col">
-              <span className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
+              <span className="trs-text-in-1 text-xl font-semibold tracking-tight text-white sm:text-2xl">
                 Third Rail Systems
                 <span className="ml-1.5 font-normal text-slate-400">OÜ</span>
               </span>
-              <span className="mono mt-1 text-[10px] uppercase tracking-[0.28em] text-slate-500">
+              <span className="trs-text-in-2 mono mt-1 text-[10px] uppercase tracking-[0.28em] text-slate-500">
                 Sovereign · Stateless · EU-Native
               </span>
             </div>
