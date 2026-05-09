@@ -152,6 +152,18 @@ code {
     stroke-dashoffset: 1;
     animation: trs-svg-core-draw 750ms cubic-bezier(0.65, 0, 0.35, 1) 80ms forwards;
 }
+.trs-svg-animate .trs-svg-core-glow {
+    opacity: 0;
+    animation: trs-svg-glow-in 700ms ease-out 200ms forwards;
+}
+.trs-svg-animate .trs-svg-core-highlight {
+    opacity: 0;
+    animation: trs-svg-fade-in 700ms ease-out 250ms forwards;
+}
+@keyframes trs-svg-glow-in {
+    0%   { opacity: 0; }
+    100% { opacity: 0.28; }
+}
 .trs-svg-animate .trs-svg-stem-left {
     opacity: 0;
     animation: trs-svg-fade-in 600ms ease-out 600ms forwards;
@@ -185,14 +197,26 @@ code {
 
 @media (prefers-reduced-motion: reduce) {
     .trs-svg-animate .trs-svg-core,
+    .trs-svg-animate .trs-svg-core-glow,
+    .trs-svg-animate .trs-svg-core-highlight,
     .trs-svg-animate .trs-svg-stem-left,
     .trs-svg-animate .trs-svg-stem-right,
     .trs-svg-animate .trs-svg-crossbar,
     .trs-svg-animate .trs-svg-halo {
         animation: none !important;
-        opacity: 1 !important;
         transform: none !important;
         stroke-dashoffset: 0 !important;
+    }
+    .trs-svg-animate .trs-svg-core,
+    .trs-svg-animate .trs-svg-core-highlight,
+    .trs-svg-animate .trs-svg-stem-left,
+    .trs-svg-animate .trs-svg-stem-right,
+    .trs-svg-animate .trs-svg-crossbar,
+    .trs-svg-animate .trs-svg-halo {
+        opacity: 1 !important;
+    }
+    .trs-svg-animate .trs-svg-core-glow {
+        opacity: 0.28 !important;
     }
 }
 

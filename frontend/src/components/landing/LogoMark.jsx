@@ -41,19 +41,23 @@ export default function LogoMark({
         </linearGradient>
 
         <linearGradient id="trs-stem" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#5A4A78" />
-          <stop offset="35%" stopColor="#9F8460" />
-          <stop offset="55%" stopColor="#B89A6C" />
-          <stop offset="78%" stopColor="#7B658E" />
-          <stop offset="100%" stopColor="#3F345A" />
+          <stop offset="0%" stopColor="#5347A0" />
+          <stop offset="22%" stopColor="#7A5E92" />
+          <stop offset="42%" stopColor="#C68A50" />
+          <stop offset="52%" stopColor="#E0A968" />
+          <stop offset="62%" stopColor="#C68A50" />
+          <stop offset="82%" stopColor="#6B528E" />
+          <stop offset="100%" stopColor="#2E2750" />
         </linearGradient>
 
         <linearGradient id="trs-stem-mirror" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3F345A" />
-          <stop offset="22%" stopColor="#7B658E" />
-          <stop offset="45%" stopColor="#B89A6C" />
-          <stop offset="65%" stopColor="#9F8460" />
-          <stop offset="100%" stopColor="#5A4A78" />
+          <stop offset="0%" stopColor="#2E2750" />
+          <stop offset="18%" stopColor="#6B528E" />
+          <stop offset="38%" stopColor="#C68A50" />
+          <stop offset="48%" stopColor="#E0A968" />
+          <stop offset="58%" stopColor="#C68A50" />
+          <stop offset="78%" stopColor="#7A5E92" />
+          <stop offset="100%" stopColor="#5347A0" />
         </linearGradient>
 
         <radialGradient id="trs-halo" cx="0.5" cy="0.5" r="0.5">
@@ -62,8 +66,8 @@ export default function LogoMark({
           <stop offset="100%" stopColor="#22D3EE" stopOpacity="0" />
         </radialGradient>
 
-        <filter id="trs-cyan-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1.4" result="blur" />
+        <filter id="trs-cyan-glow" x="-100%" y="-50%" width="300%" height="200%">
+          <feGaussianBlur stdDeviation="2.4" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -127,19 +131,45 @@ export default function LogoMark({
         fill="url(#trs-stem-mirror)"
       />
 
-      {/* Cyan core line — true SVG stroke-draw target */}
+      {/* Cyan core beam — outer soft glow underlay (wider, low opacity) */}
+      <line
+        className="trs-svg-core-glow"
+        x1="100"
+        y1="68"
+        x2="100"
+        y2="164"
+        stroke="#22D3EE"
+        strokeWidth="6"
+        strokeLinecap="round"
+        opacity="0.28"
+        filter="url(#trs-cyan-glow)"
+      />
+
+      {/* Cyan core beam — sharp inner line (true SVG stroke-draw target) */}
       <line
         className="trs-svg-core"
         x1="100"
-        y1="72"
+        y1="68"
         x2="100"
-        y2="160"
+        y2="164"
         stroke="#00E5FF"
-        strokeWidth="2"
+        strokeWidth="3.2"
         strokeLinecap="round"
-        filter="url(#trs-cyan-glow)"
         // pathLength normalises stroke math so dasharray=1 == full path
         pathLength="1"
+      />
+
+      {/* Cyan core beam — bright white-cyan highlight (very thin, sits on top) */}
+      <line
+        className="trs-svg-core-highlight"
+        x1="100"
+        y1="70"
+        x2="100"
+        y2="162"
+        stroke="#E6FBFF"
+        strokeWidth="1"
+        strokeLinecap="round"
+        opacity="0.9"
       />
     </svg>
   );
