@@ -38,6 +38,7 @@ db = client[os.environ['DB_NAME']]
 # Resend config
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev').strip()
+REPLY_TO_EMAIL = os.environ.get('REPLY_TO_EMAIL', '').strip()
 NOTIFICATION_RECIPIENT = os.environ.get('NOTIFICATION_RECIPIENT', '').strip()
 FALLBACK_RECIPIENT = os.environ.get('FALLBACK_RECIPIENT', '').strip()
 ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', '').strip()
@@ -230,6 +231,63 @@ async def _send_notification(req: PilotRequest) -> tuple[str, Optional[str]]:
         return ("failed", str(exc))
 
 
+def _build_prospect_confirmation_html(req: PilotRequest) -> str:
+    """Prospect-facing confirmation email — system tone, Reply-To routes to Levi."""
+    return f"""
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
+      <tr><td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #1f2937;border-radius:8px;padding:32px;">
+          <tr><td style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22d3ee;">Third Rail Systems · Intake</td></tr>
+          <tr><td style="padding-top:14px;font-size:22px;font-weight:600;color:#ffffff;line-height:1.3;">
+            Pilot request received.
+          </td></tr>
+          <tr><td style="padding-top:18px;font-size:14px;line-height:1.7;color:#cbd5e1;">
+            Hi {req.first_name},<br/><br/>
+            This is an automated confirmation from the Third Rail Systems platform. Your pilot assessment request has been logged under reference <span style="font-family:monospace;color:#22d3ee;">{req.id[:8]}</span>.<br/><br/>
+            A founding-team operator will reach out within one business day with a 20-minute architecture fit-call slot. No HRIS integration is required for the pilot.<br/><br/>
+            In the meantime, you may find the published liability brief useful for your CSO / DPO conversations:
+          </td></tr>
+          <tr><td style="padding:18px 0 8px 0;">
+            <a href="https://thirdrailsystems.ee/catch-22" style="display:inline-block;background:#22d3ee;color:#0b0f14;padding:10px 18px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;letter-spacing:0.3px;">
+              Read · The Duty of Care vs. Data Privacy Catch-22
+            </a>
+          </td></tr>
+          <tr><td style="padding-top:18px;font-size:13px;line-height:1.6;color:#94a3b8;">
+            Reply directly to this email to reach the founding team.
+          </td></tr>
+          <tr><td style="padding-top:24px;border-top:1px solid #1f2937;font-size:11px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;padding-bottom:0;">
+            Third Rail Systems OÜ · Tallinn, Estonia · EU-Native
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+    """
+
+
+async def _send_prospect_confirmation(req: PilotRequest) -> tuple[str, Optional[str]]:
+    """Confirmation email sent TO the prospect with Reply-To = Levi's inbox."""
+    if not RESEND_API_KEY:
+        logger.info(f"[EMAIL STUB] would confirm pilot request {req.id} to {req.corporate_email}")
+        return ("stubbed", None)
+
+    reply_to = REPLY_TO_EMAIL or NOTIFICATION_RECIPIENT or FALLBACK_RECIPIENT
+    params = {
+        "from": SENDER_EMAIL,
+        "to": [req.corporate_email],
+        "subject": "Pilot request received — Third Rail Systems OÜ",
+        "html": _build_prospect_confirmation_html(req),
+    }
+    if reply_to:
+        params["reply_to"] = reply_to
+
+    try:
+        await asyncio.to_thread(resend.Emails.send, params)
+        return ("sent", None)
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"Resend prospect-confirmation failed for {req.id}: {exc}")
+        return ("failed", str(exc))
+
+
 @api_router.post("/pilot-requests", response_model=PilotRequest, status_code=201)
 async def create_pilot_request(payload: PilotRequestCreate, request: Request):
     # --- Anti-spam guard 1: per-IP sliding-window rate limit.
@@ -281,6 +339,15 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
     status, err = await _send_notification(req)
     req.email_status = status
     req.email_error = err
+
+    # Prospect-facing confirmation. Fire after the internal notification so a
+    # confirmation failure (e.g., transient Resend hiccup) never blocks the
+    # primary lead-capture path.
+    confirm_status, confirm_err = await _send_prospect_confirmation(req)
+    if confirm_err:
+        logger.warning(
+            f"Prospect confirmation status={confirm_status} for {req.id}: {confirm_err}"
+        )
 
     doc = req.model_dump()
     doc['submitted_at'] = doc['submitted_at'].isoformat()

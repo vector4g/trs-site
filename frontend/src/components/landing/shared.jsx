@@ -6,6 +6,15 @@ export const ADMIN_TOKEN_STORAGE_KEY = "trs.admin_token";
 export const LOGO_URL =
   "https://customer-assets.emergentagent.com/job_eu-travel-risk/artifacts/xlq21bpc_Third%20Rail%20Logo.jpg";
 
+// Published thought-leadership — wired into Share buttons + "Read on LinkedIn" CTAs.
+export const LINKEDIN_ARTICLE_URL =
+  "https://www.linkedin.com/pulse/duty-care-vs-data-privacy-catch-22-multi-billion-euro-levi-hankins-ugijc";
+export const LEVI_LINKEDIN_URL = "https://www.linkedin.com/in/levihankins";
+
+/** LinkedIn share-offsite deep link for a given URL. */
+export const linkedinShareUrl = (url) =>
+  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+
 export const NAV_LINKS = [
   { id: "platform", label: "Platform" },
   { id: "architecture", label: "Architecture" },

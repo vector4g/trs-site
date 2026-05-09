@@ -1,6 +1,19 @@
 import { Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LOGO_URL } from "./shared";
+import { LOGO_URL, LINKEDIN_ARTICLE_URL } from "./shared";
+
+function LinkedInGlyph({ className = "h-4 w-4" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="currentColor"
+      className={className}
+    >
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z" />
+    </svg>
+  );
+}
 
 const LEGAL_LINKS = [
   { to: "/legal/privacy", label: "Privacy" },
@@ -49,6 +62,22 @@ export default function Footer() {
           >
             <Mail className="h-3.5 w-3.5" />
             levi@thirdrailsystems.ee
+          </a>
+
+          <a
+            href={LINKEDIN_ARTICLE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1.5 transition-colors hover:border-cyan-500/40 hover:bg-slate-900"
+            data-testid="footer-linkedin-asseenon"
+          >
+            <span className="mono text-[9px] uppercase tracking-[0.22em] text-slate-500">
+              As seen on
+            </span>
+            <LinkedInGlyph className="h-3.5 w-3.5 text-cyan-400" />
+            <span className="text-[11px] font-medium text-slate-200">
+              LinkedIn — Levi Hankins
+            </span>
           </a>
         </div>
 

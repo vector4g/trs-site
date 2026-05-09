@@ -1,6 +1,19 @@
 import { MapPin, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SectionHeader } from "./shared";
+import { SectionHeader, LEVI_LINKEDIN_URL } from "./shared";
+
+function LinkedInGlyph({ className = "h-4 w-4" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="currentColor"
+      className={className}
+    >
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z" />
+    </svg>
+  );
+}
 
 const TEAM = [
   {
@@ -9,6 +22,8 @@ const TEAM = [
     bio:
       '20-year US Navy combat veteran with lived experience under "Don\'t Ask, Don\'t Tell." Operational authority on discretion under institutional scrutiny.',
     testid: "founder-ceo",
+    linkedinUrl: LEVI_LINKEDIN_URL,
+    linkedinTestid: "founder-ceo-linkedin",
   },
   {
     role: "CTO",
@@ -74,9 +89,23 @@ export default function AboutSection() {
                   <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
                     {member.role}
                   </div>
-                  <h3 className="mt-2 text-lg font-semibold text-white sm:text-xl">
-                    {member.name}
-                  </h3>
+                  <div className="mt-2 flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-white sm:text-xl">
+                      {member.name}
+                    </h3>
+                    {member.linkedinUrl && (
+                      <a
+                        href={member.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-slate-500 transition-colors hover:text-cyan-400"
+                        aria-label={`${member.name} on LinkedIn`}
+                        data-testid={member.linkedinTestid}
+                      >
+                        <LinkedInGlyph className="h-4 w-4" />
+                      </a>
+                    )}
+                  </div>
                   <p className="mt-3 text-sm leading-relaxed text-slate-400">
                     {member.bio}
                   </p>

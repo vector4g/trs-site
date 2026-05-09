@@ -11,7 +11,6 @@ import {
   Lock,
   MapPin,
   Scale,
-  Send,
   Server,
   ShieldAlert,
   Users,
@@ -20,7 +19,27 @@ import {
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
-import { Eyebrow, useReveal, scrollToId } from "@/components/landing/shared";
+import {
+  Eyebrow,
+  useReveal,
+  scrollToId,
+  LINKEDIN_ARTICLE_URL,
+  LEVI_LINKEDIN_URL,
+  linkedinShareUrl,
+} from "@/components/landing/shared";
+
+function LinkedInGlyph({ className = "h-4 w-4" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="currentColor"
+      className={className}
+    >
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z" />
+    </svg>
+  );
+}
 
 const MEMO_URL =
   typeof window !== "undefined"
@@ -151,32 +170,12 @@ export default function StrategicMemo() {
   };
 
   const handleShare = async () => {
-    const shareData = {
-      title: "The Strategic Memo: Resolving the ISO 31030 Catch-22",
-      text:
-        "Third Rail Systems' founding paper on how to fulfill duty-of-care for marginalized travelers without creating a GDPR Article 9 liability.",
-      url: MEMO_URL,
-    };
     track("memo_share_click");
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        track("memo_share_success", { channel: "native" });
-        return;
-      } catch (_) {
-        // user cancelled — fall through to mailto
-      }
-    }
-
-    const subject = encodeURIComponent(
-      "Worth a read: Third Rail Systems — Strategic Memo",
-    );
-    const body = encodeURIComponent(
-      `I thought this might be useful for your Security / Privacy / ERG conversations.\n\n"${shareData.title}"\n\n${shareData.text}\n\n${shareData.url}\n`,
-    );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    track("memo_share_success", { channel: "mailto" });
+    // Share the published LinkedIn article — boosts the author's post and
+    // keeps reshares concentrated rather than scattered across mirrors.
+    const shareUrl = linkedinShareUrl(LINKEDIN_ARTICLE_URL);
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
+    track("memo_share_success", { channel: "linkedin" });
   };
 
   const handleCopyLink = async () => {
@@ -339,8 +338,18 @@ export default function StrategicMemo() {
                 operational truths.
               </p>
               <p>
-                Our CEO, <span className="text-white">Levi Hankins</span>,
-                served 20 years as a US Navy combat veteran and spent a
+                Our CEO,{" "}
+                <a
+                  href={LEVI_LINKEDIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-white underline decoration-cyan-500/40 underline-offset-4 hover:decoration-cyan-400"
+                  data-testid="memo-levi-linkedin"
+                >
+                  Levi Hankins
+                  <LinkedInGlyph className="h-3.5 w-3.5 text-cyan-400" />
+                </a>
+                , served 20 years as a US Navy combat veteran and spent a
                 meaningful portion of that career under "Don't Ask, Don't
                 Tell." He has first-hand, deployed experience of what happens
                 when institutional safety systems cannot safely see the people
@@ -546,7 +555,7 @@ export default function StrategicMemo() {
                       className="btn-glow h-10 bg-cyan-500 px-4 text-slate-950 hover:bg-cyan-400"
                       data-testid="memo-share-button"
                     >
-                      <Send className="mr-1 h-4 w-4" />
+                      <LinkedInGlyph className="mr-1 h-4 w-4" />
                       Share
                     </Button>
                   </div>

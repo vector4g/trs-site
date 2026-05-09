@@ -12,7 +12,6 @@ import {
   Lock,
   MapPin,
   Scale,
-  Send,
   Server,
   ShieldAlert,
   Skull,
@@ -22,7 +21,27 @@ import {
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
-import { Eyebrow, useReveal, scrollToId } from "@/components/landing/shared";
+import {
+  Eyebrow,
+  useReveal,
+  scrollToId,
+  LINKEDIN_ARTICLE_URL,
+  linkedinShareUrl,
+} from "@/components/landing/shared";
+
+// LinkedIn glyph — lucide-react has no LinkedIn icon, so use a tiny inline SVG.
+function LinkedInGlyph({ className = "h-4 w-4" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="currentColor"
+      className={className}
+    >
+      <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z" />
+    </svg>
+  );
+}
 
 const BRIEF_URL =
   typeof window !== "undefined"
@@ -213,33 +232,12 @@ export default function CatchTwentyTwo() {
   };
 
   const handleShare = async () => {
-    const shareData = {
-      title:
-        "The Duty of Care vs. Data Privacy Catch-22 — Third Rail Systems",
-      text:
-        "A multi-billion-euro liability crisis: ISO 31030 mandates the very data GDPR Article 9 forbids. The architectural answer is stateless.",
-      url: BRIEF_URL,
-    };
     track("brief_share_click", { brief: "catch-22" });
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        track("brief_share_success", { brief: "catch-22", channel: "native" });
-        return;
-      } catch (_) {
-        // user cancelled — fall through to mailto
-      }
-    }
-
-    const subject = encodeURIComponent(
-      "Worth a read: Duty of Care vs. Data Privacy — Third Rail Systems",
-    );
-    const body = encodeURIComponent(
-      `Forwarding for your CSO / DPO / ERG conversations.\n\n"${shareData.title}"\n\n${shareData.text}\n\n${shareData.url}\n`,
-    );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    track("brief_share_success", { brief: "catch-22", channel: "mailto" });
+    // Reshare the LinkedIn article — drives engagement on Levi's published
+    // post rather than splitting it between the in-site copy and LinkedIn.
+    const shareUrl = linkedinShareUrl(LINKEDIN_ARTICLE_URL);
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
+    track("brief_share_success", { brief: "catch-22", channel: "linkedin" });
   };
 
   const handleCopyLink = async () => {
@@ -287,6 +285,23 @@ export default function CatchTwentyTwo() {
           <div className="mt-8">
             <Eyebrow index="BRIEF · 2026">Liability Analysis</Eyebrow>
           </div>
+
+          <a
+            href={LINKEDIN_ARTICLE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() =>
+              track("brief_linkedin_click", {
+                brief: "catch-22",
+                location: "hero",
+              })
+            }
+            className="mono mt-5 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-cyan-300 transition-colors hover:border-cyan-400/60 hover:bg-cyan-500/15 hover:text-cyan-200"
+            data-testid="catch22-linkedin-badge"
+          >
+            <LinkedInGlyph className="h-3 w-3" />
+            Originally published on LinkedIn
+          </a>
 
           <h1
             className="mt-5 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
@@ -1022,14 +1037,32 @@ export default function CatchTwentyTwo() {
                     required.
                   </div>
                 </div>
-                <Button
-                  onClick={handleCta}
-                  className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
-                  data-testid="catch22-cta-contact"
-                >
-                  Request Pilot Assessment
-                  <ArrowRight className="ml-1 h-4 w-4" />
-                </Button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={LINKEDIN_ARTICLE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() =>
+                      track("brief_linkedin_click", {
+                        brief: "catch-22",
+                        location: "bottom",
+                      })
+                    }
+                    className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-700 bg-slate-950/60 px-4 text-sm text-slate-100 transition-colors hover:border-cyan-500/40 hover:bg-slate-800 hover:text-white"
+                    data-testid="catch22-linkedin-button"
+                  >
+                    <LinkedInGlyph className="h-4 w-4" />
+                    Read on LinkedIn
+                  </a>
+                  <Button
+                    onClick={handleCta}
+                    className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+                    data-testid="catch22-cta-contact"
+                  >
+                    Request Pilot Assessment
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </div>
               </div>
 
               {/* Share */}
@@ -1043,11 +1076,12 @@ export default function CatchTwentyTwo() {
                 <div className="mt-2 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="text-sm font-semibold text-white sm:text-base">
-                      Email this brief to a colleague
+                      Reshare on LinkedIn
                     </div>
                     <p className="mt-1 text-xs leading-relaxed text-slate-400 sm:text-sm">
-                      Hand it to your CSO, DPO, GRC counsel, or board.
-                      Pre-filled subject and pitch.
+                      Boost the published article on Levi's profile — copy
+                      the in-site link or share the original LinkedIn post
+                      with one click.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1074,7 +1108,7 @@ export default function CatchTwentyTwo() {
                       className="btn-glow h-10 bg-cyan-500 px-4 text-slate-950 hover:bg-cyan-400"
                       data-testid="catch22-share-button"
                     >
-                      <Send className="mr-1 h-4 w-4" />
+                      <LinkedInGlyph className="mr-1 h-4 w-4" />
                       Share
                     </Button>
                   </div>
