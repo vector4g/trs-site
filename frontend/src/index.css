@@ -143,3 +143,56 @@ code {
     .trs-mark-in   { opacity: 0.9 !important; }
 }
 
+/* ---- SVG LogoMark animation ----
+ * Core line stroke-draws (real SVG dasharray), then plinths + crossbar fade in.
+ * `pathLength="1"` on the cyan line normalises the dasharray math.
+ */
+.trs-svg-animate .trs-svg-core {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: trs-svg-core-draw 750ms cubic-bezier(0.65, 0, 0.35, 1) 80ms forwards;
+}
+.trs-svg-animate .trs-svg-stem-left {
+    opacity: 0;
+    animation: trs-svg-fade-in 600ms ease-out 600ms forwards;
+}
+.trs-svg-animate .trs-svg-stem-right {
+    opacity: 0;
+    animation: trs-svg-fade-in 600ms ease-out 720ms forwards;
+}
+.trs-svg-animate .trs-svg-crossbar {
+    opacity: 0;
+    transform-origin: 50% 50%;
+    animation: trs-svg-crossbar-in 700ms cubic-bezier(0.22, 1, 0.36, 1) 900ms forwards;
+}
+.trs-svg-animate .trs-svg-halo {
+    opacity: 0;
+    animation: trs-svg-fade-in 800ms ease-out 800ms forwards;
+}
+
+@keyframes trs-svg-core-draw {
+    0%   { stroke-dashoffset: 1; opacity: 0.85; }
+    100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes trs-svg-fade-in {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes trs-svg-crossbar-in {
+    0%   { opacity: 0; transform: scaleX(0.7); }
+    100% { opacity: 1; transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .trs-svg-animate .trs-svg-core,
+    .trs-svg-animate .trs-svg-stem-left,
+    .trs-svg-animate .trs-svg-stem-right,
+    .trs-svg-animate .trs-svg-crossbar,
+    .trs-svg-animate .trs-svg-halo {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        stroke-dashoffset: 0 !important;
+    }
+}
+

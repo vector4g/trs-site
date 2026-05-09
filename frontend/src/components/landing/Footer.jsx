@@ -1,6 +1,7 @@
 import { Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LOGO_URL, LINKEDIN_ARTICLE_URL } from "./shared";
+import { LINKEDIN_ARTICLE_URL } from "./shared";
+import LogoMark from "./LogoMark";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
   return (
@@ -32,12 +33,8 @@ export default function Footer() {
         {/* Brand */}
         <div className="lg:col-span-5">
           <div className="flex items-center gap-3">
-            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
-              <img
-                src={LOGO_URL}
-                alt="Third Rail Systems OÜ"
-                className="h-full w-full object-contain"
-              />
+            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center">
+              <LogoMark />
             </span>
             <div>
               <div className="text-base font-semibold text-white">

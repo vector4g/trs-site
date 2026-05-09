@@ -11,7 +11,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { LOGO_URL, NAV_LINKS, scrollToId } from "./shared";
+import { NAV_LINKS, scrollToId } from "./shared";
+import LogoMark from "./LogoMark";
 
 export default function Navbar({ onCtaClick }) {
   const [scrolled, setScrolled] = useState(false);
@@ -45,12 +46,8 @@ export default function Navbar({ onCtaClick }) {
           className="group flex items-center gap-3"
           data-testid="logo-button"
         >
-          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden sm:h-12 sm:w-12">
-            <img
-              src={LOGO_URL}
-              alt="Third Rail Systems OÜ"
-              className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-            />
+          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105 sm:h-12 sm:w-12">
+            <LogoMark />
           </span>
           <span className="hidden text-[15px] font-semibold tracking-tight text-white sm:inline">
             Third Rail Systems

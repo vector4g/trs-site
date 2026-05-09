@@ -27,11 +27,42 @@ THIRD_RAIL_LOGO_URL = (
     "xlq21bpc_Third%20Rail%20Logo.jpg"
 )
 
+# Path to the canonical, cleaned brand SVG. Preferred over THIRD_RAIL_LOGO_URL
+# because it is (a) star-free, (b) crisp at any PDF render scale, and (c)
+# served from the local filesystem with zero network latency.
+THIRD_RAIL_LOGO_LOCAL = (
+    Path(__file__).resolve().parent.parent / "frontend" / "public" / "trs_logo.svg"
+)
+
 # Registered Tallinn address for the footer
 REGISTERED_ADDRESS = (
     "Harju maakond, Tallinn, Lasnamäe linnaosa, Sepapaja tn 6, 15551, Estonia"
 )
 REGISTRY_CODE = "17488655"
+
+
+def _load_local_as_data_url(path: Path) -> Optional[str]:
+    """Synchronously load a local file into a base64 data: URL for embedding.
+
+    Used for the canonical brand SVG which lives on disk — bypasses HTTP and
+    is therefore both faster and immune to network failures during PDF render.
+    """
+    try:
+        if not path.is_file():
+            return None
+        ext = path.suffix.lower().lstrip(".")
+        mime = {
+            "svg": "image/svg+xml",
+            "png": "image/png",
+            "jpg": "image/jpeg",
+            "jpeg": "image/jpeg",
+            "webp": "image/webp",
+        }.get(ext, "application/octet-stream")
+        b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+        return f"data:{mime};base64,{b64}"
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(f"Failed to load local asset {path}: {exc}")
+        return None
 
 
 async def _fetch_as_data_url(url: str, timeout: float = 6.0) -> Optional[str]:
@@ -419,7 +450,7 @@ async def generate_briefing_pdf(
     prospect_logo_data = (
         await _fetch_as_data_url(prospect_logo_url) if prospect_logo_url else None
     )
-    third_rail_logo_data = await _fetch_as_data_url(THIRD_RAIL_LOGO_URL)
+    third_rail_logo_data = _load_local_as_data_url(THIRD_RAIL_LOGO_LOCAL) or await _fetch_as_data_url(THIRD_RAIL_LOGO_URL)
 
     builder = _build_full_html if variant == "full" else _build_exec_html
     html = builder(
