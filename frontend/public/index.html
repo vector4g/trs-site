@@ -206,14 +206,13 @@
                     }),
                     (e.__SV = 1));
             })(document, window.posthog || []);
-            posthog.init("phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs", {
-                api_host: "https://us.i.posthog.com",
-                person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well,
-                session_recording: {
-                    recordCrossOriginIframes: true,
-                    capturePerformance: false,
-                },
-            });
+            // EDPB Guidelines 03/2022: PostHog is NOT initialised at page load.
+            // The CookieConsent banner calls `posthog.init(...)` only after the
+            // visitor explicitly accepts analytics. Until then `window.posthog`
+            // exists as a no-op stub so legacy `window.posthog.capture(...)`
+            // calls don't throw.
+            window.__POSTHOG_KEY = "phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs";
+            window.__POSTHOG_HOST = "https://us.i.posthog.com";
         </script>
     </body>
 </html>

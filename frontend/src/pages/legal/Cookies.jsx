@@ -107,11 +107,14 @@ export default function Cookies() {
       </UL>
       <P>
         A consent banner compliant with the EDPB's Guidelines 03/2022 on
-        deceptive design patterns will be introduced prior to any
-        processing of analytics data from EU/EEA visitors that is not
-        strictly necessary. Until that banner is deployed, PostHog is
-        configured with the most conservative session-recording defaults
-        (recording disabled for authenticated sessions, IPs anonymised).
+        deceptive design patterns is deployed across the Website. PostHog is
+        not initialised at page load — it is loaded only after a visitor
+        explicitly clicks "Accept all" in that banner. Visitors who select
+        "Reject non-essential" never have the analytics library loaded into
+        their browser. Either choice can be revoked at any time via the
+        "Cookie settings" link in the site footer. Where session recording
+        is enabled, it runs with the most conservative defaults (recording
+        disabled for authenticated sessions, IPs anonymised).
       </P>
 
       <H2 id="contact">5. Contact</H2>

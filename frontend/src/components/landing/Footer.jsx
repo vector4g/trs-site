@@ -146,9 +146,25 @@ export default function Footer() {
       <div className="mx-auto mt-10 max-w-7xl border-t border-slate-900 px-5 pt-6 sm:px-8 lg:px-10">
         <div className="flex flex-col items-start justify-between gap-2 mono text-[10px] uppercase tracking-[0.22em] text-slate-600 sm:flex-row sm:items-center">
           <span>© {new Date().getFullYear()} Third Rail Systems OÜ</span>
-          <span>
-            All rights reserved · Registered in the Republic of Estonia
-          </span>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <button
+              type="button"
+              onClick={() => {
+                if (
+                  typeof window !== "undefined" &&
+                  typeof window.trsOpenCookieSettings === "function"
+                ) {
+                  window.trsOpenCookieSettings();
+                }
+              }}
+              className="hover:text-cyan-400"
+              data-testid="footer-cookie-settings"
+            >
+              Cookie settings
+            </button>
+            <span aria-hidden="true">·</span>
+            <span>All rights reserved · Registered in the Republic of Estonia</span>
+          </div>
         </div>
       </div>
     </footer>

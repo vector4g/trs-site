@@ -10,6 +10,7 @@ import Privacy from "@/pages/legal/Privacy";
 import Terms from "@/pages/legal/Terms";
 import Cookies from "@/pages/legal/Cookies";
 import Imprint from "@/pages/legal/Imprint";
+import CookieConsent from "@/components/consent/CookieConsent";
 import { Toaster } from "@/components/ui/sonner";
 
 /**
@@ -53,6 +54,7 @@ function App() {
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/legal" element={<Imprint />} />
         </Routes>
+        <CookieConsent />
       </BrowserRouter>
       <Toaster
         theme="dark"
