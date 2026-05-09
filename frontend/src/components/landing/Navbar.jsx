@@ -38,21 +38,21 @@ export default function Navbar({ onCtaClick }) {
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
+      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
         <Link
           to="/"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="group flex items-center gap-3"
           data-testid="logo-button"
         >
-          <span className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-md border border-slate-800 bg-slate-900">
+          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden sm:h-12 sm:w-12">
             <img
               src={LOGO_URL}
               alt="Third Rail Systems OÜ"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
             />
           </span>
-          <span className="hidden text-[13px] font-semibold tracking-tight text-white sm:inline">
+          <span className="hidden text-[15px] font-semibold tracking-tight text-white sm:inline">
             Third Rail Systems
             <span className="ml-1 font-normal text-slate-400">OÜ</span>
           </span>

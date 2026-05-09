@@ -4,8 +4,7 @@ export const MEMO_READ_STORAGE_KEY = "trs.memo_read";
 export const CATCH22_READ_STORAGE_KEY = "trs.catch22_read";
 export const ADMIN_TOKEN_STORAGE_KEY = "trs.admin_token";
 
-export const LOGO_URL =
-  "https://customer-assets.emergentagent.com/job_eu-travel-risk/artifacts/xlq21bpc_Third%20Rail%20Logo.jpg";
+export const LOGO_URL = "/trs_logo.png";
 
 // Published thought-leadership — wired into Share buttons + "Read on LinkedIn" CTAs.
 export const LINKEDIN_ARTICLE_URL =

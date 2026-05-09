@@ -32,15 +32,15 @@ export default function Footer() {
         {/* Brand */}
         <div className="lg:col-span-5">
           <div className="flex items-center gap-3">
-            <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-md border border-slate-800 bg-slate-900">
+            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
               <img
                 src={LOGO_URL}
                 alt="Third Rail Systems OÜ"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             </span>
             <div>
-              <div className="text-sm font-semibold text-white">
+              <div className="text-base font-semibold text-white">
                 Third Rail Systems OÜ
               </div>
               <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">

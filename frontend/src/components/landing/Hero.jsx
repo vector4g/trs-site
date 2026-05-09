@@ -7,6 +7,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LOGO_URL } from "./shared";
 
 export default function Hero({ onPrimary, onSecondary }) {
   return (
@@ -25,8 +26,41 @@ export default function Hero({ onPrimary, onSecondary }) {
       />
       <div className="relative mx-auto grid max-w-7xl items-start gap-16 px-5 pb-24 sm:px-8 lg:grid-cols-12 lg:px-10 lg:pb-32">
         <div className="reveal lg:col-span-8">
+          {/* Hero brand lockup */}
           <div
-            className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-cyan-300 mono"
+            className="flex items-center gap-4"
+            data-testid="hero-brand-lockup"
+          >
+            <span
+              className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden sm:h-24 sm:w-24"
+              aria-hidden="true"
+            >
+              <span
+                className="absolute inset-0 -z-10 rounded-2xl"
+                style={{
+                  background:
+                    "radial-gradient(60% 60% at 50% 50%, rgba(34,211,238,0.18) 0%, rgba(11,15,20,0) 75%)",
+                }}
+              />
+              <img
+                src={LOGO_URL}
+                alt="Third Rail Systems OÜ"
+                className="h-full w-full object-contain opacity-90"
+              />
+            </span>
+            <div className="flex flex-col">
+              <span className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                Third Rail Systems
+                <span className="ml-1.5 font-normal text-slate-400">OÜ</span>
+              </span>
+              <span className="mono mt-1 text-[10px] uppercase tracking-[0.28em] text-slate-500">
+                Sovereign · Stateless · EU-Native
+              </span>
+            </div>
+          </div>
+
+          <div
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-cyan-300 mono"
             data-testid="hero-eyebrow"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
