@@ -87,7 +87,19 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - Footer: new `Liability Brief` link. Sitemap: `/catch-22` added.
 - Testing agent iteration_9: 13/13 frontend scenarios passed (100%).
 
+## Iteration 11 — 2026-05-13 (Catch-22 PDF complete + /diagnostic qualified intake)
+- **Printable PDF of Catch-22 brief — content-truncation fix.** Headless Chromium was leaving pages 4–11 blank because the `.reveal` IntersectionObserver opacity-0 default never flipped to `is-visible` for content below the first viewport. Added a `body.trs-print-mode .reveal { opacity:1; transform:none; transition:none }` override in `index.css` + `animation:none !important` on all elements in print mode. Verified end-to-end via `analyze_file_tool`: 11/11 pages now render Executive Summary → Part 6 → Sources & Citations.
+- **`/diagnostic` qualified intake** (alias-free, dedicated route). Three triage qualifiers — organisation scale band, workforce composition (EU footprint), current travel-risk vendor — plus the standard name/email/role + honeypot + submission_ms anti-spam stack. `PilotRequestCreate` and `PilotRequest` extended with optional `request_type` (`pilot`|`diagnostic`), `org_scale_band`, `workforce_composition`, `current_vendor` — all persisted to MongoDB. `_build_notification_html` and `_send_notification` subject line now branch on `request_type` so internal notifications surface the diagnostic qualifiers immediately.
+- **Catch-22 CTA rewire.** "Request Diagnostic" button now navigates to `/diagnostic` instead of `/#contact`. Generic landing form continues to post `request_type='pilot'` by default — back-compat preserved.
+- **Admin dashboard — Type column.** New column between Role and Read renders a Pilot (slate) or Diagnostic (fuchsia) badge per row via `admin-type-<id8>` testids. Stats payload gains `diagnostic_count`. `GET /api/admin/pilot-requests?request_type=` filter accepts `pilot` or `diagnostic`.
+- **Testing agent iteration_11:** 7/7 backend pytest + all frontend acceptance criteria pass (only a Playwright timing race on the 1.4s post-submit redirect was flagged — polished by switching to `window.location.assign('/catch-22')` for deterministic navigation).
+
 ## Backlog / Next Actions
+- **P2** Refactor `CatchTwentyTwo.jsx` (~1300 lines) into reusable `BriefSection`/`Callout`/`ComparisonTable` primitives in `/components/brief/` — also reusable from `/memo` and any future briefs (e.g. `/civil-society`).
+- **P2** Split `server.py` (now ~830 lines) into `routers/admin.py`, `routers/public_briefs.py`, `services/email.py`, `services/rate_limit.py`, `services/briefings.py`.
+- **P2** Cyan-line-draw motif on numbered SectionHeaders via IntersectionObserver — visual polish for Memo + Catch-22.
+- **P2** Tighten `org_scale_band` / `workforce_composition` / `current_vendor` to a server-side allowlist (currently free-text up to 80/200 chars; frontend only sends a fixed enum of labels). Resend headers should also strip CR/LF defensively from name/role fields.
+- **P2** Admin dashboard — surface the 3 diagnostic qualifier fields inside `BriefingDialog` or a row-level expansion so Levi sees the qualifiers without leaving the table.
 - **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend.
 - **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number when registered to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`.
 - **P1** Verify the `.ee` sender domain in Resend and switch `SENDER_EMAIL` from `onboarding@resend.dev` to `levi@thirdrailsystems.ee`.

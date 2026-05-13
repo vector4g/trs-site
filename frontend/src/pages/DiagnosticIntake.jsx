@@ -198,8 +198,11 @@ export default function DiagnosticIntake() {
       });
       setErrors({});
       mountedAt.current = Date.now();
-      // Brief pause so the toast registers before we move them home.
-      setTimeout(() => navigate("/catch-22"), 1400);
+      // Hard navigation (not React Router push) so headless tests + real
+      // browsers settle into the brief view deterministically after the toast.
+      setTimeout(() => {
+        window.location.assign("/catch-22");
+      }, 1400);
     } catch (err) {
       const status = err?.response?.status;
       if (status === 429) {
