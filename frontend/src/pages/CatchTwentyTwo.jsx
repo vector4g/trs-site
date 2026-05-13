@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
   Check,
   Database,
+  Download,
   Eye,
   Gavel,
   Link as LinkIcon,
@@ -19,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import LogoMark from "@/components/landing/LogoMark";
 import {
   Eyebrow,
   useReveal,
@@ -171,21 +173,41 @@ function DiagnosticQuestion({ index, title, children }) {
 export default function CatchTwentyTwo() {
   useReveal();
   const navigate = useNavigate();
+  const location = useLocation();
   const [copied, setCopied] = useState(false);
+  const [pdfState, setPdfState] = useState("idle"); // idle | loading | done | error
+
+  // Print-mode toggle — Playwright fetches /catch-22?print=1 to strip the
+  // chrome out of the page before printing to PDF.
+  const isPrint = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("print") === "1";
+  }, [location.search]);
+
+  // Tag <body> so the print-mode CSS rules in index.css can activate.
+  useEffect(() => {
+    if (isPrint) {
+      document.body.classList.add("trs-print-mode");
+      return () => document.body.classList.remove("trs-print-mode");
+    }
+  }, [isPrint]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     const prev = document.title;
     document.title =
       "The Shadow HR Liability · Analytical Brief · Third Rail Systems OÜ";
-    track("brief_viewed", { brief: "catch-22" });
+    if (!isPrint) {
+      track("brief_viewed", { brief: "catch-22" });
+    }
     return () => {
       document.title = prev;
     };
-  }, []);
+  }, [isPrint]);
 
   // Scroll-depth + completion tracking
   useEffect(() => {
+    if (isPrint) return; // no telemetry from headless renders
     const milestones = [25, 50, 75];
     const fired = new Set();
     let completedFired = false;
@@ -252,12 +274,46 @@ export default function CatchTwentyTwo() {
     }
   };
 
+  const handlePdfDownload = async () => {
+    if (pdfState === "loading") return;
+    setPdfState("loading");
+    track("brief_pdf_download_click", { brief: "catch-22" });
+    try {
+      const apiBase = process.env.REACT_APP_BACKEND_URL;
+      const resp = await fetch(`${apiBase}/api/public/briefs/shadow-hr.pdf`, {
+        method: "GET",
+        headers: { Accept: "application/pdf" },
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "TRS_Shadow_HR_Liability_Brief_v1.0.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // Give the browser a beat to start the download before revoking.
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      setPdfState("done");
+      track("brief_pdf_download_success", { brief: "catch-22" });
+      setTimeout(() => setPdfState("idle"), 2200);
+    } catch (err) {
+      setPdfState("error");
+      track("brief_pdf_download_error", {
+        brief: "catch-22",
+        message: String(err?.message || err),
+      });
+      setTimeout(() => setPdfState("idle"), 3500);
+    }
+  };
+
   return (
     <div
       className="min-h-screen bg-slate-950 text-slate-200"
       data-testid="catch22-root"
     >
-      <Navbar onCtaClick={() => navigate("/#contact")} />
+      {!isPrint && <Navbar onCtaClick={() => navigate("/#contact")} />}
 
       {/* Hero */}
       <header
@@ -379,7 +435,7 @@ export default function CatchTwentyTwo() {
       {/* Body + TOC */}
       <div className="relative mx-auto max-w-7xl px-5 pb-28 sm:px-8 lg:px-10">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <aside className="lg:col-span-3">
+          <aside className="lg:col-span-3" data-trs-print-hide>
             <div className="sticky top-24">
               <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
                 Contents
@@ -414,7 +470,7 @@ export default function CatchTwentyTwo() {
           </aside>
 
           <article
-            className="lg:col-span-9"
+            className={isPrint ? "lg:col-span-12" : "lg:col-span-9"}
             id="brief-article-root"
             data-testid="catch22-article"
           >
@@ -991,7 +1047,10 @@ export default function CatchTwentyTwo() {
                 ]}
               />
 
-              <div className="mt-10 flex flex-col items-start gap-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div
+                className="mt-10 flex flex-col items-start gap-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-6 sm:flex-row sm:items-center sm:justify-between"
+                data-trs-print-hide
+              >
                 <div>
                   <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
                     Request a diagnostic
@@ -1002,6 +1061,37 @@ export default function CatchTwentyTwo() {
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    onClick={handlePdfDownload}
+                    disabled={pdfState === "loading"}
+                    variant="outline"
+                    className="h-10 border-slate-700 bg-slate-950/60 px-4 text-slate-100 hover:border-cyan-500/40 hover:bg-slate-800 hover:text-white disabled:opacity-90"
+                    data-testid="catch22-pdf-button"
+                  >
+                    {pdfState === "loading" ? (
+                      <>
+                        <span className="mr-2 inline-block h-4 w-4">
+                          <LogoMark className="trs-svg-pulse" />
+                        </span>
+                        Rendering…
+                      </>
+                    ) : pdfState === "done" ? (
+                      <>
+                        <Check className="mr-1 h-4 w-4 text-cyan-400" />
+                        Downloaded
+                      </>
+                    ) : pdfState === "error" ? (
+                      <>
+                        <Download className="mr-1 h-4 w-4 text-rose-400" />
+                        Retry PDF
+                      </>
+                    ) : (
+                      <>
+                        <Download className="mr-1 h-4 w-4" />
+                        Download PDF
+                      </>
+                    )}
+                  </Button>
                   <a
                     href={LINKEDIN_ARTICLE_URL}
                     target="_blank"
@@ -1033,6 +1123,7 @@ export default function CatchTwentyTwo() {
               <div
                 className="mt-6 rounded-lg border border-slate-800 bg-slate-900/60 p-6"
                 data-testid="catch22-share-card"
+                data-trs-print-hide
               >
                 <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
                   Forward
@@ -1122,7 +1213,7 @@ export default function CatchTwentyTwo() {
         </div>
       </div>
 
-      <Footer />
+      {!isPrint && <Footer />}
     </div>
   );
 }

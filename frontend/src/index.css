@@ -220,3 +220,67 @@ code {
     }
 }
 
+
+/* ---- LogoMark pulse (loading-state, in-flight UI) ----
+ * The same cyan core line oscillates its glow as a brand-DNA spinner.
+ * Used inline as a 16-24px loader.
+ */
+.trs-svg-pulse .trs-svg-core,
+.trs-svg-pulse .trs-svg-core-glow,
+.trs-svg-pulse .trs-svg-core-highlight {
+    animation: trs-svg-pulse-core 1.2s ease-in-out infinite;
+}
+.trs-svg-pulse .trs-svg-stem-left,
+.trs-svg-pulse .trs-svg-stem-right,
+.trs-svg-pulse .trs-svg-crossbar,
+.trs-svg-pulse .trs-svg-halo {
+    opacity: 0.35;
+}
+@keyframes trs-svg-pulse-core {
+    0%, 100% { opacity: 0.45; }
+    50%      { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .trs-svg-pulse .trs-svg-core,
+    .trs-svg-pulse .trs-svg-core-glow,
+    .trs-svg-pulse .trs-svg-core-highlight {
+        animation: none !important;
+        opacity: 1 !important;
+    }
+}
+
+/* ---- Print mode (?print=1 on /catch-22) ----
+ * Strips chrome that doesn't belong in the printable brief and forces a
+ * solid-white page so multi-page renders don't fall off the bottom into a
+ * black void where the original `min-h-screen bg-slate-950` was painting.
+ */
+body.trs-print-mode {
+    background: #0b0f14 !important;
+}
+body.trs-print-mode [data-trs-print-hide],
+body.trs-print-mode header > nav,
+body.trs-print-mode footer,
+body.trs-print-mode [data-testid="cookie-consent-banner"] {
+    display: none !important;
+}
+body.trs-print-mode [data-testid="catch22-back-link"] {
+    display: none !important;
+}
+body.trs-print-mode [data-testid="catch22-root"] {
+    min-height: 0 !important;
+}
+body.trs-print-mode [data-testid="catch22-header"] {
+    padding-top: 32px !important;
+}
+body.trs-print-mode .bg-grid {
+    display: none !important;
+}
+body.trs-print-mode * {
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+}
+@page {
+    size: A4;
+    margin: 0;
+}
+

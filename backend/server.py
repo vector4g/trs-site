@@ -19,6 +19,7 @@ import resend
 
 from brandfetch import domain_from_email, fetch_brand
 from briefing import generate_briefing_pdf
+from public_brief import render_public_brief_pdf
 
 
 ROOT_DIR = Path(__file__).parent
@@ -508,6 +509,85 @@ async def list_pilot_requests(limit: int = 100, _admin: str = Depends(require_ad
         if isinstance(ts, str):
             d["submitted_at"] = datetime.fromisoformat(ts)
     return docs
+
+
+# ---- Public brief PDF (Shadow HR Liability) ----
+# Light per-IP rate limit (independent of the form limiter): 4 per 15 min.
+PUBLIC_BRIEF_PDF_MAX = 4
+PUBLIC_BRIEF_PDF_WINDOW_S = 15 * 60
+_brief_pdf_buckets: dict[str, deque] = {}
+
+
+def _brief_pdf_rate_check(ip: str) -> tuple[bool, int]:
+    """Sliding-window limiter for /briefs/*.pdf, Redis-backed with in-memory fallback."""
+    now = time.time()
+    if _redis_client is not None:
+        key = f"rl:briefpdf:{ip}"
+        cutoff = now - PUBLIC_BRIEF_PDF_WINDOW_S
+        try:
+            pipe = _redis_client.pipeline()
+            pipe.zremrangebyscore(key, 0, cutoff)
+            pipe.zcard(key)
+            pipe.zrange(key, 0, 0, withscores=True)
+            _, count, oldest = pipe.execute()
+            if count >= PUBLIC_BRIEF_PDF_MAX:
+                first_score = oldest[0][1] if oldest else now
+                retry_after = int(PUBLIC_BRIEF_PDF_WINDOW_S - (now - first_score)) + 1
+                return False, max(retry_after, 1)
+            member = f"{now}:{uuid.uuid4().hex[:8]}".encode()
+            add_pipe = _redis_client.pipeline()
+            add_pipe.zadd(key, {member: now})
+            add_pipe.expire(key, PUBLIC_BRIEF_PDF_WINDOW_S + 60)
+            add_pipe.execute()
+            return True, 0
+        except Exception:  # noqa: BLE001
+            pass
+    bucket = _brief_pdf_buckets.setdefault(ip, deque())
+    while bucket and now - bucket[0] > PUBLIC_BRIEF_PDF_WINDOW_S:
+        bucket.popleft()
+    if len(bucket) >= PUBLIC_BRIEF_PDF_MAX:
+        retry_after = int(PUBLIC_BRIEF_PDF_WINDOW_S - (now - bucket[0])) + 1
+        return False, max(retry_after, 1)
+    bucket.append(now)
+    return True, 0
+
+
+# Slug -> (frontend route slug, download filename)
+_PUBLIC_BRIEFS = {
+    "shadow-hr": ("catch-22", "TRS_Shadow_HR_Liability_Brief_v1.0.pdf"),
+}
+
+
+@api_router.get("/public/briefs/{slug}.pdf")
+async def public_brief_pdf(slug: str, request: Request):
+    """Render a published brief to a print-ready PDF on demand."""
+    if slug not in _PUBLIC_BRIEFS:
+        raise HTTPException(status_code=404, detail="Unknown brief")
+
+    ip = _client_ip(request)
+    allowed, retry_after = _brief_pdf_rate_check(ip)
+    if not allowed:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many PDF requests. Please retry shortly.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    frontend_slug, filename = _PUBLIC_BRIEFS[slug]
+    try:
+        pdf_bytes = await render_public_brief_pdf(frontend_slug)
+    except Exception as exc:  # noqa: BLE001
+        logger.error(f"Public brief PDF render failed for {slug}: {exc}")
+        raise HTTPException(status_code=500, detail="PDF render failed") from exc
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "public, max-age=300",
+        },
+    )
 
 
 # ---- Admin endpoints ----
