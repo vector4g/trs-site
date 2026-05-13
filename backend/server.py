@@ -82,6 +82,14 @@ class PilotRequestCreate(BaseModel):
     memo_read: Optional[bool] = Field(default=False)
     # Whether the user completed reading the long-form Catch-22 brief.
     catch22_read: Optional[bool] = Field(default=False)
+    # Intake variant. "pilot" = generic landing CTA. "diagnostic" = the
+    # qualified Catch-22 brief CTA; carries the three qualifier fields below.
+    request_type: Optional[str] = Field(default="pilot", pattern="^(pilot|diagnostic)$")
+    # Diagnostic-only qualifier fields. All optional so the generic pilot
+    # intake never has to send them. Free-text capped to keep storage tidy.
+    org_scale_band: Optional[str] = Field(default=None, max_length=80)
+    workforce_composition: Optional[str] = Field(default=None, max_length=80)
+    current_vendor: Optional[str] = Field(default=None, max_length=200)
 
 
 class PilotRequest(BaseModel):
@@ -95,6 +103,10 @@ class PilotRequest(BaseModel):
     email_error: Optional[str] = None
     memo_read: bool = False
     catch22_read: bool = False
+    request_type: str = "pilot"  # pilot | diagnostic
+    org_scale_band: Optional[str] = None
+    workforce_composition: Optional[str] = None
+    current_vendor: Optional[str] = None
     submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
@@ -229,13 +241,29 @@ async def get_status_checks():
 
 def _build_notification_html(req: PilotRequest) -> str:
     """Inline-styled HTML email body for deliverability."""
+    diag_rows = ""
+    if req.request_type == "diagnostic":
+        def _row(label: str, value: Optional[str]) -> str:
+            if not value:
+                return ""
+            return (
+                f'<tr><td style="padding:8px 0;color:#94a3b8;">{label}</td>'
+                f'<td style="color:#e2e8f0;">{_escape_html(value)}</td></tr>'
+            )
+        diag_rows = (
+            _row("Org scale", req.org_scale_band)
+            + _row("Workforce composition", req.workforce_composition)
+            + _row("Current vendor", req.current_vendor)
+        )
+    intake_label = "Catch-22 Diagnostic Request" if req.request_type == "diagnostic" else "Pilot Assessment Request"
+    intake_title = "New Catch-22 diagnostic intake" if req.request_type == "diagnostic" else "New enterprise pilot intake"
     return f"""
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
       <tr><td align="center">
         <table width="560" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #1f2937;border-radius:8px;padding:28px;">
-          <tr><td style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22d3ee;">Pilot Assessment Request</td></tr>
+          <tr><td style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22d3ee;">{intake_label}</td></tr>
           <tr><td style="padding-top:12px;font-size:22px;font-weight:600;color:#ffffff;">
-            New enterprise pilot intake
+            {intake_title}
           </td></tr>
           <tr><td style="padding-top:20px;">
             <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
@@ -243,6 +271,7 @@ def _build_notification_html(req: PilotRequest) -> str:
               <tr><td style="padding:8px 0;color:#94a3b8;">Last name</td><td style="color:#e2e8f0;">{req.last_name}</td></tr>
               <tr><td style="padding:8px 0;color:#94a3b8;">Corporate email</td><td style="color:#e2e8f0;"><a href="mailto:{req.corporate_email}" style="color:#22d3ee;text-decoration:none;">{req.corporate_email}</a></td></tr>
               <tr><td style="padding:8px 0;color:#94a3b8;">Role</td><td style="color:#e2e8f0;">{req.role}</td></tr>
+              {diag_rows}
               <tr><td style="padding:8px 0;color:#94a3b8;">Request ID</td><td style="color:#64748b;font-family:monospace;">{req.id}</td></tr>
               <tr><td style="padding:8px 0;color:#94a3b8;">Submitted</td><td style="color:#64748b;font-family:monospace;">{req.submitted_at.isoformat()}</td></tr>
             </table>
@@ -266,11 +295,12 @@ async def _send_notification(req: PilotRequest) -> tuple[str, Optional[str]]:
     if not recipient:
         return ("failed", "No recipient configured")
 
+    subject_prefix = "[Third Rail] Diagnostic request" if req.request_type == "diagnostic" else "[Third Rail] Pilot request"
     params = {
         "from": SENDER_EMAIL,
         "to": [recipient],
         "reply_to": req.corporate_email,
-        "subject": f"[Third Rail] Pilot request — {req.first_name} {req.last_name} ({req.role})",
+        "subject": f"{subject_prefix} — {req.first_name} {req.last_name} ({req.role})",
         "html": _build_notification_html(req),
     }
     try:
@@ -474,6 +504,10 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
         role=payload.role.strip(),
         memo_read=bool(payload.memo_read),
         catch22_read=bool(payload.catch22_read),
+        request_type=payload.request_type or "pilot",
+        org_scale_band=(payload.org_scale_band or "").strip() or None,
+        workforce_composition=(payload.workforce_composition or "").strip() or None,
+        current_vendor=(payload.current_vendor or "").strip() or None,
     )
 
     status, err = await _send_notification(req)
@@ -603,6 +637,7 @@ async def admin_list_pilot_requests(
     q: Optional[str] = None,
     role: Optional[str] = None,
     status: Optional[str] = None,
+    request_type: Optional[str] = None,
     _admin: str = Depends(require_admin),
 ):
     """Admin-gated list with filters/search."""
@@ -611,6 +646,8 @@ async def admin_list_pilot_requests(
         query["email_status"] = status
     if role:
         query["role"] = {"$regex": f"^{role}", "$options": "i"}
+    if request_type in ("pilot", "diagnostic"):
+        query["request_type"] = request_type
     if q:
         qr = {"$regex": q, "$options": "i"}
         query["$or"] = [
@@ -630,6 +667,7 @@ async def admin_list_pilot_requests(
     both_read = await db.pilot_requests.count_documents(
         {"memo_read": True, "catch22_read": True}
     )
+    diagnostic_count = await db.pilot_requests.count_documents({"request_type": "diagnostic"})
 
     return {
         "items": docs,
@@ -641,6 +679,7 @@ async def admin_list_pilot_requests(
             "catch22_read": catch22_read,
             "catch22_read_rate": round((catch22_read / total) * 100, 1) if total else 0.0,
             "both_read": both_read,
+            "diagnostic_count": diagnostic_count,
         },
     }
 

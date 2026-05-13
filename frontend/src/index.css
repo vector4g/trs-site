@@ -275,9 +275,19 @@ body.trs-print-mode [data-testid="catch22-header"] {
 body.trs-print-mode .bg-grid {
     display: none !important;
 }
+/* Force reveal-on-scroll elements visible immediately in print mode.
+ * IntersectionObserver only fires for elements that scroll into view, so
+ * Playwright's static page.pdf() snapshot leaves everything past page 1
+ * stuck at opacity:0. This override is print-only and never affects users. */
+body.trs-print-mode .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+}
 body.trs-print-mode * {
     color-adjust: exact;
     -webkit-print-color-adjust: exact;
+    animation: none !important;
 }
 @page {
     size: A4;

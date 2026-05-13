@@ -253,7 +253,7 @@ export default function CatchTwentyTwo() {
 
   const handleCta = () => {
     track("brief_cta_click", { brief: "catch-22", location: "bottom" });
-    navigate("/#contact");
+    navigate("/diagnostic");
   };
 
   const handleShare = async () => {

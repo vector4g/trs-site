@@ -4,6 +4,7 @@ import "@/App.css";
 import LandingPage from "@/pages/LandingPage";
 import StrategicMemo from "@/pages/StrategicMemo";
 import CatchTwentyTwo from "@/pages/CatchTwentyTwo";
+import DiagnosticIntake from "@/pages/DiagnosticIntake";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import Privacy from "@/pages/legal/Privacy";
@@ -43,6 +44,7 @@ function App() {
           <Route path="/memo" element={<StrategicMemo />} />
           <Route path="/catch-22" element={<CatchTwentyTwo />} />
           <Route path="/duty-of-care" element={<CatchTwentyTwo />} />
+          <Route path="/diagnostic" element={<DiagnosticIntake />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/legal/privacy" element={<Privacy />} />

@@ -187,6 +187,23 @@ export default function AdminDashboard() {
     );
   };
 
+  const typeBadge = (requestType) => {
+    // Diagnostic = qualified Catch-22 brief CTA (org_scale + workforce + vendor
+    // captured). Pilot = generic landing-page intake.
+    if (requestType === "diagnostic") {
+      return (
+        <span className="inline-flex items-center rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-2 py-0.5 text-[11px] mono uppercase tracking-[0.15em] text-fuchsia-200">
+          Diagnostic
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center rounded-full border border-slate-700 bg-slate-800/60 px-2 py-0.5 text-[11px] mono uppercase tracking-[0.15em] text-slate-300">
+        Pilot
+      </span>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200" data-testid="admin-dashboard-root">
       <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
@@ -303,6 +320,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Email</th>
                   <th className="px-4 py-3 font-medium">Role</th>
+                  <th className="px-4 py-3 font-medium">Type</th>
                   <th className="px-4 py-3 font-medium">Read</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">
@@ -318,14 +336,14 @@ export default function AdminDashboard() {
               <tbody>
                 {loading && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-slate-500">
+                    <td colSpan={8} className="px-4 py-10 text-center text-slate-500">
                       Loading…
                     </td>
                   </tr>
                 )}
                 {!loading && rows.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-slate-500" data-testid="admin-empty">
+                    <td colSpan={8} className="px-4 py-10 text-center text-slate-500" data-testid="admin-empty">
                       No submissions match these filters.
                     </td>
                   </tr>
@@ -349,6 +367,12 @@ export default function AdminDashboard() {
                         </a>
                       </td>
                       <td className="px-4 py-3 text-slate-300">{r.role}</td>
+                      <td
+                        className="px-4 py-3"
+                        data-testid={`admin-type-${r.id.slice(0, 8)}`}
+                      >
+                        {typeBadge(r.request_type)}
+                      </td>
                       <td
                         className="px-4 py-3"
                         data-testid={`admin-read-${r.id.slice(0, 8)}`}
