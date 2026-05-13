@@ -77,15 +77,15 @@ export default function ProblemSection() {
             </div>
             <div>
               <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
-                Liability Brief · 14-min read
+                The Shadow HR Liability · 8-min read
               </div>
               <div className="mt-1 text-base font-semibold text-white sm:text-lg">
-                The Hammer · The Anvil · The Trap
+                Sitting on the next €35M GDPR fine.
               </div>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
-                Read the full liability analysis: executive criminal exposure
-                across UK / France / Germany, €30M+ vigilance fines, and why
-                stateless architecture is the only resolution.
+                Why every multinational with a diverse workforce is sitting
+                on the next €35 million GDPR fine — and the architectural
+                pattern that resolves it.
               </p>
             </div>
           </div>
