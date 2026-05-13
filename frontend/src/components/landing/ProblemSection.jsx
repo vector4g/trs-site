@@ -80,12 +80,13 @@ export default function ProblemSection() {
                 The Shadow HR Liability · 8-min read
               </div>
               <div className="mt-1 text-base font-semibold text-white sm:text-lg">
-                Sitting on the next €35M GDPR fine.
+                What H&amp;M's €35.3 million fine looks like when it happens
+                to your organization.
               </div>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
-                Why every multinational with a diverse workforce is sitting
-                on the next €35 million GDPR fine — and the architectural
-                pattern that resolves it.
+                Why every multinational with a diverse workforce is exposed
+                to the same regulatory pattern — and the architectural
+                alternative that resolves it. Read the brief.
               </p>
             </div>
           </div>

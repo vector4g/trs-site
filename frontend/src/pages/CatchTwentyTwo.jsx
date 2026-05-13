@@ -6,17 +6,14 @@ import {
   Check,
   Database,
   Eye,
-  FileText,
   Gavel,
-  Globe,
-  Lock,
-  MapPin,
-  Network,
-  Scale,
-  ShieldAlert,
-  Sparkles,
   Link as LinkIcon,
   Layers,
+  MapPin,
+  Network,
+  ScrollText,
+  ShieldAlert,
+  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -61,13 +58,14 @@ const track = (event, props = {}) => {
 };
 
 const TOC = [
-  { id: "hamburg", label: "0. The H&M Case" },
-  { id: "fifteen", label: "I. The 15–20% Problem" },
-  { id: "pattern", label: "II. The Pattern, Named" },
-  { id: "recognize", label: "III. Why I Recognize It" },
-  { id: "architecture", label: "IV. The Architectural Answer" },
-  { id: "trend", label: "V. The Trend" },
-  { id: "ask", label: "VI. What I'm Asking" },
+  { id: "summary", label: "Executive Summary" },
+  { id: "precedent", label: "I. The H&M Precedent" },
+  { id: "pattern", label: "II. Shadow HR, Named" },
+  { id: "disclosure", label: "III. Disclosure-Collapse Multiplier" },
+  { id: "enforcement", label: "IV. Enforcement Trajectory" },
+  { id: "architecture", label: "V. Architectural Resolution" },
+  { id: "questions", label: "VI. Five Diagnostic Questions" },
+  { id: "diagnostic", label: "Request a Diagnostic" },
   { id: "sources", label: "Sources & Citations" },
 ];
 
@@ -87,6 +85,42 @@ function BriefSection({ id, number, title, children }) {
         {children}
       </div>
     </section>
+  );
+}
+
+function SubHeading({ children }) {
+  return (
+    <h3 className="mt-10 text-xl font-semibold tracking-tight text-white sm:text-2xl">
+      {children}
+    </h3>
+  );
+}
+
+function BulletList({ items }) {
+  return (
+    <ul className="mt-2 space-y-3 pl-1 text-[15px] leading-relaxed text-slate-300">
+      {items.map((it, i) => (
+        <li key={i} className="flex items-start gap-3">
+          <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
+          <span>{it}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function PullQuote({ children, source }) {
+  return (
+    <blockquote className="my-6 border-l-2 border-cyan-500/60 bg-slate-900/40 px-5 py-4">
+      <p className="text-lg italic leading-snug text-white sm:text-xl">
+        “{children}”
+      </p>
+      {source && (
+        <p className="mt-3 mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+          — {source}
+        </p>
+      )}
+    </blockquote>
   );
 }
 
@@ -116,6 +150,24 @@ function Callout({ icon: Icon, label, children, tone = "cyan" }) {
   );
 }
 
+function DiagnosticQuestion({ index, title, children }) {
+  return (
+    <div className="reveal rounded-lg border border-slate-800 bg-slate-900/60 p-6">
+      <div className="flex items-baseline gap-4">
+        <span className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+          Q{index}
+        </span>
+        <h4 className="text-base font-semibold tracking-tight text-white sm:text-lg">
+          {title}
+        </h4>
+      </div>
+      <div className="mt-3 text-sm leading-relaxed text-slate-300">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function CatchTwentyTwo() {
   useReveal();
   const navigate = useNavigate();
@@ -125,7 +177,7 @@ export default function CatchTwentyTwo() {
     window.scrollTo(0, 0);
     const prev = document.title;
     document.title =
-      "The Duty of Care vs. Data Privacy Catch-22 · Third Rail Systems OÜ";
+      "The Shadow HR Liability · Analytical Brief · Third Rail Systems OÜ";
     track("brief_viewed", { brief: "catch-22" });
     return () => {
       document.title = prev;
@@ -184,8 +236,6 @@ export default function CatchTwentyTwo() {
 
   const handleShare = async () => {
     track("brief_share_click", { brief: "catch-22" });
-    // Reshare the LinkedIn article — drives engagement on Levi's published
-    // post rather than splitting it between the in-site copy and LinkedIn.
     const shareUrl = linkedinShareUrl(LINKEDIN_ARTICLE_URL);
     window.open(shareUrl, "_blank", "noopener,noreferrer");
     track("brief_share_success", { brief: "catch-22", channel: "linkedin" });
@@ -234,7 +284,7 @@ export default function CatchTwentyTwo() {
           </Link>
 
           <div className="mt-8">
-            <Eyebrow index="ESSAY · 8 MAY 2026">Founder essay</Eyebrow>
+            <Eyebrow index="MAY 2026 · v1.0">Analytical Brief</Eyebrow>
           </div>
 
           <a
@@ -251,47 +301,48 @@ export default function CatchTwentyTwo() {
             data-testid="catch22-linkedin-badge"
           >
             <LinkedInGlyph className="h-3 w-3" />
-            Originally published on LinkedIn
+            Companion essay on LinkedIn
           </a>
 
           <h1
             className="mt-5 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
             data-testid="catch22-title"
           >
-            The Duty of Care vs. Data Privacy{" "}
-            <span className="text-cyan-400">Catch-22</span>.
+            The Shadow HR{" "}
+            <span className="text-cyan-400">Liability</span>.
           </h1>
 
           <p className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg">
-            Why we built the cohort-agnostic risk engine we wish had existed
-            when we needed it.
+            Why every multinational with a diverse workforce is sitting on the
+            next €35 million GDPR fine — and the architectural pattern that
+            resolves it.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-slate-500 mono uppercase tracking-[0.18em]">
             <span className="flex items-center gap-2">
               <MapPin className="h-3.5 w-3.5 text-cyan-400" />
-              Levi Hankins · Founder
+              Third Rail Systems OÜ · Tallinn
             </span>
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
-            <span>8 May 2026 · Tallinn</span>
+            <span>8-minute read</span>
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
-            <span>12-minute read</span>
+            <span>v1.0 · May 2026</span>
           </div>
 
-          {/* Headline stat strip — three figures pulled from the essay */}
+          {/* Headline stat strip */}
           <div className="mt-12 grid gap-4 sm:grid-cols-3" data-testid="catch22-strip">
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex items-center gap-2 mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
                 <Database className="h-3.5 w-3.5" />
-                The H&amp;M case
+                Hamburg precedent
               </div>
               <div className="mt-3 text-sm font-semibold text-white">
-                €35.3M · 2020
+                €35.3M · Oct 2020
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                Hamburg DPA fine for internal special-category dossiers on
-                returning employees. The Shadow HR pattern, made visible by a
-                configuration error.
+                Hamburg DPA fine against H&amp;M for internal special-category
+                accumulation — five years of Welcome Back Talks, exposed by a
+                five-hour configuration error.
               </p>
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
@@ -300,12 +351,12 @@ export default function CatchTwentyTwo() {
                 Disclosure collapse
               </div>
               <div className="mt-3 text-sm font-semibold text-white">
-                76% don't fully disclose
+                76% do not fully disclose
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
                 Neurodivergent employees — City &amp; Guilds Neurodiversity
-                Index. HRC 2026 finds 47.5% of LGBTQ+ adults are less out than
-                a year ago.
+                Index 2023. HRC 2026: 47.5% of LGBTQ+ adults less out than a
+                year ago.
               </p>
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
@@ -317,8 +368,8 @@ export default function CatchTwentyTwo() {
                 €355M cumulative
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                Employee-data fines across 162 EU enforcement actions through
-                March 2025. Uber alone: €290M, July 2024.
+                Employee-data category alone, across 162 EU enforcement
+                actions through March 2025. Uber: €290M, July 2024.
               </p>
             </div>
           </div>
@@ -354,9 +405,9 @@ export default function CatchTwentyTwo() {
                   Bottom line
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-slate-300">
-                  You cannot violate GDPR Article 9 if you never receive
-                  Article 9 data. Stateless synthesis is not aesthetic — it is
-                  the only architecture that survives this decade.
+                  Minimum-disclosure stateless synthesis is the only
+                  architecture that survives both the duty-of-care obligation
+                  and the data-protection prohibition simultaneously.
                 </p>
               </div>
             </div>
@@ -367,421 +418,587 @@ export default function CatchTwentyTwo() {
             id="brief-article-root"
             data-testid="catch22-article"
           >
-            <BriefSection id="hamburg" number="0" title="The H&M Case">
+            <BriefSection id="summary" number="—" title="Executive Summary">
               <p>
                 In October 2020, the Hamburg Data Protection Authority fined
-                H&amp;M <span className="text-white">€35.3&nbsp;million</span>.
+                H&amp;M <span className="text-white">€35.3&nbsp;million</span>{" "}
+                for a violation that involved no external attack, no data
+                breach in the conventional sense, and no malicious actor.
+                The breach was structural. Middle managers had been quietly
+                accumulating digital dossiers on their employees — health
+                information, religious beliefs, family circumstances — over
+                five years, stored on an internal network drive, generated
+                through well-intentioned manager conversations. The data
+                became visible to the wider company only because of a
+                configuration error.
               </p>
               <p>
-                The violation was not a data breach in the conventional sense.
-                There was no external attack, no leaked credentials, no
-                ransomware. The breach was internal — managers at H&amp;M's
-                Nuremberg service centre had been maintaining what amounted to
-                digital dossiers on several hundred employees, stored on a
-                network drive, accumulating over five years.
+                This document argues that the H&amp;M case is not an outlier.
+                It is the visible instance of a structural pattern that is
+                present in virtually every multinational employer with a
+                marginalized-cohort workforce, that has grown larger and more
+                concentrated since 2020, and that is now operating inside a
+                regulatory environment actively configured to find and
+                penalize it. The pattern is called{" "}
+                <span className="text-white">Shadow HR</span>. The exposure
+                is calculated against the full marginalized population, not
+                the disclosed subset.
               </p>
               <p>
-                The dossiers contained health diagnoses. Religious beliefs.
-                Family circumstances. Vacation experiences. The information
-                had been collected, in many cases, during well-intentioned
-                "Welcome Back Talks" conducted by team leaders after employees
-                returned from sick leave or vacation. The data became visible
-                to the wider company only because of a configuration error.
+                The architectural pattern that resolves it —{" "}
+                <span className="text-white">
+                  minimum-disclosure stateless synthesis
+                </span>{" "}
+                — is the only approach that survives both the duty-of-care
+                obligation and the data-protection prohibition simultaneously.
+                Five operational diagnostic questions appear at the close. A
+                General Counsel, Chief Privacy Officer, or Chief Security
+                Officer who can answer all five with documented evidence is
+                likely in compliant operating territory. One who cannot is
+                likely sitting on undocumented exposure of the type the
+                Hamburg DPA found at H&amp;M.
+              </p>
+            </BriefSection>
+
+            <BriefSection id="precedent" number="Part 1" title="The H&M Precedent">
+              <p>
+                The H&amp;M Hennes &amp; Mauritz fine, issued on{" "}
+                <span className="text-white">1 October 2020</span> by the
+                Hamburg Commissioner for Data Protection and Freedom of
+                Information, set the operational template that European DPAs
+                have followed since. Understanding the case in detail matters
+                because the violation mechanism is the violation mechanism
+                that is operating, undetected, in most multinationals today.
+              </p>
+
+              <SubHeading>What happened at the Nuremberg service centre</SubHeading>
+              <p>
+                H&amp;M operated a service centre in Nuremberg where,
+                beginning in 2014, team leaders conducted what were
+                internally called <em>Welcome Back Talks</em> with employees
+                returning from sick leave or vacation. The stated purpose was
+                to maintain personal connection and identify support needs.
+                Over five years, the content of these conversations was
+                systematically recorded by managers and stored on an internal
+                network drive. The records included specific health
+                diagnoses, family difficulties, religious beliefs, and
+                details about employees' vacation experiences and personal
+                circumstances. The records were used to inform employment
+                decisions including evaluations and contract renewals.
               </p>
               <p>
-                Hamburg's Commissioner for Data Protection,{" "}
-                <span className="text-white">Prof. Dr. Johannes Caspar</span>,
-                described what his office found as "a particularly intensive
-                encroachment on employees' civil rights." The fine was, at the
-                time, the largest GDPR penalty ever issued by a German DPA.
+                The data was not exposed because of an external breach. The
+                data was exposed because in October 2019, a technical
+                configuration error made the network drive readable across
+                the wider H&amp;M corporate network for approximately{" "}
+                <span className="text-white">five hours</span>. Employees
+                noticed. Internal complaints followed. The Hamburg DPA opened
+                an investigation.
               </p>
-              <Callout icon={ShieldAlert} label="What this is really about" tone="warn">
-                Almost six years later, every multinational with a
-                marginalized-cohort workforce is still running some version of
-                the H&amp;M pattern. They just haven't been caught yet — and
-                the largest single instance of it is one nobody is talking
-                about.
+
+              <SubHeading>Hamburg's characterization</SubHeading>
+              <p>
+                Prof. Dr. Johannes Caspar, the Hamburg Commissioner at the
+                time, characterized the H&amp;M conduct as constituting:
+              </p>
+              <PullQuote source="Hamburg Commissioner for Data Protection · 1 October 2020">
+                A particularly intensive encroachment on employees' civil
+                rights.
+              </PullQuote>
+              <p>
+                Three elements of the Hamburg analysis matter for
+                understanding the broader pattern:
+              </p>
+              <BulletList
+                items={[
+                  "The data collection was undertaken with no documented legal basis under GDPR Article 6 or Article 9. The managers were not acting maliciously, but they were also not operating under any framework that authorized the processing.",
+                  "The accumulation pattern, not the configuration error, was the violation. The fine would have been issued even if the configuration error had never occurred. The configuration error simply made the underlying violation visible.",
+                  "The penalty calculation was based on the population whose data had been processed, not on the subset whose data had been temporarily exposed. The exposure was incidental. The processing was the offence.",
+                ]}
+              />
+              <Callout icon={ShieldAlert} label="Why this precedent matters" tone="warn">
+                The €35.3M figure was, at the time, the largest GDPR penalty
+                ever issued by a German DPA. It established the principle
+                that <span className="text-white">informal employee data
+                accumulation, conducted by middle managers under no formal
+                legal framework</span>, is GDPR-actionable at penalty levels
+                typically associated with technical security failures or
+                deliberate misuse.
               </Callout>
             </BriefSection>
 
-            <BriefSection id="fifteen" number="I" title="The 15–20% Problem">
+            <BriefSection
+              id="pattern"
+              number="Part 2"
+              title="The Shadow HR Pattern, Named"
+            >
               <p>
-                Roughly <span className="text-white">15 to 20 percent</span>{" "}
-                of the global population is neurodivergent. Autism, ADHD,
-                dyslexia, dyspraxia, and related conditions, taken together,
-                account for somewhere between one in five and one in seven of
-                the people on your payroll. Most multinational employers,
-                when pressed, will tell you they have an ERG, a neurodiversity
-                hiring programme, or at minimum a stated commitment to
-                inclusion.
+                The H&amp;M case names a pattern that exists in most
+                multinational organizations. Once identified, the pattern
+                becomes visible everywhere. Once made visible, it cannot be
+                unseen by a sophisticated General Counsel.
               </p>
-              <p>
-                Almost none of them can tell you with any confidence which of
-                their employees are neurodivergent. And the reason is not
-                architectural humility. It is that the employees themselves
-                will not say.
-              </p>
-              <p>
-                The 2024 CIPD <em>Neuroinclusion at Work</em> report found
-                that <span className="text-white">31%</span> of neurodivergent
-                employees have not told their manager or HR. The 2023 City
-                &amp; Guilds Neurodiversity Index found that{" "}
-                <span className="text-white">76%</span> chose not to fully
-                disclose. The May 2025 Understood.org / Harris Poll survey
-                found that <span className="text-white">64%</span> of
-                neurodivergent employees worry that disclosure would harm
-                them, and <span className="text-white">77%</span> of all
-                adults agree that neurodivergent employees feel pressure to
-                mask. The U.S. is currently rolling back DEI infrastructure in
-                ways that have made disclosure feel even more dangerous than
-                it did two years ago. Disclosure rates are not improving.
-                They are collapsing.
-              </p>
-              <p>
-                Here is what this means operationally. Every multinational
-                employer has a workforce that is 15–20% neurodivergent.
-                Roughly half of those employees have not formally disclosed.
-                The other half have disclosed partially or informally — to a
-                manager, to an ERG, in a survey, in a spreadsheet, in an HRIS
-                field that someone in middle management decided to start
-                tracking because the duty-of-care framework demanded it.
-              </p>
-              <Callout icon={Database} label="The Shadow HR problem" tone="danger">
-                That spreadsheet is the H&amp;M pattern, replicated at scale,
-                across a population three to four times larger than the
-                LGBTQ+ workforce I have spent two decades thinking about. It
-                is special-category data under GDPR Article 9. It carries up
-                to <span className="text-white">€20M or 4% of global turnover</span>{" "}
-                in penalties under Article 83. And in most multinationals it
-                is operating right now, undetected, in dozens of locations,
-                generated by managers trying to do the right thing under a
-                duty-of-care framework that gives them no architectural
-                alternative.
-              </Callout>
-            </BriefSection>
 
-            <BriefSection id="pattern" number="II" title="The Pattern, Named">
+              <SubHeading>The structural origin</SubHeading>
               <p>
-                The pattern is this. Modern duty-of-care frameworks —{" "}
-                <span className="text-white">ISO 31030</span> for travel risk,
-                CSDDD for corporate sustainability, LkSG before its repeal,
-                evolving employer liability under the Equality Act and
-                analogous European disability law — all demand that employers
-                protect marginalized employees from specific, bespoke,
-                identity-aware harms.
+                Modern duty-of-care frameworks —{" "}
+                <span className="text-white">ISO 31030</span> for travel
+                risk, the Corporate Sustainability Due Diligence Directive
+                (CSDDD) for supply chain and workforce obligations, the
+                Worker Protection Act 2024 in the United Kingdom, the
+                Equality Act jurisprudence on reasonable adjustments, and
+                parallel European employer-liability evolution — all demand
+                that employers protect specific marginalized employees from
+                specific identity-aware harms. Generic protection is
+                inadequate. Tailored protection is required.
               </p>
               <p>
                 Modern data protection frameworks —{" "}
-                <span className="text-white">GDPR Article 9</span>, the EU AI
-                Act, sector-specific regulations on health and disability
-                data — all prohibit employers from centrally recording the
-                attributes that would let them deliver that protection.
+                <span className="text-white">GDPR Article 9</span> on special
+                category data, the EU AI Act prohibition on
+                demographic-attribute training inputs in employment contexts,
+                sector-specific regulation on health and disability data —
+                all prohibit employers from centrally recording the
+                attributes that would let them deliver that tailored
+                protection.
               </p>
               <p>
                 These two regimes were authored by different legislators,
-                operating on different timescales, optimising for different
-                harms. They are both correct, individually. They are
-                catastrophically incompatible, together. The result is what I
-                have come to call the{" "}
+                operating on different timescales, optimizing for different
+                harms. They are both correct, individually. They are{" "}
                 <span className="text-white">
-                  Catch-22 of enterprise duty-of-care
+                  catastrophically incompatible, together
                 </span>
-                : you cannot discharge your protection obligation without the
-                data, and you cannot legally hold the data you need to
-                discharge your protection obligation.
+                .
               </p>
+
+              <SubHeading>How the pattern manifests</SubHeading>
               <p>
-                The legacy travel-risk management industry — International
-                SOS, SAP Concur, Crisis24, Everbridge — solved this Catch-22
-                by ignoring half of it. They built stateful data brokers that
-                accumulated traveler attributes, ran centralised assessments,
-                and trusted that the regulatory environment around data
-                protection would not catch up. For a while, they were right.
-                The H&amp;M fine was the moment they stopped being right.
-                The Uber{" "}
-                <span className="text-white">€290 million</span> fine in
-                July 2024 was the regulator's signal that the enforcement
-                environment is now active. The{" "}
-                <span className="text-white">€355 million</span> cumulative
-                total in European employee-data fines, across{" "}
-                <span className="text-white">162 enforcement actions</span>{" "}
-                through March 2025, is the trend.
+                Managers in multinational organizations live inside the
+                resulting incompatibility every day. They know they have a
+                duty-of-care obligation. They know the official systems
+                cannot legally hold the data that would let them discharge
+                it. So they build unofficial systems. In practice, Shadow HR
+                manifests as:
               </p>
+              <BulletList
+                items={[
+                  "Spreadsheets maintained by individual managers or HR business partners tracking employee accommodations, dietary requirements, medical conditions, family circumstances, religious observances, or identity factors relevant to travel and assignment decisions.",
+                  "Network drives where ERG (Employee Resource Group) coordinators store membership lists for LGBTQ+ networks, disability networks, neurodiversity networks, veteran networks, and parent networks — typically without DPIA, without explicit consent for the processing purpose, and without documented retention policy.",
+                  "HRIS custom fields that someone in middle management began populating without explicit corporate authorization, capturing accommodation needs, medical restrictions, or identity factors in free-text or structured form.",
+                  "Email threads and chat archives where managers and HR staff have discussed individual employees' personal circumstances in detail, with the threads retained indefinitely under default corporate retention policies.",
+                  "OHS (Occupational Health and Safety) files containing medical disclosure information that is then referenced informally by line managers for non-OHS purposes.",
+                  "Travel-risk vendor platforms that have accumulated traveler profile data including health conditions, dietary restrictions, and emergency contact relationships — all of which constitute special-category data under Article 9.",
+                ]}
+              />
               <p>
-                Shadow HR is what happens when the regulatory environment
-                hardens around an industry that was structurally incapable of
-                changing. Managers know they have a duty. They know they
-                cannot use the official systems. So they build unofficial
-                ones. And every spreadsheet, every network drive, every
-                well-intentioned ERG membership list is now a future €35
-                million fine waiting for the configuration error that exposes
-                it.
+                Each of these is special-category personal data under GDPR
+                Article 9, processed without proper legal basis, without
+                DPIA, without documented purpose limitation, without
+                retention controls, and typically without the data subject's
+                specific knowledge of the processing scope. None of it was
+                created with malicious intent. All of it was created by
+                people trying to discharge their organizational obligations
+                under duty-of-care frameworks that gave them no architectural
+                alternative.
               </p>
             </BriefSection>
 
             <BriefSection
-              id="recognize"
-              number="III"
-              title="Why I Recognize the Pattern"
+              id="disclosure"
+              number="Part 3"
+              title="The Disclosure-Collapse Multiplier"
             >
               <p>
-                I spent 20 years in the United States Navy under{" "}
-                <span className="text-white">Don't Ask, Don't Tell</span>. For
-                18 of those years, my career could have ended at any moment
-                based on a rumour. Not a verified incident, not an admission,
-                not evidence — a rumour. The burden of proof ran the wrong
-                direction, and the policy was less about punishing conduct
-                than about punishing any signal of identity that the
-                institution decided to investigate.
+                Shadow HR would be a static problem if voluntary employee
+                disclosure rates were stable. They are not. Disclosure rates
+                across every marginalized cohort with available data are
+                collapsing, and the collapse changes the risk math
+                materially.
+              </p>
+
+              <SubHeading>The data</SubHeading>
+              <p>
+                The Human Rights Campaign Foundation's{" "}
+                <span className="text-white">2026 Corporate Equality Index</span>{" "}
+                documented that <span className="text-white">47.5%</span> of
+                LGBTQ+ adults are less out in at least one area of their
+                lives than they were 12 months ago. The HRC characterized
+                this as a measurable retreat from workplace identity
+                disclosure under the current political and regulatory
+                environment.
               </p>
               <p>
-                During those two decades I led sailors and Marines into
-                hostile environments. I made operational decisions about their
-                safety in places where the local legal and cultural threat
-                landscape varied dramatically by who they were. I was
-                responsible for their lives. And I was operating, the entire
-                time, as a person whose own identity could not be formally
-                recorded inside the system that was demanding I protect
-                theirs.
+                The City &amp; Guilds Foundation Neurodiversity Index for
+                2023 found that <span className="text-white">76%</span> of
+                neurodivergent employees chose not to fully disclose their
+                condition to their employer. The 2024 CIPD{" "}
+                <em>Neuroinclusion at Work</em> Report found that{" "}
+                <span className="text-white">31%</span> of neurodivergent
+                employees have not told their manager or HR anything at all.
+                The Understood.org and Harris Poll Neurodiversity at Work
+                Survey in May 2025 found that{" "}
+                <span className="text-white">64%</span> of neurodivergent
+                employees believe disclosure would harm them, and{" "}
+                <span className="text-white">77%</span> of all adults agreed
+                that neurodivergent employees feel pressure to mask their
+                conditions at work.
               </p>
               <p>
-                This is what I have come to call the{" "}
-                <span className="text-white">dual surveillance problem</span>.
-                The institution surveils the people it expects you to
-                protect. The institution surveils you. The protection cannot
-                happen through the official data architecture, because the
-                official data architecture is also the threat. So you learn
-                to operate inside the gap. You learn to manage threat risk
-                for people whose attributes you cannot formally know, while
-                operating as a person whose attributes cannot be formally
-                known. You learn that the architecture of protection has to
-                be decoupled, fundamentally and structurally, from the
-                architecture of identification.
+                Across LGBTQ+, neurodivergent, disability, and other
+                marginalized cohorts, the direction of travel is consistent:
+                fewer employees are telling their employers what they are.
+                The regulatory rollback of DEI infrastructure in the United
+                States, accelerating since early 2025, has made disclosure
+                feel actively dangerous in ways it did not feel two years
+                ago.
+              </p>
+
+              <SubHeading>Why this makes the exposure worse</SubHeading>
+              <p>
+                Most Chief Privacy Officers would assume that declining
+                disclosure reduces Shadow HR exposure.{" "}
+                <span className="text-white">The opposite is true.</span> As
+                voluntary disclosure to official channels collapses, managers
+                operating under duty-of-care pressure do not stop tracking.
+                They track informally instead. The spreadsheet replaces the
+                HRIS field. The ERG private chat replaces the corporate
+                membership list. The personal note replaces the corporate
+                record.
               </p>
               <p>
-                I have specific stories about what that taught me — about
-                colleagues processed out on false accusations, about Marines
-                I led under fire who never knew who their commander actually
-                was, about the architectural decisions that get made by
-                people who have lived inside the trap. I will share them
-                separately over the coming weeks, on LinkedIn, as standalone
-                posts. What matters here is what falls out of that
-                experience architecturally, when you finally get the chance
-                to build the system you wish had existed when you needed it.
+                The total population of employees about whom special-category
+                data is being processed does not shrink as disclosure
+                collapses. The population stays the same. The proportion of
+                that processing that happens in undocumented, unsanctioned,
+                unmonitored systems grows. And the regulatory liability is
+                calculated on the total population, not on the proportion
+                being tracked through official channels.
+              </p>
+
+              <SubHeading>The 15-to-20 percent dimension</SubHeading>
+              <p>
+                The most underappreciated dimension of this problem is scale.
+                Neurodivergent individuals — those with autism, ADHD,
+                dyslexia, dyspraxia, and related conditions — account for an
+                estimated <span className="text-white">15–20%</span> of the
+                global adult population. A multinational with 50,000
+                employees has approximately{" "}
+                <span className="text-white">7,500 to 10,000</span>{" "}
+                neurodivergent workers. Approximately 24% have formally
+                disclosed (per CIPD 2024). The disclosed subset is tracked
+                somewhere — in HRIS accommodation fields, ERG membership
+                lists, manager notes, OHS files. Each of those tracking
+                locations is processing special-category health data under
+                Article 9. A configuration error of the H&amp;M variety,
+                exposing one of these tracking locations, would generate a
+                penalty calculated against the entire employed neurodivergent
+                population, not against the subset whose data was
+                incidentally exposed. Hamburg established that principle in
+                2020. It has been confirmed in every subsequent enforcement
+                action.
+              </p>
+            </BriefSection>
+
+            <BriefSection
+              id="enforcement"
+              number="Part 4"
+              title="The Enforcement Trajectory"
+            >
+              <p>
+                The argument that the H&amp;M case was an outlier requires
+                ignoring everything that has happened since. The European DPA
+                enforcement environment is not stable around employee data.{" "}
+                <span className="text-white">It is intensifying.</span>
+              </p>
+
+              <SubHeading>The Uber precedent</SubHeading>
+              <p>
+                In July 2024, the Dutch Data Protection Authority{" "}
+                <em>(Autoriteit Persoonsgegevens)</em> fined Uber{" "}
+                <span className="text-white">€290&nbsp;million</span> for the
+                unlawful transfer of European driver data to the United
+                States. The fine was not about a breach. It was about the
+                routine processing of driver-identity data through pathways
+                that did not satisfy GDPR transfer requirements.
+              </p>
+              <p>
+                The case extended the H&amp;M principle. It is not necessary
+                for data to be exposed for the processing itself to
+                constitute the violation. The Uber decision specifically
+                reaffirmed that the population whose data was processed forms
+                the calculation basis for the penalty, regardless of how many
+                of those individuals experienced actual harm.
+              </p>
+
+              <SubHeading>The cumulative trend</SubHeading>
+              <p>
+                The CMS GDPR Enforcement Tracker Report for 2025 documented
+                cumulative European enforcement of{" "}
+                <span className="text-white">€355&nbsp;million</span> across{" "}
+                <span className="text-white">162 enforcement actions</span>{" "}
+                in the employee-data category alone, through March 2025. The
+                trajectory of monthly enforcement is accelerating, not flat.
+                Three factors are driving the acceleration:
+              </p>
+              <BulletList
+                items={[
+                  "DPAs have improved their investigatory technique for finding informal data accumulation. The H&M case taught the regulatory community how to recognize the Shadow HR pattern. Subsequent cases have refined that recognition.",
+                  "Employee complaints have become more common as workforce awareness of GDPR rights has matured. The complaint pathway from employee to DPA is now well-established across most member states.",
+                  "DPAs have aligned on the principle that penalty severity should be calibrated to the failure to design for compliance, not just to the harm caused. This means well-intentioned violations receive penalties commensurate with their structural scope, not with their motive.",
+                ]}
+              />
+
+              <SubHeading>The insurance underwriting dimension</SubHeading>
+              <p>
+                D&amp;O (Directors and Officers) liability insurance
+                underwriters and cyber liability underwriters have begun
+                requiring documented compliance with ISO 31030 (Travel Risk
+                Management) and demonstrable GDPR Article 35 DPIA coverage on
+                employee-data processing as conditions for competitive
+                renewal pricing. The insurance market is establishing what
+                the regulatory market is enforcing. Organizations that cannot
+                document their employee-data architecture against both
+                frameworks are facing premium increases and coverage
+                exclusions that compound the direct regulatory exposure.
               </p>
             </BriefSection>
 
             <BriefSection
               id="architecture"
-              number="IV"
-              title="The Architectural Answer"
+              number="Part 5"
+              title="The Architectural Resolution"
             >
               <p>
-                The platform I am building at Third Rail Systems is called{" "}
-                <span className="text-white">ISI — Intersectional Safety
-                Intelligence</span>. It is built around three named modules,
-                each running an 8-agent adversarial debate across six
-                different LLM families to eliminate single-vendor training
-                bias on life-safety outputs.
+                The Shadow HR problem cannot be solved by policy. Stronger
+                manager training, clearer compliance documentation, more
+                frequent DPIAs — all are useful, none are sufficient.
+                Managers will continue to receive duty-of-care obligations
+                they cannot legally discharge using sanctioned data
+                infrastructure, and they will continue to build informal
+                alternatives in response. The problem is solvable only by{" "}
+                <span className="text-white">architectural change</span>.
+                Specifically, by removing the underlying need for centralized
+                special-category data accumulation in the first place.
+              </p>
+
+              <SubHeading>The minimum-disclosure principle</SubHeading>
+              <p>
+                A minimum-disclosure architecture delivers the bespoke risk
+                mitigation that duty-of-care frameworks demand without
+                requiring the employer to centrally retain the demographic
+                attributes that data-protection frameworks prohibit. The
+                architectural pattern has three properties:
               </p>
 
               <div className="my-6 grid gap-4 sm:grid-cols-3">
                 <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
                   <Sparkles className="h-4 w-4 text-cyan-400" />
                   <div className="mt-3 text-sm font-semibold text-white">
-                    TRS-01 · Grandin
+                    1. Edge-bound identity
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    Sensory environments — noise, light, crowd density,
-                    visual complexity — calculated as a Sensory Load Index
-                    for neurodivergent travelers. IBCCES Certified Autism
-                    Center data + Wheelmap accessibility validation.
+                    Identity attributes that would constitute Article 9
+                    special-category data are held on the employee's edge
+                    device, behind biometric authentication, never
+                    transmitted to enterprise systems.
                   </p>
                 </div>
                 <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
                   <Layers className="h-4 w-4 text-cyan-400" />
                   <div className="mt-3 text-sm font-semibold text-white">
-                    TRS-02 · Heumann
+                    2. Stateless synthesis
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    Physical accessibility infrastructure beyond
-                    checklist-level — ramps, elevators, restrooms, transit
-                    access, surface conditions — using Wheelmap user data and
-                    GTFS wheelchair-boarding parsing.
+                    Risk assessment is performed by stateless synthesis
+                    against destination or assignment context. The
+                    demographic input is destroyed at the boundary of the
+                    synthesis enclave. No retained identity record exists to
+                    attach the output to.
                   </p>
                 </div>
                 <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
-                  <Globe className="h-4 w-4 text-cyan-400" />
+                  <ScrollText className="h-4 w-4 text-cyan-400" />
                   <div className="mt-3 text-sm font-semibold text-white">
-                    TRS-03 · Crenshaw
+                    3. Decoupled audit
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    Seven intersectional dimensions: LGBTQ+ legal status,
-                    trans-specific safety, women's gender safety, racialisation
-                    and policing, diplomatic ground truth, municipal LGBTQ+
-                    protections, and xenophobia indicators.
+                    The audit trail required for ISO 31030 and EU AI Act
+                    compliance captures the assessment outputs and decision
+                    logic — not the demographic inputs. The compliance
+                    evidence exists. The Article 9 exposure does not.
                   </p>
                 </div>
               </div>
 
-              <p>
-                The first module is named for{" "}
-                <span className="text-white">Temple Grandin</span>. It exists
-                because the first instance of the Shadow HR problem I built
-                this platform to solve is the neurodivergent workforce, and
-                because Temple Grandin spent her career proving that the
-                right environmental architecture makes invisible disabilities
-                visible without requiring the person carrying them to
-                disclose anything.
-              </p>
-              <p>
-                The second module is named for{" "}
-                <span className="text-white">Judith Heumann</span>. It exists
-                because Judith Heumann taught a generation of disability
-                rights advocates that accessibility is not a feature, it is a
-                precondition, and that the institutions which fail to deliver
-                it are failing a much larger population than they realise.
-              </p>
-              <p>
-                The third module is named for{" "}
-                <span className="text-white">Kimberlé Crenshaw</span>. It
-                exists because Kimberlé Crenshaw named the problem of
-                intersectionality in 1989, and the legacy travel-risk industry
-                still does not understand that a Black trans woman in a
-                hostile jurisdiction is not facing the sum of two risks but
-                the multiplication of several.
-              </p>
-              <p>
-                Beneath all three modules sits a sovereign data layer with
-                primary-source provenance — ILGA Rainbow Map, TGEU Trans
-                Rights Index and Trans Murder Monitoring, US State Department
-                / UK FCDO / Canada GAC diplomatic triangulation, UN Universal
-                Periodic Review, ENAR Shadow Reports, EU FRA harassment
-                surveys, HRC Municipal Equality Index, OSAC city reports,
-                SafetiPin street audits, IBCCES autism certifications,
-                Wheelmap accessibility validation. Every datum is traced to a
-                primary source with a year. No crowdsourced opinions. No
-                training-data stereotypes.{" "}
-                <span className="text-white">
-                  Thirty countries and thirty cities operational as of May
-                  2026
-                </span>
-                , with full structured ETL coverage.
-              </p>
-
-              <Callout icon={Network} label="The architectural insight">
-                At no point does the platform receive, store, or transmit the
-                traveler's identity attributes. The traveler profile lives on
-                the edge device, behind biometric authentication. The
-                platform uses{" "}
-                <span className="text-white">IETF RFC 9458 Oblivious HTTP</span>{" "}
-                to separate IP and SSO authentication from the demographic
-                payload at the network layer. The assessment runs against
-                destination-side data only. The audit log, retained for EU
-                AI Act and ISO 31030 compliance, captures the assessment
-                outputs and the agent debate trail — never the demographic
-                inputs.
+              <Callout icon={Network} label="Implementation status">
+                This pattern is implementable. Third Rail Systems OÜ has
+                built a working implementation called the{" "}
+                <span className="text-white">ISI Platform</span>. The KTH
+                Royal Institute of Technology in Stockholm has independently
+                validated the architecture at{" "}
+                <span className="text-white">IRL 5</span> (Technology
+                Readiness Level). Independent academic oversight on EU AI
+                Act conformity is provided by{" "}
+                <span className="text-white">Dr. Sidra Azmat Butt</span>,
+                researcher at the Next Gen Digital State Research Group at
+                Tallinn University of Technology.
               </Callout>
 
+              <SubHeading>Why this is the only pattern that survives</SubHeading>
               <p>
-                You cannot violate Article 9 of GDPR if you never receive
-                Article 9 data. You cannot expose what you do not retain. The
-                Catch-22 is not solved by clever policy. It is solved by an
-                architectural decision to refuse the data in the first place,
-                while still delivering the safety analysis the duty-of-care
-                framework demands.
+                Centralized data brokerage — the architectural pattern that
+                defines the legacy travel-risk-management industry — cannot
+                survive the current regulatory environment. The enforcement
+                trajectory is too steep, the disclosure-collapse multiplier
+                is too aggressive, and the population-based penalty
+                calculation is too punitive.{" "}
+                <span className="text-white">
+                  Privacy-by-design architecture is not an aesthetic
+                  preference. It is the only structural pattern that
+                  satisfies both regulatory regimes simultaneously
+                </span>{" "}
+                and that scales with a workforce whose disclosure rates will
+                continue to decline through the remainder of the decade.
               </p>
             </BriefSection>
 
             <BriefSection
-              id="trend"
-              number="V"
-              title="The Trend That Makes This Inevitable"
+              id="questions"
+              number="Part 6"
+              title="Five Diagnostic Questions"
             >
               <p>
-                The Human Rights Campaign's{" "}
-                <span className="text-white">2026 Corporate Equality Index</span>{" "}
-                documented that <span className="text-white">47.5%</span> of
-                LGBTQ+ adults are less out in at least one area of their lives
-                than they were 12 months ago. The neurodivergent disclosure
-                numbers cited earlier in this piece show the same pattern at
-                greater magnitude. Across every marginalized cohort I have
-                data on, voluntary disclosure to employers is collapsing.
-              </p>
-              <p>
-                This is structurally fatal for the legacy travel-risk
-                management industry. Every centralised-register approach to
-                duty-of-care depends on the employee voluntarily telling the
-                employer what they are. As that disclosure collapses, the
-                centralised models become incapable of delivering the
-                protection their entire business case is built on. The pattern
-                is the same one we saw in CRM, in identity management, in
-                analytics —{" "}
+                A General Counsel, Chief Privacy Officer, or Chief Security
+                Officer evaluating organizational exposure to Shadow HR
+                liability can begin with five operational diagnostic
+                questions. The questions are not exhaustive. They are
+                calibrated to surface the categories of exposure most
+                consistently present in multinational organizations.{" "}
                 <span className="text-white">
-                  privacy-by-design architectures eventually displace
-                  centralised-state architectures
-                </span>
-                , because the centralised-state architectures cannot survive
-                contact with their own operating environment.
+                  An organization that can answer all five questions with
+                  documented evidence is likely in compliant operating
+                  territory.
+                </span>{" "}
+                An organization that cannot answer one or more is likely
+                sitting on undocumented exposure of the type the Hamburg DPA
+                found at H&amp;M in 2020.
               </p>
-              <p>
-                The companies that will be standing at the end of this decade
-                are the ones that figured out how to discharge duty-of-care
-                without requiring the disclosure. Stateless synthesis is not
-                an aesthetic preference. It is the only architectural pattern
-                that survives a contracting-disclosure environment, an
-                actively-enforcing regulatory environment, and an insurance
-                underwriting cycle that is starting to demand documented ISO
-                31030 alignment as a condition of competitive D&amp;O renewal.
-              </p>
+
+              <div className="mt-8 space-y-4">
+                <DiagnosticQuestion index="1" title="Legal basis documentation">
+                  Can you produce, within 72 hours, the documented legal
+                  basis under GDPR Article 6 and Article 9 for every employee
+                  accommodation, ERG membership, or identity-related data
+                  field currently held in any system — official or informal —
+                  within your organization? If the answer requires
+                  consultation with multiple HR business partners, ERG
+                  coordinators, or line managers to compile, the
+                  documentation does not exist in the form GDPR requires.
+                </DiagnosticQuestion>
+                <DiagnosticQuestion
+                  index="2"
+                  title="Informal accumulation discovery"
+                >
+                  When was the last time your DPO or Privacy Office conducted
+                  a systematic discovery exercise to identify Shadow HR
+                  accumulation in spreadsheets, network drives, chat
+                  archives, and email threads across the organization? If the
+                  answer is never, or if the answer is more than 18 months
+                  ago, the accumulation is likely present and growing.
+                </DiagnosticQuestion>
+                <DiagnosticQuestion index="3" title="Manager training content">
+                  Do your line manager training materials contain explicit,
+                  named guidance against informal tracking of employee
+                  accommodations, identity factors, or personal circumstances
+                  — with examples of what does and does not constitute
+                  Article 9 special-category data? Generic GDPR training does
+                  not satisfy this question. The guidance must be specific to
+                  the Shadow HR pattern.
+                </DiagnosticQuestion>
+                <DiagnosticQuestion index="4" title="DPIA coverage on ERG data">
+                  When was the last DPIA (Data Protection Impact Assessment)
+                  conducted on the data processing performed by your ERG
+                  coordinators in the course of maintaining membership lists,
+                  organizing events, and supporting members in their
+                  professional development? If the answer is never, your ERG
+                  coordinators are likely processing Article 9 data without
+                  the legal infrastructure GDPR requires.
+                </DiagnosticQuestion>
+                <DiagnosticQuestion
+                  index="5"
+                  title="Travel risk vendor data classification"
+                >
+                  Has your Privacy Office conducted a classification audit of
+                  the data your current travel-risk-management vendor
+                  (International&nbsp;SOS, SAP Concur, Crisis24, Everbridge,
+                  or similar) holds about your employees, with specific
+                  attention to which fields constitute Article 9
+                  special-category data? If the vendor holds health
+                  information, dietary requirements, emergency contact
+                  relationships, or accommodation needs, the vendor is
+                  processing Article 9 data on your behalf. Your DPA with
+                  that vendor must specifically authorize Article 9
+                  processing under documented legal basis.{" "}
+                  <span className="text-white">
+                    Most current vendor DPAs do not.
+                  </span>
+                </DiagnosticQuestion>
+              </div>
             </BriefSection>
 
-            <BriefSection id="ask" number="VI" title="What I'm Asking">
+            <BriefSection
+              id="diagnostic"
+              number="—"
+              title="If This Brief Maps to Your Organization"
+            >
               <p>
-                I am the founder of{" "}
-                <span className="text-white">Third Rail Systems OÜ</span>,
-                headquartered in Tallinn, Estonia. We have shipped the
-                platform described above.{" "}
-                <span className="text-white">
-                  KTH Royal Institute of Technology
-                </span>{" "}
-                in Stockholm validated it at Innovation Readiness Level 4.{" "}
-                <span className="text-white">Dr. Sidra Azmat Butt</span> at
-                TalTech provides scientific oversight on EU AI Act compliance.
-                We are pre-seed, raising{" "}
-                <span className="text-white">€400,000 on a SAFE</span>, with a
-                Tehnopol DeepTech accelerator grant track in parallel.
+                The Shadow HR pattern is recognizable once named. Most
+                General Counsels who read this brief in full will recognize
+                at least two of the five diagnostic questions as ones they
+                cannot answer with documented evidence. Some will recognize
+                all five.
               </p>
               <p>
-                I am not writing this piece to pitch the platform. I am
-                writing it because I have spent six months in conversations
-                with CISOs, DPOs, and CHROs at multinational employers, and I
-                have not yet met one who, on hearing the H&amp;M case
-                described in detail, did not recognise their own organisation
-                in it. The Shadow HR problem is hiding in plain sight inside
-                virtually every multinational with a diverse workforce. The
-                architectural answer exists. Most of the industry has not yet
-                figured out that it does.
+                Third Rail Systems OÜ is conducting confidential architectural
+                diagnostics with a limited number of multinational
+                organizations through Q3 2026. The diagnostic is not a sales
+                engagement. It is a{" "}
+                <span className="text-white">60-minute structured
+                conversation</span> between your Privacy, Security, and HR
+                leadership and our architectural team, focused on whether
+                your current employee-data architecture can survive a Hamburg
+                DPA inspection. The diagnostic produces a written assessment
+                of exposure points and architectural alternatives. There is
+                no obligation to engage further. Organizations that
+                determine, after the diagnostic, that their current
+                architecture is sound have received a documented validation
+                that may be useful for D&amp;O insurance underwriting
+                conversations. Organizations that determine, after the
+                diagnostic, that architectural change is warranted have a
+                reference framework for the change.
               </p>
+
+              <SubHeading>Evaluation criteria</SubHeading>
               <p>
-                If you are a security or privacy officer at a multinational
-                with a marginalized-cohort workforce, and you have ever
-                wondered whether your duty-of-care infrastructure could
-                survive a Hamburg DPA inspection — I would like to talk to
-                you. The conversation is not a sales pitch. It is an
-                architectural diagnostic. If the architecture I have described
-                maps to a problem you recognise, we should talk about whether
-                it maps to a solution you can deploy.
+                Diagnostic requests are evaluated against three criteria:
               </p>
+              <BulletList
+                items={[
+                  "Organizational scale — multinational with 5,000+ employees.",
+                  "Workforce composition — substantive marginalized-cohort population, including but not limited to LGBTQ+, neurodivergent, and disability cohorts.",
+                  "Current exposure — organization is processing employee data through travel-risk vendors, ERG infrastructure, or accommodation-tracking systems.",
+                ]}
+              />
 
               <div className="mt-10 flex flex-col items-start gap-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-6 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
-                    Next step
+                    Request a diagnostic
                   </div>
                   <div className="mt-1 text-sm text-slate-100 sm:text-base">
-                    20-minute architecture diagnostic. No HRIS integration
-                    required.
+                    60-minute structured conversation. Confidential. No HRIS
+                    integration required.
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -799,33 +1016,16 @@ export default function CatchTwentyTwo() {
                     data-testid="catch22-linkedin-button"
                   >
                     <LinkedInGlyph className="h-4 w-4" />
-                    Read on LinkedIn
+                    Read companion essay
                   </a>
                   <Button
                     onClick={handleCta}
                     className="btn-glow bg-cyan-500 text-slate-950 hover:bg-cyan-400"
                     data-testid="catch22-cta-contact"
                   >
-                    Request Pilot Assessment
+                    Request Diagnostic
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
-                </div>
-              </div>
-
-              {/* Sign-off */}
-              <div className="mt-10 rounded-lg border border-slate-800 bg-slate-900/60 p-6">
-                <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-                  Signed
-                </div>
-                <div className="mt-2 text-base font-semibold text-white">
-                  Levi Hankins
-                </div>
-                <div className="mt-1 text-sm text-slate-400">
-                  Founder, Third Rail Systems OÜ · Tallinn, Estonia ·{" "}
-                  Twenty years U.S. Navy
-                </div>
-                <div className="mt-2 text-sm italic text-slate-500">
-                  Building the platform I wish had existed when I needed it.
                 </div>
               </div>
 
@@ -840,12 +1040,11 @@ export default function CatchTwentyTwo() {
                 <div className="mt-2 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="text-sm font-semibold text-white sm:text-base">
-                      Reshare on LinkedIn
+                      Share with your General Counsel
                     </div>
                     <p className="mt-1 text-xs leading-relaxed text-slate-400 sm:text-sm">
-                      Boost the published article on Levi's profile — copy
-                      the in-site link or share the original LinkedIn post
-                      with one click.
+                      Copy the in-site link or share the LinkedIn companion
+                      essay with one click.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -889,13 +1088,15 @@ export default function CatchTwentyTwo() {
                 {[
                   "Hamburg Commissioner for Data Protection and Freedom of Information, press release, 1 October 2020 (H&M Hennes & Mauritz Online Shop AB & Co. KG fine).",
                   "Autoriteit Persoonsgegevens (Dutch Data Protection Authority), Uber fine announcement, July 2024.",
-                  "CMS GDPR Enforcement Tracker Report 2025, Employment / Employee Data category.",
+                  "CMS GDPR Enforcement Tracker Report 2025, Employment and Employee Data category.",
                   "CIPD Neuroinclusion at Work Report, February 2024.",
-                  "City & Guilds Foundation Neurodiversity Index, 2023–2026 editions.",
-                  "Understood.org / Harris Poll Neurodiversity at Work Survey, May 2025.",
-                  "Human Rights Campaign Foundation Corporate Equality Index 2026 and \"One Year In\" report.",
+                  "City & Guilds Foundation Neurodiversity Index, 2023 edition.",
+                  "Understood.org and Harris Poll Neurodiversity at Work Survey, May 2025.",
+                  "Human Rights Campaign Foundation Corporate Equality Index 2026.",
                   "CSDDD (Corporate Sustainability Due Diligence Directive), Official Journal of the European Union, 5 July 2024; Omnibus I amendments 24 February 2026.",
                   "GDPR Article 9 and Article 83, Regulation (EU) 2016/679.",
+                  "ISO 31030:2021 Travel Risk Management — Guidance for Organizations, International Organization for Standardization.",
+                  "KTH Royal Institute of Technology, Deeptech Startup Network IRL Framework Evidence Report, Third Rail Systems OÜ, March 2026.",
                 ].map((cite) => (
                   <li key={cite} className="flex items-start gap-3">
                     <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
@@ -904,9 +1105,17 @@ export default function CatchTwentyTwo() {
                 ))}
               </ul>
 
-              <p className="mt-10 mono text-xs uppercase tracking-[0.2em] text-slate-500">
-                <Scale className="mr-2 inline h-3 w-3 text-cyan-400" />
-                Third Rail Systems OÜ · Tallinn, Estonia · EU-Native
+              <div className="mt-10 rounded-lg border border-slate-800 bg-slate-900/60 p-5 text-xs leading-relaxed text-slate-500">
+                This document is published by Third Rail Systems OÜ. The
+                analysis is provided for informational purposes and does not
+                constitute legal advice. Organizations evaluating their
+                exposure under GDPR, ISO 31030, the EU AI Act, or related
+                frameworks should consult qualified legal counsel.
+              </div>
+
+              <p className="mt-6 mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                © 2026 Third Rail Systems OÜ · Tallinn, Estonia · Registry
+                17488655 · v1.0 · May 2026
               </p>
             </BriefSection>
           </article>
