@@ -1,4 +1,4 @@
-import { Shield, Lock, Users, ArrowUpRight } from "lucide-react";
+import { Shield, Lock, Users, Heart, ArrowUpRight } from "lucide-react";
 import { SectionHeader } from "./shared";
 
 const PERSONAS = [
@@ -28,6 +28,17 @@ const PERSONAS = [
       "Partner strategically with Security to unlock safe global mobility.",
     ],
   },
+  {
+    tag: "For Civil Society",
+    Icon: Heart,
+    points: [
+      "Protect human rights defenders, activists, and field staff without creating internal demographic registers.",
+      "Deploy intersectional safety assessments aligned with donor compliance frameworks (USAID 2 CFR 200, EU AI Act, GDPR).",
+      "Pilot pricing for design partners; pro-bono deployment available for qualifying mission-aligned organizations.",
+    ],
+    outcome:
+      "Mission-aligned safety infrastructure that withstands donor audit and protects the people you serve.",
+  },
 ];
 
 export default function PersonasSection({ onCtaClick }) {
@@ -45,8 +56,8 @@ export default function PersonasSection({ onCtaClick }) {
           description="Three mandates. One architecture. Each function keeps its own remit intact."
         />
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
-          {PERSONAS.map(({ tag, Icon, points }, idx) => (
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {PERSONAS.map(({ tag, Icon, points, outcome }, idx) => (
             <div
               key={tag}
               className="reveal relative flex flex-col rounded-lg border border-slate-800 bg-slate-900/60 p-7 transition-colors hover:border-slate-700"
@@ -72,9 +83,18 @@ export default function PersonasSection({ onCtaClick }) {
                 ))}
               </ul>
 
-              <div className="mt-8 flex items-center justify-between border-t border-slate-800 pt-5">
+              {outcome && (
+                <p className="mt-5 rounded-md border border-cyan-500/20 bg-cyan-500/[0.04] p-3 text-[13px] leading-relaxed text-slate-300">
+                  <span className="mono text-[10px] uppercase tracking-[0.18em] text-cyan-300">
+                    Outcome —{" "}
+                  </span>
+                  {outcome}
+                </p>
+              )}
+
+              <div className="mt-auto flex items-center justify-between border-t border-slate-800 pt-5">
                 <span className="mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
-                  Outcome
+                  {outcome ? "Next step" : "Outcome"}
                 </span>
                 <button
                   onClick={onCtaClick}

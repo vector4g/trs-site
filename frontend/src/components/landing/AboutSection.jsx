@@ -19,8 +19,10 @@ const TEAM = [
   {
     role: "CEO",
     name: "Levi Hankins",
-    bio:
+    bio: [
       '20-year US Navy combat veteran with lived experience under "Don\'t Ask, Don\'t Tell." Operational authority on discretion under institutional scrutiny.',
+      "Founded Third Rail Systems to build the infrastructure that did not exist when he served — for enterprises managing duty-of-care obligations, and for civil-society organizations protecting the activists who do the most exposed work.",
+    ],
     testid: "founder-ceo",
     linkedinUrl: LEVI_LINKEDIN_URL,
     linkedinTestid: "founder-ceo-linkedin",
@@ -28,15 +30,18 @@ const TEAM = [
   {
     role: "CTO",
     name: "Jeremy Stabile",
-    bio:
-      "Fortune 500 SecOps and GRC architecture expert. Designs the stateless synthesis layer and HITL oversight controls.",
+    bio: [
+      "[N]-year security architecture leader from [Fortune 500 healthcare or finance sector — specify]. Built and operated GRC frameworks at scale through SOC 2, HITRUST, and HIPAA audits.",
+      "Designs the stateless synthesis layer and the Human-In-The-Loop oversight controls.",
+    ],
     testid: "founder-cto",
   },
   {
     role: "Head of Algorithmic Validation",
     name: "Dr. Sidra Azmat Butt",
-    bio:
+    bio: [
       "PhD, Information Technology — TalTech. Researcher, Next Gen Digital State Research Group. Independent oversight on EU AI Act conformity and GDPR privacy-by-design.",
+    ],
     testid: "core-team-sidra",
     badge: "TalTech · Tallinn",
     advisoryHref: "#advisory",
@@ -106,9 +111,13 @@ export default function AboutSection() {
                       </a>
                     )}
                   </div>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                    {member.bio}
-                  </p>
+                  <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-400">
+                    {(Array.isArray(member.bio) ? member.bio : [member.bio]).map(
+                      (paragraph, i) => (
+                        <p key={i}>{paragraph}</p>
+                      ),
+                    )}
+                  </div>
                   {member.badge && (
                     <div className="mt-4 inline-flex w-fit items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-0.5 mono text-[10px] uppercase tracking-[0.18em] text-cyan-300">
                       {member.badge}

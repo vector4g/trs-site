@@ -74,6 +74,17 @@ export default function Hero({ onPrimary, onSecondary }) {
             triggering GDPR special-category data liabilities.
           </p>
 
+          <p
+            className="mt-4 max-w-2xl text-base text-slate-400 sm:text-lg"
+            data-testid="hero-subheadline-civil"
+          >
+            The same minimum-disclosure architecture serves civil-society
+            organizations, IGOs, and human rights institutions that protect
+            activists, defenders, and field staff in higher-risk environments.
+            Different scale, identical operational tension between duty-of-care
+            and identity protection.
+          </p>
+
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button
               size="lg"

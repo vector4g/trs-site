@@ -240,7 +240,7 @@ export default function ContactSection() {
                       setForm((f) => ({ ...f, firstName: e.target.value }))
                     }
                     className="mt-2 h-11 border-slate-800 bg-slate-950 text-slate-100 placeholder:text-slate-600 focus-visible:ring-cyan-500"
-                    placeholder="Levi"
+                    placeholder="First name"
                     data-testid="input-first-name"
                   />
                   {errors.firstName && (
@@ -264,7 +264,7 @@ export default function ContactSection() {
                       setForm((f) => ({ ...f, lastName: e.target.value }))
                     }
                     className="mt-2 h-11 border-slate-800 bg-slate-950 text-slate-100 placeholder:text-slate-600 focus-visible:ring-cyan-500"
-                    placeholder="Hankins"
+                    placeholder="Last name"
                     data-testid="input-last-name"
                   />
                   {errors.lastName && (

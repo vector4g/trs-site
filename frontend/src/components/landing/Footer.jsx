@@ -1,6 +1,6 @@
 import { Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LINKEDIN_ARTICLE_URL } from "./shared";
+import { LEVI_LINKEDIN_URL } from "./shared";
 import LogoMark from "./LogoMark";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
@@ -62,14 +62,14 @@ export default function Footer() {
           </a>
 
           <a
-            href={LINKEDIN_ARTICLE_URL}
+            href={LEVI_LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1.5 transition-colors hover:border-cyan-500/40 hover:bg-slate-900"
-            data-testid="footer-linkedin-asseenon"
+            data-testid="footer-founder-updates"
           >
             <span className="mono text-[9px] uppercase tracking-[0.22em] text-slate-500">
-              As seen on
+              Founder updates
             </span>
             <LinkedInGlyph className="h-3.5 w-3.5 text-cyan-400" />
             <span className="text-[11px] font-medium text-slate-200">

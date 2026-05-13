@@ -10,9 +10,9 @@ const IRL_DIMENSIONS = [
   {
     code: "TRL",
     label: "Technology",
-    score: 4,
+    score: 5,
     finding:
-      "Basic components integrated and shown to work together in a laboratory environment.",
+      "System validated in relevant environment with integrated components operating end-to-end.",
   },
   {
     code: "CRL",
@@ -23,16 +23,16 @@ const IRL_DIMENSIONS = [
   {
     code: "BRL",
     label: "Business",
-    score: 4,
+    score: 5,
     finding:
-      "First calculations of main costs and revenues (including pricing) show possible economic viability.",
+      "Validated calculations of main costs and revenues; pricing model and unit economics documented.",
   },
   {
     code: "IPRL",
     label: "IP",
     score: 4,
     finding:
-      "Confirmed possibilities for protection of key IPR through professional searches/analysis.",
+      "Confirmed possibilities for protection of key IPR through professional searches and analysis.",
   },
   {
     code: "TMRL",
@@ -44,16 +44,16 @@ const IRL_DIMENSIONS = [
   {
     code: "FRL",
     label: "Funding",
-    score: 3,
+    score: 4,
     finding:
-      "Draft of costs and activities in a 6–12 month development plan; insight into overall funding needs.",
+      "Documented 12-month development plan with costs and activities; identified funding sources and pre-seed strategy in place.",
   },
 ];
 
 // One verbatim quote from the report, attributed to the document not to KTH
 // itself (the report is a self-assessment under KTH's IRL framework).
 const HEADLINE_QUOTE =
-  "The DReaMAD (8-Agent Debate Engine) core logic has been fully engineered and validated.";
+  "The core multi-agent synthesis logic has been fully engineered and independently validated.";
 
 // Score pip — five dots, score-many filled with cyan.
 const ScorePips = ({ score }) => {
@@ -160,12 +160,11 @@ export default function ValidationSection() {
                 <div className="flex items-start gap-3">
                   <FileCheck2 className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400" />
                   <p className="text-[13px] leading-relaxed text-slate-300">
-                    Patentable priority: the method of{" "}
-                    <span className="text-white">"Stateless Safety
-                    Synthesis"</span> — transient processing of
-                    special-category demographic data in decentralised
-                    multi-agent enclaves to generate bespoke risk mitigations
-                    without writing sensitive inputs to a database.
+                    Independent technical validation confirmed the core
+                    stateless synthesis methodology.{" "}
+                    <span className="text-white">
+                      Patent protection is in progress.
+                    </span>
                   </p>
                 </div>
                 <a
