@@ -31,8 +31,7 @@ const TEAM = [
     role: "CTO",
     name: "Jeremy Stabile",
     bio: [
-      "[N]-year security architecture leader from [Fortune 500 healthcare or finance sector — specify]. Built and operated GRC frameworks at scale through SOC 2, HITRUST, and HIPAA audits.",
-      "Designs the stateless synthesis layer and the Human-In-The-Loop oversight controls.",
+      "Cybersecurity analyst with national-security research depth (RAND), HIPAA-grade healthcare GRC experience (Cedars-Sinai, UCLA), and German multinational GDPR experience (Karl Storz). Lead engineer of the stateless synthesis architecture and Human-In-The-Loop oversight controls.",
     ],
     testid: "founder-cto",
   },
