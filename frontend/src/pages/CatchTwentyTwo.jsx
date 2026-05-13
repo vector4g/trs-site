@@ -4,18 +4,19 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Database,
+  Eye,
   FileText,
   Gavel,
   Globe,
-  Hammer,
-  Link as LinkIcon,
   Lock,
   MapPin,
+  Network,
   Scale,
-  Server,
   ShieldAlert,
-  Skull,
-  Triangle,
+  Sparkles,
+  Link as LinkIcon,
+  Layers,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -60,12 +61,14 @@ const track = (event, props = {}) => {
 };
 
 const TOC = [
-  { id: "overview", label: "0. Executive Overview" },
-  { id: "hammer", label: "I. The Hammer — Criminal Liability" },
-  { id: "anvil", label: "II. The Anvil — Corporate Ruin" },
-  { id: "trap", label: "III. The Trap — GDPR Article 9" },
-  { id: "market", label: "IV. Market Scale & Stateless Architecture" },
-  { id: "next", label: "V. The Pilot" },
+  { id: "hamburg", label: "0. The H&M Case" },
+  { id: "fifteen", label: "I. The 15–20% Problem" },
+  { id: "pattern", label: "II. The Pattern, Named" },
+  { id: "recognize", label: "III. Why I Recognize It" },
+  { id: "architecture", label: "IV. The Architectural Answer" },
+  { id: "trend", label: "V. The Trend" },
+  { id: "ask", label: "VI. What I'm Asking" },
+  { id: "sources", label: "Sources & Citations" },
 ];
 
 function BriefSection({ id, number, title, children }) {
@@ -84,14 +87,6 @@ function BriefSection({ id, number, title, children }) {
         {children}
       </div>
     </section>
-  );
-}
-
-function SubHeading({ children }) {
-  return (
-    <h3 className="mt-10 text-xl font-semibold tracking-tight text-white sm:text-2xl">
-      {children}
-    </h3>
   );
 }
 
@@ -121,56 +116,6 @@ function Callout({ icon: Icon, label, children, tone = "cyan" }) {
   );
 }
 
-function ComparisonTable({ caption, headers, rows, testid }) {
-  return (
-    <div
-      className="my-8 overflow-x-auto rounded-lg border border-slate-800 bg-slate-900/60"
-      data-testid={testid}
-    >
-      {caption && (
-        <div className="border-b border-slate-800 px-5 py-3 mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
-          {caption}
-        </div>
-      )}
-      <table className="w-full text-left text-[13px] sm:text-sm">
-        <thead className="bg-slate-950/60">
-          <tr>
-            {headers.map((h) => (
-              <th
-                key={h}
-                className="border-b border-slate-800 px-4 py-3 mono text-[10px] font-medium uppercase tracking-[0.16em] text-slate-400"
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr
-              key={i}
-              className="border-b border-slate-900 last:border-b-0 align-top"
-            >
-              {row.map((cell, j) => (
-                <td
-                  key={j}
-                  className={`px-4 py-4 ${
-                    j === 0
-                      ? "text-white font-medium"
-                      : "text-slate-300"
-                  }`}
-                >
-                  {cell}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 export default function CatchTwentyTwo() {
   useReveal();
   const navigate = useNavigate();
@@ -180,7 +125,7 @@ export default function CatchTwentyTwo() {
     window.scrollTo(0, 0);
     const prev = document.title;
     document.title =
-      "Duty of Care vs. Data Privacy — The Multi-Billion-Euro Catch-22 · Third Rail Systems OÜ";
+      "The Duty of Care vs. Data Privacy Catch-22 · Third Rail Systems OÜ";
     track("brief_viewed", { brief: "catch-22" });
     return () => {
       document.title = prev;
@@ -289,7 +234,7 @@ export default function CatchTwentyTwo() {
           </Link>
 
           <div className="mt-8">
-            <Eyebrow index="BRIEF · 2026">Liability Analysis</Eyebrow>
+            <Eyebrow index="ESSAY · 8 MAY 2026">Founder essay</Eyebrow>
           </div>
 
           <a
@@ -318,61 +263,62 @@ export default function CatchTwentyTwo() {
           </h1>
 
           <p className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg">
-            A multi-billion-euro liability crisis in European enterprise
-            operations — and why every legacy HRIS is structurally unequipped
-            to resolve it.
+            Why we built the cohort-agnostic risk engine we wish had existed
+            when we needed it.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-slate-500 mono uppercase tracking-[0.18em]">
             <span className="flex items-center gap-2">
               <MapPin className="h-3.5 w-3.5 text-cyan-400" />
-              Tallinn, Estonia
+              Levi Hankins · Founder
             </span>
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
-            <span>14-minute read</span>
+            <span>8 May 2026 · Tallinn</span>
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
-            <span>v1.0 · founding team</span>
+            <span>12-minute read</span>
           </div>
 
-          {/* Hammer / Anvil / Trap stat strip */}
+          {/* Headline stat strip — three figures pulled from the essay */}
           <div className="mt-12 grid gap-4 sm:grid-cols-3" data-testid="catch22-strip">
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex items-center gap-2 mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
-                <Hammer className="h-3.5 w-3.5" />
-                The Hammer
+                <Database className="h-3.5 w-3.5" />
+                The H&amp;M case
               </div>
               <div className="mt-3 text-sm font-semibold text-white">
-                Executive criminal liability
+                €35.3M · 2020
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                UK Gross Negligence Manslaughter (life). FR{" "}
-                <em>faute inexcusable</em>. DE § 222 StGB.
+                Hamburg DPA fine for internal special-category dossiers on
+                returning employees. The Shadow HR pattern, made visible by a
+                configuration error.
               </p>
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex items-center gap-2 mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
-                <Triangle className="h-3.5 w-3.5" />
-                The Anvil
+                <Eye className="h-3.5 w-3.5" />
+                Disclosure collapse
               </div>
               <div className="mt-3 text-sm font-semibold text-white">
-                Corporate financial ruin
+                76% don't fully disclose
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                Loi de Vigilance €30M + civil. LkSG 2% global turnover.
-                €37B in EU foreign penalties since 2010.
+                Neurodivergent employees — City &amp; Guilds Neurodiversity
+                Index. HRC 2026 finds 47.5% of LGBTQ+ adults are less out than
+                a year ago.
               </p>
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex items-center gap-2 mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
-                <Lock className="h-3.5 w-3.5" />
-                The Trap
+                <Gavel className="h-3.5 w-3.5" />
+                Enforcement live
               </div>
               <div className="mt-3 text-sm font-semibold text-white">
-                GDPR Article 9 violation
+                €355M cumulative
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                €20M or 4% of global turnover for processing
-                special-category data — the same data ISO 31030 demands.
+                Employee-data fines across 162 EU enforcement actions through
+                March 2025. Uber alone: €290M, July 2024.
               </p>
             </div>
           </div>
@@ -408,8 +354,9 @@ export default function CatchTwentyTwo() {
                   Bottom line
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-slate-300">
-                  Stateless architecture is the only mathematically sound
-                  resolution to the Duty of Care vs. Data Privacy Catch-22.
+                  You cannot violate GDPR Article 9 if you never receive
+                  Article 9 data. Stateless synthesis is not aesthetic — it is
+                  the only architecture that survives this decade.
                 </p>
               </div>
             </div>
@@ -420,617 +367,411 @@ export default function CatchTwentyTwo() {
             id="brief-article-root"
             data-testid="catch22-article"
           >
-            <BriefSection id="overview" number="0" title="Executive Overview">
+            <BriefSection id="hamburg" number="0" title="The H&M Case">
               <p>
-                The landscape of corporate governance and enterprise risk
-                across the European Union and the United Kingdom has
-                undergone a hostile, systemic paradigm shift. The era in
-                which executives could shield themselves behind the corporate
-                veil — treating employee safety failures during international
-                deployments as financial line items or insurable operational
-                risks — is definitively over.
+                In October 2020, the Hamburg Data Protection Authority fined
+                H&amp;M <span className="text-white">€35.3&nbsp;million</span>.
               </p>
               <p>
-                Sovereign legal frameworks are aggressively piercing the
-                corporate veil, deploying specialized mechanisms to hold
-                Chief Security Officers, Human Resources Directors, and
-                C-suite executives personally, criminally, and financially
-                liable for failing to protect their personnel.
+                The violation was not a data breach in the conventional sense.
+                There was no external attack, no leaked credentials, no
+                ransomware. The breach was internal — managers at H&amp;M's
+                Nuremberg service centre had been maintaining what amounted to
+                digital dossiers on several hundred employees, stored on a
+                network drive, accumulating over five years.
               </p>
               <p>
-                Under <span className="text-white">ISO 31030</span>, employers
-                are legally mandated to conduct bespoke risk assessments
-                evaluating the distinct vulnerabilities of traveling
-                employees — including LGBTQ+ status, gender identity,
-                neurodivergence, and physical disabilities. Yet{" "}
-                <span className="text-white">GDPR Article 9</span> explicitly
-                prohibits the processing or storing of this special-category
-                data, levying massive financial penalties for non-compliance.
+                The dossiers contained health diagnoses. Religious beliefs.
+                Family circumstances. Vacation experiences. The information
+                had been collected, in many cases, during well-intentioned
+                "Welcome Back Talks" conducted by team leaders after employees
+                returned from sick leave or vacation. The data became visible
+                to the wider company only because of a configuration error.
               </p>
-              <Callout icon={Scale} label="The trilemma">
-                Enterprise leadership is forced to choose between the{" "}
-                <span className="text-white">Hammer</span> of individual
-                executive criminal liability, the{" "}
-                <span className="text-white">Anvil</span> of unlimited
-                corporate financial ruin via supply-chain and vigilance laws,
-                or the <span className="text-white">Trap</span> of a €20M
-                data-privacy fine. There is no fourth option inside a stateful
-                data architecture.
+              <p>
+                Hamburg's Commissioner for Data Protection,{" "}
+                <span className="text-white">Prof. Dr. Johannes Caspar</span>,
+                described what his office found as "a particularly intensive
+                encroachment on employees' civil rights." The fine was, at the
+                time, the largest GDPR penalty ever issued by a German DPA.
+              </p>
+              <Callout icon={ShieldAlert} label="What this is really about" tone="warn">
+                Almost six years later, every multinational with a
+                marginalized-cohort workforce is still running some version of
+                the H&amp;M pattern. They just haven't been caught yet — and
+                the largest single instance of it is one nobody is talking
+                about.
               </Callout>
             </BriefSection>
 
-            <BriefSection
-              id="hammer"
-              number="I"
-              title="The Hammer — Individual Executive Criminal Liability"
-            >
+            <BriefSection id="fifteen" number="I" title="The 15–20% Problem">
               <p>
-                Executive immunity has been systematically dismantled across
-                Europe's most influential jurisdictions. The regulatory
-                apparatus no longer views corporate negligence as an abstract
-                institutional failure; rather, it identifies and prosecutes
-                the specific human actors responsible for the omission of
-                safety protocols.
-              </p>
-
-              <SubHeading>
-                United Kingdom — Gross Negligence and the Dismantling of the
-                "Controlling Mind"
-              </SubHeading>
-              <p>
-                The Health and Safety at Work etc. Act 1974 (HSWA) imposes a
-                rigid statutory duty on employers to ensure, "so far as is
-                reasonably practicable," the health, safety, and welfare of
-                all their employees. The duty has explicit{" "}
-                <span className="text-white">extraterritorial reach</span> —
-                it applies in full force to employees on UK terms while
-                travelling abroad.
+                Roughly <span className="text-white">15 to 20 percent</span>{" "}
+                of the global population is neurodivergent. Autism, ADHD,
+                dyslexia, dyspraxia, and related conditions, taken together,
+                account for somewhere between one in five and one in seven of
+                the people on your payroll. Most multinational employers,
+                when pressed, will tell you they have an ERG, a neurodiversity
+                hiring programme, or at minimum a stated commitment to
+                inclusion.
               </p>
               <p>
-                The Corporate Manslaughter and Corporate Homicide Act 2007
-                (CMCHA) replaced the old "directing mind" test with one of
-                systemic <span className="text-white">senior-management</span>{" "}
-                failings. Deploying an employee with hidden vulnerabilities
-                — a neurodivergent individual or an LGBTQ+ executive — into a
-                hostile jurisdiction without an individualized risk
-                assessment routinely meets the standard of a "gross breach"
-                of duty of care.
+                Almost none of them can tell you with any confidence which of
+                their employees are neurodivergent. And the reason is not
+                architectural humility. It is that the employees themselves
+                will not say.
               </p>
               <p>
-                Although the CMCHA charge applies to the corporate entity,
-                its evidential intensity routinely unearths the data
-                required to prosecute executives individually under Section
-                37 HSWA (offences committed with the "consent, connivance, or
-                neglect" of a director) or under the common-law offence of
-                Gross Negligence Manslaughter — which carries a maximum
-                tariff of <span className="text-white">life imprisonment</span>
-                . Convicted executives face mandatory disqualification under
-                the Company Directors Disqualification Act 1986. Cotswold
-                Geotechnical Holdings and Lion Steel Equipment both
-                demonstrate the prosecutorial appetite for individual
-                charges.
-              </p>
-
-              <SubHeading>
-                France — <em>Faute Inexcusable</em> and Institutional
-                Criminality
-              </SubHeading>
-              <p>
-                Article L. 4121-1 of the French Labour Code creates an{" "}
-                <em>obligation de résultat</em> — an absolute, overriding
-                safety obligation. Any accident occurring during a business
-                trip is presumed a workplace accident; failure constitutes{" "}
-                <em>faute inexcusable</em> whenever the employer "was, or
-                should have been, aware of the danger" and did not take the
-                necessary measures.
+                The 2024 CIPD <em>Neuroinclusion at Work</em> report found
+                that <span className="text-white">31%</span> of neurodivergent
+                employees have not told their manager or HR. The 2023 City
+                &amp; Guilds Neurodiversity Index found that{" "}
+                <span className="text-white">76%</span> chose not to fully
+                disclose. The May 2025 Understood.org / Harris Poll survey
+                found that <span className="text-white">64%</span> of
+                neurodivergent employees worry that disclosure would harm
+                them, and <span className="text-white">77%</span> of all
+                adults agree that neurodivergent employees feel pressure to
+                mask. The U.S. is currently rolling back DEI infrastructure in
+                ways that have made disclosure feel even more dangerous than
+                it did two years ago. Disclosure rates are not improving.
+                They are collapsing.
               </p>
               <p>
-                The 2002 Karachi attack — in which 11 French DCN engineers
-                died — is the defining extraterritorial precedent. The 2004
-                ruling by the Tribunal des Affaires de Sécurité Sociale de la
-                Manche condemned the State and DCN for{" "}
-                <em>faute inexcusable de l'employeur</em>; the State chose
-                not to appeal, cementing the precedent that executives are
-                liable for failing to assess and mitigate foreign
-                operational risks.
+                Here is what this means operationally. Every multinational
+                employer has a workforce that is 15–20% neurodivergent.
+                Roughly half of those employees have not formally disclosed.
+                The other half have disclosed partially or informally — to a
+                manager, to an ERG, in a survey, in a spreadsheet, in an HRIS
+                field that someone in middle management decided to start
+                tracking because the duty-of-care framework demanded it.
               </p>
-              <p>
-                Article 121-3 of the French Criminal Code targets individuals
-                who indirectly cause harm by omission. Executives, CSOs, and
-                delegates can be personally and criminally liable for{" "}
-                <em>faute caractérisée</em> or{" "}
-                <em>faute délibérée</em>. On 21 January 2025, the Criminal
-                Division of the French Supreme Court enshrined{" "}
-                <span className="text-white">
-                  "institutional psychological harassment"
-                </span>{" "}
-                into law — failure to implement individualized travel risk
-                assessments for vulnerable demographic groups operates within
-                this exact matrix of criminal liability.
-              </p>
-
-              <SubHeading>
-                Germany — <em>Fürsorgepflicht</em> and Executive Negligent
-                Homicide
-              </SubHeading>
-              <p>
-                German criminal law (StGB) reserves criminal liability
-                exclusively for natural persons. When an enterprise fails in
-                its duty of care, the crosshairs of the German judicial
-                system bypass the corporate shell entirely and lock onto
-                individual managing directors, CSOs, and HR leaders.
-              </p>
-              <p>
-                Section 618 BGB codifies the{" "}
-                <em>Fürsorgepflicht</em> — the obligation to arrange,
-                maintain, and regulate operations so that employees are
-                protected against risks to life and health. Travel time spent
-                in the employer's interest is treated as working time,
-                extending the geographic and temporal reach of liability.
-              </p>
-              <p>
-                A failure that results in injury or death abroad leads to
-                charges of{" "}
-                <span className="text-white">
-                  <em>Fahrlässige Tötung</em> (§ 222 StGB)
-                </span>{" "}
-                or <em>Fahrlässige Körperverletzung</em> (§ 229 StGB),
-                punishable by imprisonment. Under § 30 OWiG, the company
-                itself is exposed to exorbitant administrative fines for
-                supervisory failures by managerial representatives.
-              </p>
-
-              <ComparisonTable
-                caption="Sovereign jurisdictional exposure"
-                headers={[
-                  "Jurisdiction",
-                  "Primary statutory doctrine",
-                  "Executive criminal exposure",
-                  "Key precedents",
-                ]}
-                rows={[
-                  [
-                    "United Kingdom",
-                    "Gross breach of duty of care (HSWA 1974 & CMCHA 2007)",
-                    "Gross Negligence Manslaughter — maximum life imprisonment; mandatory director disqualification",
-                    "Cotswold Geotechnical Holdings; Lion Steel Equipment",
-                  ],
-                  [
-                    "France",
-                    "Faute inexcusable (absolute safety obligation, Labour Code)",
-                    "Faute caractérisée / délibérée — imprisonment + personal fines",
-                    "2002 Karachi bombing (TASS 2004); 2025 Institutional Psychological Harassment ruling",
-                  ],
-                  [
-                    "Germany",
-                    "Fürsorgepflicht (BGB § 618)",
-                    "Fahrlässige Tötung (§ 222 StGB) / Fahrlässige Körperverletzung (§ 229 StGB)",
-                    "Federal Labor Court travel-time rulings; Middle East travel-refusal precedents",
-                  ],
-                ]}
-                testid="catch22-table-hammer"
-              />
-
-              <Callout icon={Hammer} label="What this means operationally" tone="warn">
-                The era of relying on generic travel insurance or automated
-                booking tools is over. Executives must conclusively prove
-                they used <em>bespoke intelligence</em> to protect the
-                specific, individualized vulnerabilities of their personnel
-                — or face the Hammer.
+              <Callout icon={Database} label="The Shadow HR problem" tone="danger">
+                That spreadsheet is the H&amp;M pattern, replicated at scale,
+                across a population three to four times larger than the
+                LGBTQ+ workforce I have spent two decades thinking about. It
+                is special-category data under GDPR Article 9. It carries up
+                to <span className="text-white">€20M or 4% of global turnover</span>{" "}
+                in penalties under Article 83. And in most multinationals it
+                is operating right now, undetected, in dozens of locations,
+                generated by managers trying to do the right thing under a
+                duty-of-care framework that gives them no architectural
+                alternative.
               </Callout>
             </BriefSection>
 
-            <BriefSection
-              id="anvil"
-              number="II"
-              title="The Anvil — Unlimited Corporate Financial Ruin"
-            >
+            <BriefSection id="pattern" number="II" title="The Pattern, Named">
               <p>
-                The European regulatory apparatus has weaponized civil and
-                administrative law so that failures in human-rights due
-                diligence, supply-chain management, and employee protection
-                produce catastrophic balance-sheet destruction. The
-                mechanisms are vigilance laws, supply-chain due-diligence
-                acts, and a continent-wide surge in class-action litigation.
-              </p>
-
-              <SubHeading>
-                The French <em>Loi de Vigilance</em> — Extraterritorial
-                Devastation
-              </SubHeading>
-              <p>
-                The French Corporate Duty of Vigilance Law (2017) targets
-                companies with ≥5,000 employees domestically (or ≥10,000
-                globally including subsidiaries). It mandates an annual{" "}
-                <span className="text-white">Vigilance Plan</span> that
-                identifies risks and establishes preventative measures
-                across direct activities, overseas subsidiaries,
-                subcontractors, and supply-chain partners.
+                The pattern is this. Modern duty-of-care frameworks —{" "}
+                <span className="text-white">ISO 31030</span> for travel risk,
+                CSDDD for corporate sustainability, LkSG before its repeal,
+                evolving employer liability under the Equality Act and
+                analogous European disability law — all demand that employers
+                protect marginalized employees from specific, bespoke,
+                identity-aware harms.
               </p>
               <p>
-                Failure to publish or implement triggers administrative fines
-                up to <span className="text-white">€10M</span>; if the
-                failure produces preventable damage, fines escalate to{" "}
-                <span className="text-white">€30M</span> — and these are
-                additive to <span className="text-white">unlimited civil
-                liability</span> under French tort law.
+                Modern data protection frameworks —{" "}
+                <span className="text-white">GDPR Article 9</span>, the EU AI
+                Act, sector-specific regulations on health and disability
+                data — all prohibit employers from centrally recording the
+                attributes that would let them deliver that protection.
               </p>
               <p>
-                The December 2023 ruling against{" "}
-                <span className="text-white">La Poste</span> — and the
-                landmark March 2026 ruling against{" "}
-                <span className="text-white">Yves Rocher</span> in the 34th
-                Chamber of the Paris Court of Justice — conclusively prove
-                that European parent companies cannot silo liability in
-                high-risk foreign jurisdictions. A failure to map the
-                individualized risks faced by personnel deployed abroad
-                travels directly upstream to corporate headquarters in Paris.
-              </p>
-
-              <SubHeading>
-                Germany's LkSG — Systemic Revenue Extraction
-              </SubHeading>
-              <p>
-                The <em>Lieferkettensorgfaltspflichtengesetz</em> (LkSG, in
-                force January 2023; expanded January 2024 to companies with
-                &gt;1,000 employees) imposes due-diligence obligations across
-                the entire operational footprint. Enforcement by BAFA is
-                designed to inflict maximum financial pain.
-              </p>
-              <p>
-                For corporations with global turnover &gt;€400M, BAFA can
-                impose fines up to{" "}
-                <span className="text-white">2% of global annual revenue</span>
-                . Any company fined &gt;€175,000 is excluded from German
-                public procurement for up to{" "}
-                <span className="text-white">three years</span>. Section 11
-                LkSG grants <em>besondere Prozessstandschaft</em> to NGOs
-                and trade unions, weaponizing the company's own mandatory
-                reporting against it through tort claims under BGB § 823.
-              </p>
-
-              <SubHeading>
-                The Surge in Class Actions and Settlements
-              </SubHeading>
-              <p>
-                Since 2010, EU-based multinationals have paid the equivalent
-                of <span className="text-white">$43B (≈€37B)</span> in
-                regulatory penalties and settlements in cases brought
-                outside the EU (Violation Tracker Global). The EU
-                Representative Actions Directive has accelerated class
-                actions across Member States. Recent UK class actions seek
-                in excess of <span className="text-white">€120B</span>{" "}
-                collectively, including a €41B claim related to the Mariana
-                dam disaster. The German Federal Supreme Court has removed
-                strict upper limits on nursing-care costs for severely
-                injured persons — driving future medical-reserve settlements
-                exponentially higher.
-              </p>
-
-              <ComparisonTable
-                caption="Corporate financial exposure vectors"
-                headers={[
-                  "Liability vector",
-                  "Enforcing statute / mechanism",
-                  "Maximum exposure",
-                ]}
-                rows={[
-                  [
-                    "Extraterritorial subsidiary liability",
-                    "French Loi de Vigilance",
-                    "€30M statutory fine + unlimited civil tort damages (Yves Rocher 2026)",
-                  ],
-                  [
-                    "Supply chain & occupational safety",
-                    "German LkSG",
-                    "2% of global annual turnover; 3-year ban from public procurement",
-                  ],
-                  [
-                    "Mass torts & negligence",
-                    "EU Representative Actions Directive / NGO litigation",
-                    "Open-ended class settlements (€41B Mariana dam claim; €37B total EU foreign penalties)",
-                  ],
-                ]}
-                testid="catch22-table-anvil"
-              />
-
-              <Callout icon={Skull} label="What this means commercially" tone="danger">
-                Failures of the duty of care are no longer quiet HR
-                dismissals — they are highly publicized, multi-million-euro
-                settlements executed under RAD-empowered class litigation,
-                overseen by aggressive regulatory bodies eager to extract
-                2% of global turnover.
-              </Callout>
-            </BriefSection>
-
-            <BriefSection
-              id="trap"
-              number="III"
-              title="The Trap — GDPR Article 9 as Accelerator"
-            >
-              <p>
-                The Hammer and the Anvil together establish a non-negotiable
-                operational mandate: enterprises must conduct deep, bespoke,
-                individualized risk assessments before deploying any
-                employee. ISO 31030:2021 codifies this duty.
-              </p>
-              <p>
-                But the moment a CSO, HR Director, or travel manager attempts
-                to comply with ISO 31030, they step directly into the legal
-                trap of <span className="text-white">GDPR Article 9</span>.
-              </p>
-
-              <SubHeading>The Legal Friction</SubHeading>
-              <p>
-                To accurately assess whether an employee is safe to travel
-                to specific jurisdictions, the enterprise must definitively
-                know whether that employee is LGBTQ+, has a hidden
-                travel-limiting disability, or requires accommodations for
-                a neurodivergent condition.
-              </p>
-              <p>
-                Under GDPR Article 9(1), processing of "special categories"
-                — racial or ethnic origin, political opinions, religious or
-                philosophical beliefs, genetic data, biometric data, health
-                data, and data concerning a person's sex life or sexual
-                orientation — is strictly prohibited. The very data ISO
-                31030 demands is the data the EU explicitly forbids
-                collecting.
-              </p>
-              <p>
-                Article 9(2) exceptions are practically useless for travel
-                risk:
-              </p>
-              <ul className="mt-2 space-y-3 pl-1 text-[15px] leading-relaxed text-slate-300">
-                <li className="flex items-start gap-3">
-                  <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
-                  <span>
-                    <span className="text-white">Explicit consent (9(2)(a))</span>
-                    {" "}— rarely "freely given" in employment contexts due
-                    to the inherent power imbalance.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
-                  <span>
-                    <span className="text-white">
-                      Employment law obligations (9(2)(b))
-                    </span>
-                    {" "}— preemptive travel-risk profiling fails the necessity
-                    and proportionality tests.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
-                  <span>
-                    <span className="text-white">Vital interests (9(2)(c))</span>
-                    {" "}— applies only in acute, life-or-death emergencies;
-                    no cover for routine pre-trip planning.
-                  </span>
-                </li>
-              </ul>
-              <p>
-                The CJEU's Lithuanian anti-corruption ruling extended Article
-                9 to data that{" "}
-                <span className="text-white">indirectly reveals</span>{" "}
-                special-category data through cross-referencing or
-                deduction. Logging a same-sex spouse as an emergency contact
-                or a specific medication accommodation is illegal processing
-                of sexual orientation and health data. Profiling an employee
-                to satisfy ISO 31030 automatically constitutes illegal
-                Article 9 processing under this reasoning.
-              </p>
-
-              <SubHeading>"Shadow HR" — The Inevitable Breach</SubHeading>
-              <p>
-                Trapped between protecting vulnerable employees and being
-                legally barred from recording their vulnerabilities in the
-                official HRIS, middle management resorts to{" "}
-                <span className="text-white">Shadow HR</span>: decentralized
-                spreadsheets tracking who is LGBTQ+, who needs psychiatric
-                medication, who must not be deployed to specific
-                jurisdictions.
-              </p>
-              <p>
-                This is now compounded by{" "}
-                <span className="text-white">Shadow AI</span>: a recent
-                SAP/WalkMe survey found{" "}
-                <span className="text-white">78%</span> of employees use
-                unapproved consumer-grade AI tools at work. Sensitive
-                health and demographic data routinely flows from shadow
-                spreadsheets into public LLMs.
-              </p>
-              <p>
-                Insider risks driven by negligence cost businesses an average
-                of <span className="text-white">$19.5M/year</span>. Shadow
-                data breaches take 26.2% longer to identify and 20.2% longer
-                to contain (~291 days), with average breach cost of $5.27M.
-                The regulatory wrath is worse: Article 9 violations trigger
-                the upper-tier penalty framework — fines up to{" "}
+                These two regimes were authored by different legislators,
+                operating on different timescales, optimising for different
+                harms. They are both correct, individually. They are
+                catastrophically incompatible, together. The result is what I
+                have come to call the{" "}
                 <span className="text-white">
-                  €20M or 4% of total worldwide annual turnover
+                  Catch-22 of enterprise duty-of-care
                 </span>
-                . Amazon Europe (€746M), Meta Ireland (€1.2B and €91M)
-                demonstrate this is not theoretical.
+                : you cannot discharge your protection obligation without the
+                data, and you cannot legally hold the data you need to
+                discharge your protection obligation.
               </p>
-
-              <Callout icon={ShieldAlert} label="The cornered enterprise" tone="danger">
-                <ul className="mt-1 space-y-2 text-sm text-slate-300">
-                  <li>
-                    <span className="text-white">Path A —</span> Ignore ISO
-                    31030: criminal Hammer + LkSG/Loi de Vigilance Anvil.
-                  </li>
-                  <li>
-                    <span className="text-white">Path B —</span> Officially
-                    store special-category data: documented Article 9
-                    violation, 4% global turnover.
-                  </li>
-                  <li>
-                    <span className="text-white">Path C —</span> Tolerate
-                    Shadow HR: untrackable breach, the same €20M+ regulatory
-                    execution, plus reputational damage and uninsurable
-                    losses.
-                  </li>
-                </ul>
-              </Callout>
+              <p>
+                The legacy travel-risk management industry — International
+                SOS, SAP Concur, Crisis24, Everbridge — solved this Catch-22
+                by ignoring half of it. They built stateful data brokers that
+                accumulated traveler attributes, ran centralised assessments,
+                and trusted that the regulatory environment around data
+                protection would not catch up. For a while, they were right.
+                The H&amp;M fine was the moment they stopped being right.
+                The Uber{" "}
+                <span className="text-white">€290 million</span> fine in
+                July 2024 was the regulator's signal that the enforcement
+                environment is now active. The{" "}
+                <span className="text-white">€355 million</span> cumulative
+                total in European employee-data fines, across{" "}
+                <span className="text-white">162 enforcement actions</span>{" "}
+                through March 2025, is the trend.
+              </p>
+              <p>
+                Shadow HR is what happens when the regulatory environment
+                hardens around an industry that was structurally incapable of
+                changing. Managers know they have a duty. They know they
+                cannot use the official systems. So they build unofficial
+                ones. And every spreadsheet, every network drive, every
+                well-intentioned ERG membership list is now a future €35
+                million fine waiting for the configuration error that exposes
+                it.
+              </p>
             </BriefSection>
 
             <BriefSection
-              id="market"
-              number="IV"
-              title="Market Scale & The Stateless Architecture Solution"
+              id="recognize"
+              number="III"
+              title="Why I Recognize the Pattern"
             >
               <p>
-                The requirement to manage demographic vulnerability during
-                travel is not a niche HR grievance — it is a systemic,
-                multi-billion-euro operational vulnerability affecting a
-                massive percentage of the modern corporate workforce.
-              </p>
-
-              <SubHeading>The Intersectional Risk Matrix</SubHeading>
-              <ComparisonTable
-                caption="Demographic risk vectors"
-                headers={[
-                  "Vector",
-                  "Market scale / exposure",
-                  "Critical liability statistic",
-                ]}
-                rows={[
-                  [
-                    "LGBTQ+ personnel",
-                    "61 nations criminalize identity; 14 criminalize trans expression",
-                    "55% of enterprise travel buyers ignore this demographic entirely; only 13% of travelers receive LGBTQ+ pre-travel info",
-                  ],
-                  [
-                    "Neurodivergent / disabled",
-                    "15–20% of global population; 18.6M US workers report travel-limiting disabilities",
-                    "49% experience negative travel events; only 15% of buyers consider neurodivergence",
-                  ],
-                  [
-                    "Female travelers",
-                    "≈50% of the global workforce",
-                    "67% deem international travel unsafe for women; only 16% receive specialized briefings",
-                  ],
-                ]}
-                testid="catch22-table-market"
-              />
-              <p>
-                With up to <span className="text-white">30%</span> of a
-                multinational's workforce potentially falling into one or
-                more special-data categories, manual management guarantees a
-                GDPR breach — while ignoring it guarantees an executive
-                manslaughter charge.
-              </p>
-
-              <SubHeading>Why Legacy "Data Lake" Architecture Fails</SubHeading>
-              <p>
-                Legacy HRIS and traditional enterprise AI orchestration
-                platforms are{" "}
-                <span className="text-white">stateful</span> by design —
-                built for retention, historical tracking, and persistent
-                context. A stateful AI assistant integrated with an HR data
-                lake to generate a travel risk assessment{" "}
-                <em>permanently logs the transaction</em>, creating an
-                indelible, auditable footprint of illegal Article 9
-                processing.
+                I spent 20 years in the United States Navy under{" "}
+                <span className="text-white">Don't Ask, Don't Tell</span>. For
+                18 of those years, my career could have ended at any moment
+                based on a rumour. Not a verified incident, not an admission,
+                not evidence — a rumour. The burden of proof ran the wrong
+                direction, and the policy was less about punishing conduct
+                than about punishing any signal of identity that the
+                institution decided to investigate.
               </p>
               <p>
-                It is technically impossible to achieve GDPR Article 9
-                compliance within a stateful environment while
-                simultaneously satisfying the personalized mandates of ISO
-                31030. The architecture conflates the action of protecting
-                the employee with the liability of storing their data.
+                During those two decades I led sailors and Marines into
+                hostile environments. I made operational decisions about their
+                safety in places where the local legal and cultural threat
+                landscape varied dramatically by who they were. I was
+                responsible for their lives. And I was operating, the entire
+                time, as a person whose own identity could not be formally
+                recorded inside the system that was demanding I protect
+                theirs.
               </p>
-
-              <SubHeading>The Stateless AI Resolution</SubHeading>
               <p>
-                The only mathematically sound resolution to the Catch-22 is{" "}
-                <span className="text-white">Stateless AI Architecture</span>{" "}
-                — a Zero Data Retention environment that treats every
-                interaction as an isolated, discrete event with absolutely
-                no memory of past inputs or user behavior.
+                This is what I have come to call the{" "}
+                <span className="text-white">dual surveillance problem</span>.
+                The institution surveils the people it expects you to
+                protect. The institution surveils you. The protection cannot
+                happen through the official data architecture, because the
+                official data architecture is also the threat. So you learn
+                to operate inside the gap. You learn to manage threat risk
+                for people whose attributes you cannot formally know, while
+                operating as a person whose attributes cannot be formally
+                known. You learn that the architecture of protection has to
+                be decoupled, fundamentally and structurally, from the
+                architecture of identification.
+              </p>
+              <p>
+                I have specific stories about what that taught me — about
+                colleagues processed out on false accusations, about Marines
+                I led under fire who never knew who their commander actually
+                was, about the architectural decisions that get made by
+                people who have lived inside the trap. I will share them
+                separately over the coming weeks, on LinkedIn, as standalone
+                posts. What matters here is what falls out of that
+                experience architecturally, when you finally get the chance
+                to build the system you wish had existed when you needed it.
+              </p>
+            </BriefSection>
+
+            <BriefSection
+              id="architecture"
+              number="IV"
+              title="The Architectural Answer"
+            >
+              <p>
+                The platform I am building at Third Rail Systems is called{" "}
+                <span className="text-white">ISI — Intersectional Safety
+                Intelligence</span>. It is built around three named modules,
+                each running an 8-agent adversarial debate across six
+                different LLM families to eliminate single-vendor training
+                bias on life-safety outputs.
               </p>
 
-              <div className="my-6 grid gap-4 sm:grid-cols-2">
+              <div className="my-6 grid gap-4 sm:grid-cols-3">
                 <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
-                  <Server className="h-4 w-4 text-cyan-400" />
+                  <Sparkles className="h-4 w-4 text-cyan-400" />
                   <div className="mt-3 text-sm font-semibold text-white">
-                    1. Algorithmic Isolation
+                    TRS-01 · Grandin
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    Operates entirely outside the legacy HRIS and central
-                    data lakes. Zero API integration with core personnel
-                    files — no cross-contamination, no systemic logging.
+                    Sensory environments — noise, light, crowd density,
+                    visual complexity — calculated as a Sensory Load Index
+                    for neurodivergent travelers. IBCCES Certified Autism
+                    Center data + Wheelmap accessibility validation.
+                  </p>
+                </div>
+                <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
+                  <Layers className="h-4 w-4 text-cyan-400" />
+                  <div className="mt-3 text-sm font-semibold text-white">
+                    TRS-02 · Heumann
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-400">
+                    Physical accessibility infrastructure beyond
+                    checklist-level — ramps, elevators, restrooms, transit
+                    access, surface conditions — using Wheelmap user data and
+                    GTFS wheelchair-boarding parsing.
                   </p>
                 </div>
                 <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
                   <Globe className="h-4 w-4 text-cyan-400" />
                   <div className="mt-3 text-sm font-semibold text-white">
-                    2. Sovereign Legal Synthesis
+                    TRS-03 · Crenshaw
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    Trained exclusively on real-time sovereign legal and
-                    geopolitical data — UAE penal codes, Indonesian
-                    medication regulations, French accessibility
-                    infrastructure, regional union-activity criminalization.
-                  </p>
-                </div>
-                <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
-                  <Lock className="h-4 w-4 text-cyan-400" />
-                  <div className="mt-3 text-sm font-semibold text-white">
-                    3. Ephemeral Processing
-                  </div>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    The traveler interfaces voluntarily and anonymously.
-                    The AI synthesizes sovereign threat data against
-                    transient inputs in an isolated session-scoped context.
-                  </p>
-                </div>
-                <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
-                  <FileText className="h-4 w-4 text-cyan-400" />
-                  <div className="mt-3 text-sm font-semibold text-white">
-                    4. Dossier + Instant Purge
-                  </div>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    A bespoke Inclusion Safety Dossier is delivered. The
-                    millisecond it is delivered, an automated context-clear
-                    protocol permanently and irreversibly destroys session
-                    memory, inputs, and outputs. Nothing is written to disk,
-                    backed up, or retained.
+                    Seven intersectional dimensions: LGBTQ+ legal status,
+                    trans-specific safety, women's gender safety, racialisation
+                    and policing, diplomatic ground truth, municipal LGBTQ+
+                    protections, and xenophobia indicators.
                   </p>
                 </div>
               </div>
 
-              <Callout icon={Gavel} label="The dual compliance posture">
-                Stateless architecture rigorously fulfils ISO 31030, French{" "}
-                <em>faute inexcusable</em>, and German{" "}
-                <em>Fürsorgepflicht</em> — shielding executives from the
-                Hammer. Because the system possesses zero persistent memory
-                and never records special-category data, it remains fully
-                compliant with the absolute prohibitions of GDPR Article 9 —
-                eliminating the €20M / 4% Anvil and neutralizing the Shadow
-                HR Trap.
-              </Callout>
-            </BriefSection>
-
-            <BriefSection id="next" number="V" title="The Pilot">
               <p>
-                For enterprise leadership and the capital markets that fund
-                them, the conclusion is absolute: the legal friction between
-                duty of care and data privacy is an existential threat to
-                modern multinational operations. Capital allocation and
-                procurement must urgently pivot away from legacy HR data
-                lakes and invest decisively in stateless AI architectures.
+                The first module is named for{" "}
+                <span className="text-white">Temple Grandin</span>. It exists
+                because the first instance of the Shadow HR problem I built
+                this platform to solve is the neurodivergent workforce, and
+                because Temple Grandin spent her career proving that the
+                right environmental architecture makes invisible disabilities
+                visible without requiring the person carrying them to
+                disclose anything.
               </p>
               <p>
-                Third Rail Systems OÜ runs paid, time-boxed enterprise pilots
-                — typically 4 to 6 weeks — that require{" "}
+                The second module is named for{" "}
+                <span className="text-white">Judith Heumann</span>. It exists
+                because Judith Heumann taught a generation of disability
+                rights advocates that accessibility is not a feature, it is a
+                precondition, and that the institutions which fail to deliver
+                it are failing a much larger population than they realise.
+              </p>
+              <p>
+                The third module is named for{" "}
+                <span className="text-white">Kimberlé Crenshaw</span>. It
+                exists because Kimberlé Crenshaw named the problem of
+                intersectionality in 1989, and the legacy travel-risk industry
+                still does not understand that a Black trans woman in a
+                hostile jurisdiction is not facing the sum of two risks but
+                the multiplication of several.
+              </p>
+              <p>
+                Beneath all three modules sits a sovereign data layer with
+                primary-source provenance — ILGA Rainbow Map, TGEU Trans
+                Rights Index and Trans Murder Monitoring, US State Department
+                / UK FCDO / Canada GAC diplomatic triangulation, UN Universal
+                Periodic Review, ENAR Shadow Reports, EU FRA harassment
+                surveys, HRC Municipal Equality Index, OSAC city reports,
+                SafetiPin street audits, IBCCES autism certifications,
+                Wheelmap accessibility validation. Every datum is traced to a
+                primary source with a year. No crowdsourced opinions. No
+                training-data stereotypes.{" "}
                 <span className="text-white">
-                  zero API integration with your HRIS
+                  Thirty countries and thirty cities operational as of May
+                  2026
                 </span>
-                . The pilot produces a signed architecture fit-assessment, a
-                sample Inclusion Safety Dossier for a live destination, and
-                a compliance binder your DPO can actually file.
+                , with full structured ETL coverage.
+              </p>
+
+              <Callout icon={Network} label="The architectural insight">
+                At no point does the platform receive, store, or transmit the
+                traveler's identity attributes. The traveler profile lives on
+                the edge device, behind biometric authentication. The
+                platform uses{" "}
+                <span className="text-white">IETF RFC 9458 Oblivious HTTP</span>{" "}
+                to separate IP and SSO authentication from the demographic
+                payload at the network layer. The assessment runs against
+                destination-side data only. The audit log, retained for EU
+                AI Act and ISO 31030 compliance, captures the assessment
+                outputs and the agent debate trail — never the demographic
+                inputs.
+              </Callout>
+
+              <p>
+                You cannot violate Article 9 of GDPR if you never receive
+                Article 9 data. You cannot expose what you do not retain. The
+                Catch-22 is not solved by clever policy. It is solved by an
+                architectural decision to refuse the data in the first place,
+                while still delivering the safety analysis the duty-of-care
+                framework demands.
+              </p>
+            </BriefSection>
+
+            <BriefSection
+              id="trend"
+              number="V"
+              title="The Trend That Makes This Inevitable"
+            >
+              <p>
+                The Human Rights Campaign's{" "}
+                <span className="text-white">2026 Corporate Equality Index</span>{" "}
+                documented that <span className="text-white">47.5%</span> of
+                LGBTQ+ adults are less out in at least one area of their lives
+                than they were 12 months ago. The neurodivergent disclosure
+                numbers cited earlier in this piece show the same pattern at
+                greater magnitude. Across every marginalized cohort I have
+                data on, voluntary disclosure to employers is collapsing.
+              </p>
+              <p>
+                This is structurally fatal for the legacy travel-risk
+                management industry. Every centralised-register approach to
+                duty-of-care depends on the employee voluntarily telling the
+                employer what they are. As that disclosure collapses, the
+                centralised models become incapable of delivering the
+                protection their entire business case is built on. The pattern
+                is the same one we saw in CRM, in identity management, in
+                analytics —{" "}
+                <span className="text-white">
+                  privacy-by-design architectures eventually displace
+                  centralised-state architectures
+                </span>
+                , because the centralised-state architectures cannot survive
+                contact with their own operating environment.
+              </p>
+              <p>
+                The companies that will be standing at the end of this decade
+                are the ones that figured out how to discharge duty-of-care
+                without requiring the disclosure. Stateless synthesis is not
+                an aesthetic preference. It is the only architectural pattern
+                that survives a contracting-disclosure environment, an
+                actively-enforcing regulatory environment, and an insurance
+                underwriting cycle that is starting to demand documented ISO
+                31030 alignment as a condition of competitive D&amp;O renewal.
+              </p>
+            </BriefSection>
+
+            <BriefSection id="ask" number="VI" title="What I'm Asking">
+              <p>
+                I am the founder of{" "}
+                <span className="text-white">Third Rail Systems OÜ</span>,
+                headquartered in Tallinn, Estonia. We have shipped the
+                platform described above.{" "}
+                <span className="text-white">
+                  KTH Royal Institute of Technology
+                </span>{" "}
+                in Stockholm validated it at Innovation Readiness Level 4.{" "}
+                <span className="text-white">Dr. Sidra Azmat Butt</span> at
+                TalTech provides scientific oversight on EU AI Act compliance.
+                We are pre-seed, raising{" "}
+                <span className="text-white">€400,000 on a SAFE</span>, with a
+                Tehnopol DeepTech accelerator grant track in parallel.
+              </p>
+              <p>
+                I am not writing this piece to pitch the platform. I am
+                writing it because I have spent six months in conversations
+                with CISOs, DPOs, and CHROs at multinational employers, and I
+                have not yet met one who, on hearing the H&amp;M case
+                described in detail, did not recognise their own organisation
+                in it. The Shadow HR problem is hiding in plain sight inside
+                virtually every multinational with a diverse workforce. The
+                architectural answer exists. Most of the industry has not yet
+                figured out that it does.
+              </p>
+              <p>
+                If you are a security or privacy officer at a multinational
+                with a marginalized-cohort workforce, and you have ever
+                wondered whether your duty-of-care infrastructure could
+                survive a Hamburg DPA inspection — I would like to talk to
+                you. The conversation is not a sales pitch. It is an
+                architectural diagnostic. If the architecture I have described
+                maps to a problem you recognise, we should talk about whether
+                it maps to a solution you can deploy.
               </p>
 
               <div className="mt-10 flex flex-col items-start gap-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-6 sm:flex-row sm:items-center sm:justify-between">
@@ -1039,7 +780,7 @@ export default function CatchTwentyTwo() {
                     Next step
                   </div>
                   <div className="mt-1 text-sm text-slate-100 sm:text-base">
-                    20-minute architecture fit-call. No HRIS integration
+                    20-minute architecture diagnostic. No HRIS integration
                     required.
                   </div>
                 </div>
@@ -1068,6 +809,23 @@ export default function CatchTwentyTwo() {
                     Request Pilot Assessment
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
+                </div>
+              </div>
+
+              {/* Sign-off */}
+              <div className="mt-10 rounded-lg border border-slate-800 bg-slate-900/60 p-6">
+                <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                  Signed
+                </div>
+                <div className="mt-2 text-base font-semibold text-white">
+                  Levi Hankins
+                </div>
+                <div className="mt-1 text-sm text-slate-400">
+                  Founder, Third Rail Systems OÜ · Tallinn, Estonia ·{" "}
+                  Twenty years U.S. Navy
+                </div>
+                <div className="mt-2 text-sm italic text-slate-500">
+                  Building the platform I wish had existed when I needed it.
                 </div>
               </div>
 
@@ -1120,9 +878,34 @@ export default function CatchTwentyTwo() {
                   </div>
                 </div>
               </div>
+            </BriefSection>
+
+            <BriefSection
+              id="sources"
+              number="—"
+              title="Sources & Citations"
+            >
+              <ul className="space-y-3 pl-1 text-sm leading-relaxed text-slate-400">
+                {[
+                  "Hamburg Commissioner for Data Protection and Freedom of Information, press release, 1 October 2020 (H&M Hennes & Mauritz Online Shop AB & Co. KG fine).",
+                  "Autoriteit Persoonsgegevens (Dutch Data Protection Authority), Uber fine announcement, July 2024.",
+                  "CMS GDPR Enforcement Tracker Report 2025, Employment / Employee Data category.",
+                  "CIPD Neuroinclusion at Work Report, February 2024.",
+                  "City & Guilds Foundation Neurodiversity Index, 2023–2026 editions.",
+                  "Understood.org / Harris Poll Neurodiversity at Work Survey, May 2025.",
+                  "Human Rights Campaign Foundation Corporate Equality Index 2026 and \"One Year In\" report.",
+                  "CSDDD (Corporate Sustainability Due Diligence Directive), Official Journal of the European Union, 5 July 2024; Omnibus I amendments 24 February 2026.",
+                  "GDPR Article 9 and Article 83, Regulation (EU) 2016/679.",
+                ].map((cite) => (
+                  <li key={cite} className="flex items-start gap-3">
+                    <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
+                    <span>{cite}</span>
+                  </li>
+                ))}
+              </ul>
 
               <p className="mt-10 mono text-xs uppercase tracking-[0.2em] text-slate-500">
-                <Globe className="mr-2 inline h-3 w-3 text-cyan-400" />
+                <Scale className="mr-2 inline h-3 w-3 text-cyan-400" />
                 Third Rail Systems OÜ · Tallinn, Estonia · EU-Native
               </p>
             </BriefSection>
