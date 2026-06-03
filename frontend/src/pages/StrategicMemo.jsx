@@ -26,6 +26,7 @@ import {
   LINKEDIN_ARTICLE_URL,
   LEVI_LINKEDIN_URL,
   linkedinShareUrl,
+  openExternal,
 } from "@/components/landing/shared";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
@@ -173,8 +174,14 @@ export default function StrategicMemo() {
     track("memo_share_click");
     // Share the published LinkedIn article — boosts the author's post and
     // keeps reshares concentrated rather than scattered across mirrors.
+    // window.open from inside a synchronous click handler is allowed by
+    // browsers even when target="_blank" would be sandbox-collapsed.
     const shareUrl = linkedinShareUrl(LINKEDIN_ARTICLE_URL);
-    window.open(shareUrl, "_blank", "noopener,noreferrer");
+    try {
+      window.open(shareUrl, "_blank", "noopener,noreferrer");
+    } catch (_) {
+      window.location.assign(shareUrl);
+    }
     track("memo_share_success", { channel: "linkedin" });
   };
 
@@ -343,6 +350,7 @@ export default function StrategicMemo() {
                   href={LEVI_LINKEDIN_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={openExternal(LEVI_LINKEDIN_URL)}
                   className="inline-flex items-center gap-1.5 text-white underline decoration-cyan-500/40 underline-offset-4 hover:decoration-cyan-400"
                   data-testid="memo-levi-linkedin"
                 >

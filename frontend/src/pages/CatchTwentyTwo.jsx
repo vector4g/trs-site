@@ -28,6 +28,7 @@ import {
   CATCH22_READ_STORAGE_KEY,
   LINKEDIN_ARTICLE_URL,
   linkedinShareUrl,
+  openExternal,
 } from "@/components/landing/shared";
 import {
   BriefSection,
@@ -168,7 +169,11 @@ export default function CatchTwentyTwo() {
   const handleShare = async () => {
     track("brief_share_click", { brief: "catch-22" });
     const shareUrl = linkedinShareUrl(LINKEDIN_ARTICLE_URL);
-    window.open(shareUrl, "_blank", "noopener,noreferrer");
+    try {
+      window.open(shareUrl, "_blank", "noopener,noreferrer");
+    } catch (_) {
+      window.location.assign(shareUrl);
+    }
     track("brief_share_success", { brief: "catch-22", channel: "linkedin" });
   };
 
@@ -256,12 +261,13 @@ export default function CatchTwentyTwo() {
             href={LINKEDIN_ARTICLE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() =>
+            onClick={(e) => {
               track("brief_linkedin_click", {
                 brief: "catch-22",
                 location: "hero",
-              })
-            }
+              });
+              openExternal(LINKEDIN_ARTICLE_URL)(e);
+            }}
             className="mono mt-5 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-cyan-300 transition-colors hover:border-cyan-400/60 hover:bg-cyan-500/15 hover:text-cyan-200"
             data-testid="catch22-linkedin-badge"
           >
@@ -1005,12 +1011,13 @@ export default function CatchTwentyTwo() {
                     href={LINKEDIN_ARTICLE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() =>
+                    onClick={(e) => {
                       track("brief_linkedin_click", {
                         brief: "catch-22",
                         location: "bottom",
-                      })
-                    }
+                      });
+                      openExternal(LINKEDIN_ARTICLE_URL)(e);
+                    }}
                     className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-700 bg-slate-950/60 px-4 text-sm text-slate-100 transition-colors hover:border-cyan-500/40 hover:bg-slate-800 hover:text-white"
                     data-testid="catch22-linkedin-button"
                   >

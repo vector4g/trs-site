@@ -1,5 +1,5 @@
 import { ShieldCheck, FileCheck2, ExternalLink } from "lucide-react";
-import { SectionHeader } from "./shared";
+import { SectionHeader, openExternal } from "./shared";
 
 const KTH_REPORT_URL =
   "https://customer-assets.emergentagent.com/job_eu-travel-risk/artifacts/d4unbyo0_KTH%20IRL%20Evidence%20Report%20Third%20Rail%20Systems.docx";
@@ -171,6 +171,7 @@ export default function ValidationSection() {
                   href={KTH_REPORT_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={openExternal(KTH_REPORT_URL)}
                   className="mt-5 inline-flex items-center gap-2 rounded-md border border-slate-700 bg-slate-950 px-4 py-2 text-sm text-slate-100 transition-colors hover:border-cyan-500/50 hover:text-cyan-300"
                   data-testid="irl-download-report"
                 >

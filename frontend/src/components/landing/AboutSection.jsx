@@ -1,6 +1,11 @@
 import { MapPin, Globe, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SectionHeader, LEVI_LINKEDIN_URL, LINKEDIN_ARTICLES } from "./shared";
+import {
+  SectionHeader,
+  LEVI_LINKEDIN_URL,
+  LINKEDIN_ARTICLES,
+  openExternal,
+} from "./shared";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
   return (
@@ -102,6 +107,7 @@ export default function AboutSection() {
                         href={member.linkedinUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={openExternal(member.linkedinUrl)}
                         className="text-slate-500 transition-colors hover:text-cyan-400"
                         aria-label={`${member.name} on LinkedIn`}
                         data-testid={member.linkedinTestid}
@@ -174,6 +180,7 @@ export default function AboutSection() {
                   href={LEVI_LINKEDIN_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={openExternal(LEVI_LINKEDIN_URL)}
                   className="mono hidden shrink-0 items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-slate-400 transition-colors hover:text-cyan-400 sm:inline-flex"
                   data-testid="recent-writing-follow"
                   aria-label="Follow Levi Hankins on LinkedIn"
@@ -190,6 +197,7 @@ export default function AboutSection() {
                       href={article.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={openExternal(article.url)}
                       className="group flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-5"
                       data-testid={article.testid}
                     >

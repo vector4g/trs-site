@@ -1,6 +1,6 @@
 import { Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LEVI_LINKEDIN_URL } from "./shared";
+import { LEVI_LINKEDIN_URL, openExternal } from "./shared";
 import LogoMark from "./LogoMark";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
@@ -65,6 +65,7 @@ export default function Footer() {
             href={LEVI_LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={openExternal(LEVI_LINKEDIN_URL)}
             className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1.5 transition-colors hover:border-cyan-500/40 hover:bg-slate-900"
             data-testid="footer-founder-updates"
           >

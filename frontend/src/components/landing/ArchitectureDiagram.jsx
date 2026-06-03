@@ -1,5 +1,5 @@
 import { Download, FileBadge, Layers, ArrowDown } from "lucide-react";
-import { SectionHeader } from "./shared";
+import { SectionHeader, openExternal } from "./shared";
 
 const ISI_DIAGRAM_URL =
   "https://customer-assets.emergentagent.com/job_eu-travel-risk/artifacts/6113hgwr_ISI%20Architecture%20Diagram.pdf";
@@ -167,6 +167,7 @@ export default function ArchitectureDiagram() {
               href={ISI_DIAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={openExternal(ISI_DIAGRAM_URL)}
               className="inline-flex items-center gap-2 rounded-md border border-slate-700 bg-slate-900 px-4 py-2 text-sm text-slate-100 transition-colors hover:border-cyan-500/50 hover:text-cyan-300"
               data-testid="isi-download-pdf"
             >

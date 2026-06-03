@@ -43,6 +43,36 @@ export const LINKEDIN_ARTICLES = [
 export const linkedinShareUrl = (url) =>
   `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
 
+/**
+ * Defensive outbound-link handler.
+ *
+ * Inside an iframe (e.g., the Emergent preview), browsers commonly collapse
+ * `target="_blank"` into a same-iframe navigation because the parent iframe's
+ * sandbox attribute does not include `allow-popups`. LinkedIn (and many other
+ * SaaS surfaces) refuses to be framed via `X-Frame-Options: SAMEORIGIN`, so
+ * the click 502s with `ERR_BLOCKED_BY_RESPONSE`.
+ *
+ * This handler explicitly calls `window.open(...)` during a synchronous user
+ * gesture only when we detect we're inside an iframe — that bypasses the
+ * sandbox collapse. In the normal (non-iframe) production case it falls
+ * through to the native `target="_blank"` behaviour.
+ *
+ * Usage:
+ *   <a href={url} target="_blank" rel="noopener noreferrer" onClick={openExternal(url)}>
+ */
+export const openExternal = (url) => (e) => {
+  try {
+    if (typeof window !== "undefined" && window.self !== window.top) {
+      e.preventDefault();
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  } catch (_) {
+    // window.top access can throw on cross-origin iframes; if so, force-open.
+    e.preventDefault();
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+};
+
 export const NAV_LINKS = [
   { id: "platform", label: "Platform" },
   { id: "architecture", label: "Architecture" },

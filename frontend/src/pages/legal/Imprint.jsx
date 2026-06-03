@@ -3,6 +3,9 @@ import LegalLayout, {
   P,
   Definition,
 } from "@/components/legal/LegalLayout";
+import { openExternal } from "@/components/landing/shared";
+
+const ODR_URL = "https://ec.europa.eu/consumers/odr";
 
 export default function Imprint() {
   return (
@@ -100,10 +103,11 @@ export default function Imprint() {
         The European Commission's online dispute-resolution platform is
         available at{" "}
         <a
-          href="https://ec.europa.eu/consumers/odr"
+          href={ODR_URL}
           className="text-cyan-400 hover:text-cyan-300"
           target="_blank"
           rel="noreferrer"
+          onClick={openExternal(ODR_URL)}
         >
           ec.europa.eu/consumers/odr
         </a>
