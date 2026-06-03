@@ -211,6 +211,55 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
               </div>
             </div>
 
+            {/* Diagnostic qualifiers — only shown for /diagnostic intake leads.
+              * Lets Levi see org-scale + workforce + current-vendor without
+              * leaving the dialog to consult the row. */}
+            {lead?.request_type === "diagnostic" && (
+              <div
+                className="rounded-lg border border-fuchsia-500/20 bg-fuchsia-500/5 p-4"
+                data-testid="briefing-diagnostic-qualifiers"
+              >
+                <div className="mono text-[10px] uppercase tracking-[0.22em] text-fuchsia-200">
+                  Diagnostic qualifiers
+                </div>
+                <dl className="mt-3 grid grid-cols-1 gap-2 text-[13px] sm:grid-cols-2">
+                  <div>
+                    <dt className="mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
+                      Org scale
+                    </dt>
+                    <dd
+                      className="mt-0.5 text-slate-100"
+                      data-testid="briefing-qualifier-orgscale"
+                    >
+                      {lead.org_scale_band || "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
+                      Workforce
+                    </dt>
+                    <dd
+                      className="mt-0.5 text-slate-100"
+                      data-testid="briefing-qualifier-workforce"
+                    >
+                      {lead.workforce_composition || "—"}
+                    </dd>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <dt className="mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
+                      Current vendor
+                    </dt>
+                    <dd
+                      className="mt-0.5 text-slate-100"
+                      data-testid="briefing-qualifier-vendor"
+                    >
+                      {lead.current_vendor || "—"}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            )}
+
             {/* Overrides */}
             <div className="space-y-3">
               <div>

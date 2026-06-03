@@ -249,6 +249,31 @@ code {
     }
 }
 
+/* ---- Section-header cyan-line motif ---------------------------------------
+ * Decorative horizontal line that scales from 0→1 when a parent `.reveal`
+ * gains `.is-visible`. Pure CSS — no per-component JS state. Used inside the
+ * numbered headers of /catch-22 and /memo for a synchronised entrance with
+ * the section copy. */
+.trs-section-line {
+    display: inline-block;
+    height: 1px;
+    width: 56px;
+    background: linear-gradient(90deg, rgba(0,229,255,0.95) 0%, rgba(0,229,255,0.1) 100%);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1) 80ms;
+    vertical-align: middle;
+}
+.reveal.is-visible .trs-section-line {
+    transform: scaleX(1);
+}
+@media (prefers-reduced-motion: reduce) {
+    .trs-section-line {
+        transition: none;
+        transform: scaleX(1);
+    }
+}
+
 /* ---- Print mode (?print=1 on /catch-22) ----
  * Strips chrome that doesn't belong in the printable brief and forces a
  * solid-white page so multi-page renders don't fall off the bottom into a

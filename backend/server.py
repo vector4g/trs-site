@@ -8,10 +8,7 @@ import asyncio
 import base64
 import logging
 import re
-import time
-from collections import deque
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
@@ -20,10 +17,74 @@ import resend
 from brandfetch import domain_from_email, fetch_brand
 from briefing import generate_briefing_pdf
 from public_brief import render_public_brief_pdf
+from models import (
+    StatusCheck,
+    StatusCheckCreate,
+    PilotRequestCreate,
+    PilotRequest,
+    BriefingGenerateRequest,
+    BriefingPreview,
+)
+from rate_limit import (
+    check_pilot_rate as _rate_limit_check,
+    check_brief_pdf_rate as _brief_pdf_rate_check,
+    get_client_ip as _client_ip,
+)
 
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+
+# --- Diagnostic qualifier allowlists --------------------------------------------
+# Mirror the labels in /app/frontend/src/pages/DiagnosticIntake.jsx. The frontend
+# only ever submits these exact strings — anything else is either a stale UI or a
+# tampered request and must be silently dropped, NOT echoed into emails.
+ORG_SCALE_ALLOWLIST = frozenset({
+    "Under 1,000 employees",
+    "1,000 – 5,000 employees",
+    "5,000 – 25,000 employees",
+    "25,000 – 100,000 employees",
+    "100,000+ employees",
+})
+WORKFORCE_ALLOWLIST = frozenset({
+    "EU / EEA only",
+    "EU + UK",
+    "Global with major EU footprint",
+    "Global with minor EU footprint",
+})
+CURRENT_VENDOR_ALLOWLIST = frozenset({
+    "No travel-risk vendor",
+    "International SOS",
+    "WTW / Crisis24",
+    "Control Risks",
+    "Anvil / GardaWorld",
+    "In-house / internal",
+    "Other (note in reply)",
+})
+
+
+def _sanitize_qualifier(value: Optional[str], allowlist: frozenset) -> Optional[str]:
+    """Return the value only if it's an exact match for an allowlisted label.
+    Free-text bypasses are silently dropped so they never reach Resend or Mongo.
+    """
+    if not value:
+        return None
+    v = value.strip()
+    return v if v in allowlist else None
+
+
+# Strip CR/LF and surrounding whitespace from anything that lands in an email
+# subject line. Prevents header-injection via name/role/email.
+_HEADER_STRIP_RE = re.compile(r"[\r\n\t]+")
+
+
+def _strip_for_header(value: str) -> str:
+    if not value:
+        return ""
+    return _HEADER_STRIP_RE.sub(" ", value).strip()[:200]
+
+
 
 # Configure logging first so helpers below can use `logger`.
 logging.basicConfig(
@@ -53,151 +114,6 @@ app = FastAPI(title="Third Rail Systems OÜ API")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
-
-
-# ---- Existing status models ----
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-
-# ---- Pilot Request models ----
-class PilotRequestCreate(BaseModel):
-    first_name: str = Field(..., min_length=1, max_length=80)
-    last_name: str = Field(..., min_length=1, max_length=80)
-    corporate_email: EmailStr
-    role: str = Field(..., min_length=1, max_length=80)
-    # Honeypot: genuine users leave this blank. Bots that fill every field
-    # will populate it. Named innocuously so scrapers don't skip it.
-    company_website: Optional[str] = Field(default="", max_length=200)
-    # Client-side time-to-submit in milliseconds. Humans rarely submit in <1.5s.
-    submission_ms: Optional[int] = Field(default=None, ge=0, le=60 * 60 * 1000)
-    # Whether the user completed reading /memo before submitting (tracked in
-    # localStorage when `memo_read_completed` fires). Helps qualify leads.
-    memo_read: Optional[bool] = Field(default=False)
-    # Whether the user completed reading the long-form Catch-22 brief.
-    catch22_read: Optional[bool] = Field(default=False)
-    # Intake variant. "pilot" = generic landing CTA. "diagnostic" = the
-    # qualified Catch-22 brief CTA; carries the three qualifier fields below.
-    request_type: Optional[str] = Field(default="pilot", pattern="^(pilot|diagnostic)$")
-    # Diagnostic-only qualifier fields. All optional so the generic pilot
-    # intake never has to send them. Free-text capped to keep storage tidy.
-    org_scale_band: Optional[str] = Field(default=None, max_length=80)
-    workforce_composition: Optional[str] = Field(default=None, max_length=80)
-    current_vendor: Optional[str] = Field(default=None, max_length=200)
-
-
-class PilotRequest(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    first_name: str
-    last_name: str
-    corporate_email: EmailStr
-    role: str
-    email_status: str = "queued"  # queued | sent | stubbed | failed | rejected
-    email_error: Optional[str] = None
-    memo_read: bool = False
-    catch22_read: bool = False
-    request_type: str = "pilot"  # pilot | diagnostic
-    org_scale_band: Optional[str] = None
-    workforce_composition: Optional[str] = None
-    current_vendor: Optional[str] = None
-    submitted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-
-class BriefingGenerateRequest(BaseModel):
-    pilot_request_id: str
-    variant: str = Field(default="exec", pattern="^(exec|full)$")
-    prospect_company_override: Optional[str] = Field(default=None, max_length=200)
-    prospect_logo_url_override: Optional[str] = Field(default=None, max_length=1000)
-
-
-class BriefingPreview(BaseModel):
-    lead_name: str
-    lead_email: EmailStr
-    inferred_company: Optional[str] = None
-    inferred_logo_url: Optional[str] = None
-    domain: Optional[str] = None
-
-
-# ---- Sliding-window rate limiter (per-IP) ----
-# Backed by Redis when REDIS_URL is set; falls back to in-memory deque so the
-# limiter still works in dev/test environments without Redis.
-RATE_LIMIT_MAX = 5
-RATE_LIMIT_WINDOW_S = 15 * 60
-_rate_buckets: dict[str, deque] = {}
-
-REDIS_URL = os.environ.get('REDIS_URL', '').strip()
-_redis_client = None
-if REDIS_URL:
-    try:
-        import redis as _redis_lib
-        _redis_client = _redis_lib.Redis.from_url(
-            REDIS_URL, socket_timeout=0.5, socket_connect_timeout=0.5,
-            decode_responses=False,
-        )
-        # Verify connectivity at startup; logs once.
-        _redis_client.ping()
-        logger.info("Rate limiter: Redis backend at %s", REDIS_URL)
-    except Exception as exc:  # noqa: BLE001
-        logger.warning("Rate limiter: Redis unavailable (%s) — falling back to in-memory", exc)
-        _redis_client = None
-
-
-def _rate_limit_check(ip: str) -> tuple[bool, int]:
-    """Return (allowed, retry_after_seconds).
-
-    Redis path uses an atomic ZSET sliding-window pipeline; falls back to an
-    in-process deque when Redis is unreachable.
-    """
-    now = time.time()
-    if _redis_client is not None:
-        key = f"rl:pilot:{ip}"
-        cutoff = now - RATE_LIMIT_WINDOW_S
-        try:
-            pipe = _redis_client.pipeline()
-            pipe.zremrangebyscore(key, 0, cutoff)
-            pipe.zcard(key)
-            pipe.zrange(key, 0, 0, withscores=True)
-            _, count, oldest = pipe.execute()
-            if count >= RATE_LIMIT_MAX:
-                first_score = oldest[0][1] if oldest else now
-                retry_after = int(RATE_LIMIT_WINDOW_S - (now - first_score)) + 1
-                return False, max(retry_after, 1)
-            # Record this submission with a unique member so duplicate
-            # timestamps within the same second don't collapse.
-            member = f"{now}:{uuid.uuid4().hex[:8]}".encode()
-            add_pipe = _redis_client.pipeline()
-            add_pipe.zadd(key, {member: now})
-            add_pipe.expire(key, RATE_LIMIT_WINDOW_S + 60)
-            add_pipe.execute()
-            return True, 0
-        except Exception as exc:  # noqa: BLE001
-            logger.warning("Redis rate-limit failure (%s) — falling back to in-memory", exc)
-            # fall through to in-memory below
-
-    bucket = _rate_buckets.setdefault(ip, deque())
-    # Drop expired entries
-    while bucket and now - bucket[0] > RATE_LIMIT_WINDOW_S:
-        bucket.popleft()
-    if len(bucket) >= RATE_LIMIT_MAX:
-        retry_after = int(RATE_LIMIT_WINDOW_S - (now - bucket[0])) + 1
-        return False, max(retry_after, 1)
-    bucket.append(now)
-    return True, 0
-
-
-def _client_ip(request: Request) -> str:
-    # Honour the common proxy headers first, then fall back to the direct peer.
-    fwd = request.headers.get("x-forwarded-for") or request.headers.get("x-real-ip")
-    if fwd:
-        return fwd.split(",")[0].strip()
-    return request.client.host if request.client else "unknown"
 
 
 def require_admin(x_admin_token: Optional[str] = Header(default=None)) -> str:
@@ -296,11 +212,15 @@ async def _send_notification(req: PilotRequest) -> tuple[str, Optional[str]]:
         return ("failed", "No recipient configured")
 
     subject_prefix = "[Third Rail] Diagnostic request" if req.request_type == "diagnostic" else "[Third Rail] Pilot request"
+    # Resend headers must be CR/LF-free. Strip and cap before splicing user input.
+    safe_first = _strip_for_header(req.first_name)
+    safe_last = _strip_for_header(req.last_name)
+    safe_role = _strip_for_header(req.role)
     params = {
         "from": SENDER_EMAIL,
         "to": [recipient],
         "reply_to": req.corporate_email,
-        "subject": f"{subject_prefix} — {req.first_name} {req.last_name} ({req.role})",
+        "subject": f"{subject_prefix} — {safe_first} {safe_last} ({safe_role})",
         "html": _build_notification_html(req),
     }
     try:
@@ -505,9 +425,9 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
         memo_read=bool(payload.memo_read),
         catch22_read=bool(payload.catch22_read),
         request_type=payload.request_type or "pilot",
-        org_scale_band=(payload.org_scale_band or "").strip() or None,
-        workforce_composition=(payload.workforce_composition or "").strip() or None,
-        current_vendor=(payload.current_vendor or "").strip() or None,
+        org_scale_band=_sanitize_qualifier(payload.org_scale_band, ORG_SCALE_ALLOWLIST),
+        workforce_composition=_sanitize_qualifier(payload.workforce_composition, WORKFORCE_ALLOWLIST),
+        current_vendor=_sanitize_qualifier(payload.current_vendor, CURRENT_VENDOR_ALLOWLIST),
     )
 
     status, err = await _send_notification(req)
@@ -547,45 +467,6 @@ async def list_pilot_requests(limit: int = 100, _admin: str = Depends(require_ad
 
 # ---- Public brief PDF (Shadow HR Liability) ----
 # Light per-IP rate limit (independent of the form limiter): 4 per 15 min.
-PUBLIC_BRIEF_PDF_MAX = 4
-PUBLIC_BRIEF_PDF_WINDOW_S = 15 * 60
-_brief_pdf_buckets: dict[str, deque] = {}
-
-
-def _brief_pdf_rate_check(ip: str) -> tuple[bool, int]:
-    """Sliding-window limiter for /briefs/*.pdf, Redis-backed with in-memory fallback."""
-    now = time.time()
-    if _redis_client is not None:
-        key = f"rl:briefpdf:{ip}"
-        cutoff = now - PUBLIC_BRIEF_PDF_WINDOW_S
-        try:
-            pipe = _redis_client.pipeline()
-            pipe.zremrangebyscore(key, 0, cutoff)
-            pipe.zcard(key)
-            pipe.zrange(key, 0, 0, withscores=True)
-            _, count, oldest = pipe.execute()
-            if count >= PUBLIC_BRIEF_PDF_MAX:
-                first_score = oldest[0][1] if oldest else now
-                retry_after = int(PUBLIC_BRIEF_PDF_WINDOW_S - (now - first_score)) + 1
-                return False, max(retry_after, 1)
-            member = f"{now}:{uuid.uuid4().hex[:8]}".encode()
-            add_pipe = _redis_client.pipeline()
-            add_pipe.zadd(key, {member: now})
-            add_pipe.expire(key, PUBLIC_BRIEF_PDF_WINDOW_S + 60)
-            add_pipe.execute()
-            return True, 0
-        except Exception:  # noqa: BLE001
-            pass
-    bucket = _brief_pdf_buckets.setdefault(ip, deque())
-    while bucket and now - bucket[0] > PUBLIC_BRIEF_PDF_WINDOW_S:
-        bucket.popleft()
-    if len(bucket) >= PUBLIC_BRIEF_PDF_MAX:
-        retry_after = int(PUBLIC_BRIEF_PDF_WINDOW_S - (now - bucket[0])) + 1
-        return False, max(retry_after, 1)
-    bucket.append(now)
-    return True, 0
-
-
 # Slug -> (frontend route slug, download filename)
 _PUBLIC_BRIEFS = {
     "shadow-hr": ("catch-22", "TRS_Shadow_HR_Liability_Brief_v1.0.pdf"),

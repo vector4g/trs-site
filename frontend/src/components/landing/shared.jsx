@@ -63,7 +63,7 @@ export const Eyebrow = ({ children, index }) => (
     data-testid={`eyebrow-${index || "label"}`}
   >
     {index && <span className="text-slate-500">{index}</span>}
-    <span className="h-px w-8 bg-cyan-400/60" />
+    <span className="trs-section-line" aria-hidden="true" />
     <span>{children}</span>
   </div>
 );
