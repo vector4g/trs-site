@@ -303,13 +303,13 @@ export default function StrategicMemo() {
               <p>
                 Third Rail Systems OÜ is the minimum-disclosure compliance
                 layer for enterprise travel risk. We materially decouple risk
-                intelligence from human identity — so that fulfilling your
+                intelligence from human identity, so that fulfilling your
                 duty-of-care obligation toward marginalized employees stops
                 being the thing that creates your worst GDPR liability.
               </p>
               <Callout icon={Scale} label="Thesis in one line">
-                Institutional safety and human privacy are not in tension —
-                they are in the wrong place on the stack. Move identity
+                Institutional safety and human privacy are not in tension.
+                They are in the wrong place on the stack. Move identity
                 off-device and the tension dissolves.
               </Callout>
             </MemoSection>
@@ -318,9 +318,9 @@ export default function StrategicMemo() {
               <p>
                 ISO 31030 made it unambiguous: organizations must take
                 reasonable steps to provide localized mitigations for
-                marginalized travelers — LGBTQ+, disabled, neurodivergent, and
-                other cohorts whose risk profile diverges sharply from the
-                generic average. That is the duty-of-care mandate.
+                marginalized travelers, including LGBTQ+, disabled, and
+                neurodivergent cohorts, whose risk profile diverges sharply
+                from the generic average. That is the duty-of-care mandate.
               </p>
               <p>
                 GDPR Article 9 made the opposite unambiguous: centrally
@@ -361,12 +361,12 @@ export default function StrategicMemo() {
                   Levi Hankins
                   <LinkedInGlyph className="h-3.5 w-3.5 text-cyan-400" />
                 </a>
-                , served 20 years as a US Navy combat veteran and spent a
-                meaningful portion of that career under "Don't Ask, Don't
-                Tell." He has first-hand, deployed experience of what happens
-                when institutional safety systems cannot safely see the people
-                they are meant to protect. That is not a case study for us —
-                it is the starting point of the company.
+                , served 20 years as a US Navy combat veteran and served the
+                bulk of that career under "Don't Ask, Don't Tell." He has
+                first-hand, deployed experience of what happens when
+                institutional safety systems cannot safely see the people
+                they are meant to protect. That is not a case study for us.
+                It is the starting point of the company.
               </p>
               <p>
                 Our CTO, <span className="text-white">Jeremy Stabile</span>, is
@@ -384,13 +384,13 @@ export default function StrategicMemo() {
                 She provides independent oversight on EU AI Act conformity,
                 GDPR privacy-by-design, and the academic translation of our
                 transient-processing architecture. The architecture is not
-                only commercially defensible — it is academically inspectable.
+                only commercially defensible. It is academically inspectable.
               </p>
               <Callout icon={Users} label="Why this matters commercially">
                 Enterprises buy from founders who have stood on the other side
                 of the problem, and from architectures an independent
                 academic is willing to put their name on. Our thesis is not
-                borrowed from a pitch deck — it was paid for in career risk
+                borrowed from a pitch deck. It was paid for in career risk
                 and in published peer review.
               </Callout>
             </MemoSection>
@@ -401,12 +401,9 @@ export default function StrategicMemo() {
                 <span className="text-white">
                   identity-bearing inputs never leave the traveler's device.
                 </span>{" "}
-                Everything else follows from that one constraint. Internally
-                we call this the{" "}
-                <span className="text-white">DReaMAD Protocol</span> — a
-                stateless, multi-agent debate engine that processes a
-                traveler's traits in transient memory and writes none of
-                them to a database.
+                Everything else follows from that one constraint. A stateless,
+                multi-agent deliberation engine processes a traveler's traits
+                in transient memory and writes none of them to a database.
               </p>
 
               <div className="my-6 grid gap-4 sm:grid-cols-3">
@@ -447,18 +444,19 @@ export default function StrategicMemo() {
                 This is a deliberate inversion of the industry default. Most
                 travel-risk platforms collect more identity data to produce
                 more specific output. We produce more specific output by
-                collecting less identity data — and by refusing to retain any
+                collecting less identity data, and by refusing to retain any
                 of it at the synthesis layer.
               </p>
               <Callout icon={Server} label="Independently evidenced">
-                Third Rail Systems OÜ has been evidenced under the{" "}
+                Third Rail Systems OÜ has been evidenced at{" "}
+                <span className="text-white">Innovation Readiness Level 5</span>{" "}
+                under the{" "}
                 <span className="text-white">KTH Royal Institute of
                 Technology Innovation Readiness Level (IRL) framework</span>.
-                The DReaMAD 8-Agent Debate Engine core logic has been fully
-                engineered and validated against a sovereign 30-country risk
-                database (ILGA, U.S. State Department, Wheelmap, TGEU) —
-                proving the stateless concept functions without persistent
-                data storage.
+                The core stateless synthesis logic has been fully engineered
+                and evidenced against a sovereign 30-country risk database
+                (ILGA, U.S. State Department, Wheelmap, TGEU), proving the
+                stateless concept functions without persistent data storage.
               </Callout>
             </MemoSection>
 
@@ -482,17 +480,17 @@ export default function StrategicMemo() {
                 assessed intersectional threats prior to deployment.
               </Callout>
               <p>
-                Proudly registered in Tallinn, Estonia — ensuring a strict
-                European corporate footprint immune to US jurisdictional
-                overreach. The Estonia advantage is not branding; it is part
-                of the defensive posture.
+                Proudly registered in Tallinn, Estonia, ensuring a strict
+                European corporate footprint outside US jurisdictional reach.
+                The Estonia advantage is not branding; it is part of the
+                defensive posture.
               </p>
             </MemoSection>
 
             <MemoSection id="pilot" number="VI" title="The Pilot">
               <p>
-                We run paid, time-boxed enterprise pilots — typically 4 to 6
-                weeks — that require <span className="text-white">zero API
+                We run paid, time-boxed enterprise pilots, typically 4 to 6
+                weeks, that require <span className="text-white">zero API
                 integration with your HRIS</span>. That is not a convenience
                 feature; it is a statement about the architecture. If our
                 system needed your HRIS, we would have already failed the
