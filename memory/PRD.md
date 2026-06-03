@@ -108,6 +108,21 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - **DB cleanup:** Deleted all 174 leads from `pilot_requests` per user direction ('a' — full wipe). Fresh slate. Real customer leads will now populate cleanly with no historical test pollution.
 - **Verified:** synthetic submit returns `email_status="test_bypass"`; admin stats now `{total:0, ...}`.
 
+## Iteration 14 — 2026-06-03 (Sender switch to apex + server.py split into 9 modules)
+- **`SENDER_EMAIL` switched** from `platform@sys.thirdrailsystems.ee` → `levi@thirdrailsystems.ee`. User verified the apex `.ee` domain in Resend + upgraded their Resend plan (no more quota concerns). All outbound mail (internal notification, prospect confirmation, briefing-to-lead attachments) now sends from Levi's direct address.
+- **`server.py` refactored from 752 → 244 lines.** Behaviour-preserving split into 9 focused modules:
+  - `database.py` — Motor `client` + `db` handle (single source of truth)
+  - `auth.py` — `ADMIN_TOKEN` + `require_admin` FastAPI dependency
+  - `validation.py` — qualifier allowlists + `strip_for_header` / `sanitize_qualifier`
+  - `models.py` — Pydantic models (existing, untouched)
+  - `rate_limit.py` — per-IP sliding-window limiter (existing, untouched)
+  - `services/email.py` — All 3 Resend send paths (notification / confirmation / briefing-to-lead) + `is_test_lead()` bypass guard + HTML builders
+  - `services/briefings.py` — `render_briefing` orchestration (Brandfetch → Playwright → Mongo audit fields)
+  - `routers/admin.py` — All `/api/admin/*` endpoints
+  - `server.py` — Thin entrypoint: app setup, load_dotenv ordering, status + pilot-requests + public-brief routes, CORS, shutdown hook
+- **Backwards-compat aliases retained** (`_send_notification`, `_sanitize_qualifier`, `_escape_html`, etc.) so any legacy `from server import ...` or test code still works.
+- **Testing agent iteration_13 / iter14_refactor:** 18/18 backend pytest + 9/9 frontend regression pass. Zero new defects. Lone observation: FastAPI `@app.on_event('shutdown')` is deprecated — non-blocking, queued for a future lifespan-handler migration.
+
 ## Backlog / Next Actions
 - **P2** Extract `routers/admin.py` and `services/email.py` + `services/briefings.py` from `server.py` (still ~830 lines after iter12 split).
 - **P2** `_sanitize_qualifier` should log a single WARN per drop so operators can spot scraper/abuse patterns.
