@@ -29,12 +29,12 @@ export const LINKEDIN_ARTICLES = [
   {
     id: "catch22-brief",
     title:
-      "The duty-of-care vs. data-privacy Catch-22 — a multi-billion-euro liability hiding in EU enterprise HR.",
+      "The duty-of-care vs. data-privacy Catch-22: a multi-billion-euro liability hiding in EU enterprise HR.",
     url: "https://www.linkedin.com/pulse/duty-care-vs-data-privacy-catch-22-multi-billion-euro-levi-hankins-ugijc",
     tag: "Liability brief",
     date: "May 2026",
     snippet:
-      "The companion essay to the published liability brief. Five enforcement vectors EU GCs and CISOs are quietly under-pricing right now.",
+      "The five enforcement vectors EU general counsel and CISOs are quietly under-pricing right now, and the architectural pattern that resolves them.",
     testid: "writing-article-catch22",
   },
 ];
