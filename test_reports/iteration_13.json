@@ -1,0 +1,38 @@
+{
+  "summary": "Iter 14 backend split + SENDER_EMAIL switch fully verified. All 18 pytest cases pass (module imports, SENDER_EMAIL=levi@thirdrailsystems.ee, pilot/diagnostic intake, qualifier sanitisation, honeypot, fast-submit, per-IP 429 rate-limit, admin auth + list + filter + preview 404, public brief PDF + 404, briefing generate streams %PDF, email-to-lead test_bypass). Frontend regression: all 9 routes load 200 with 0 console errors; /catch-22 Download PDF hits /api/public/briefs/shadow-hr.pdf and returns 200; /admin login + table (20 rows, Pilot/Diagnostic badges) + BriefingDialog open + briefing-diagnostic-qualifiers panel renders org_scale/workforce/vendor correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "server.py:242", "issue": "FastAPI @app.on_event('shutdown') is deprecated — consider migrating to lifespan event handler. Non-blocking, runtime-safe."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter14_refactor.py",
+    "/app/test_reports/pytest/iter14_refactor.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Refactor is clean — 9 modules each <200 lines, single-responsibility, no circular imports.",
+    "load_dotenv ordering in server.py is correct (before any env-reading imports).",
+    "services/email.is_test_lead() correctly bypasses Resend for TEST_/example.* — confirmed via 14 test leads created, none hit Resend (email_status='test_bypass' on every response).",
+    "validation.py allowlists are frozenset (immutable, hashable) — correct choice.",
+    "Backwards-compat underscore aliases (_send_notification, _sanitize_qualifier, etc.) preserved — safe for any legacy callers.",
+    "Minor: @app.on_event('shutdown') deprecated by FastAPI; switch to lifespan handler in a future cleanup pass."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter14_refactor.py (new)"
+  ],
+  "success_rate": {"backend": "100% (18/18)", "frontend": "100% (9/9 routes + admin + briefing dialog + PDF download)"},
+  "test_credentials": "ADMIN_TOKEN=dev-admin-trs-2026 from /app/memory/test_credentials.md — verified working.",
+  "seed_data_creation": "Test created ~14 TEST_-prefixed leads (TEST_Alice/TEST_Smith, TEST_AdminUI/TEST_Diag, TEST_Briefing/TEST_Lead) with @example.com emails. All hit synthetic-lead bypass — zero Resend sends. Safe to leave in DB or clear at main agent's discretion.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iter 14 refactor + SENDER_EMAIL=levi@thirdrailsystems.ee fully verified. Regression suite at /app/backend/tests/test_iter14_refactor.py covers all six endpoint families + import sanity. Use _ip() helper (198.51.100.0/24 random) to avoid per-IP limiter. ALWAYS use TEST_ prefix + @example.com to hit the bypass — verified via email_status='test_bypass' in 100% of intake/email-to-lead responses.",
+  "rca of the issue": "No issues found. Refactor is behaviour-preserving and SENDER_EMAIL switch is live + correct."
+}

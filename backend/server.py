@@ -1,147 +1,92 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Header, Request, Depends
-from fastapi.responses import Response
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
-import asyncio
-import base64
+"""Third Rail Systems OÜ — FastAPI entrypoint.
+
+Thin orchestration layer. Concerns delegated to:
+  - models.py          Pydantic models (StatusCheck, PilotRequest, …)
+  - database.py        Mongo client + db handle
+  - auth.py            ADMIN_TOKEN + require_admin dependency
+  - validation.py      qualifier allowlists + CR/LF strip
+  - rate_limit.py      per-IP sliding-window limiter (Redis + in-memory fallback)
+  - services/email.py  All Resend send paths (notification, confirmation, briefing)
+  - services/briefings.py  Briefing PDF render orchestration
+  - routers/admin.py   All /api/admin/* routes
+  - brandfetch.py      Brandfetch logo/name resolver
+  - briefing.py        Playwright HTML→PDF for admin briefings
+  - public_brief.py    Playwright HTML→PDF for /public/briefs/{slug}.pdf
+
+This file owns only:
+  - app + api_router setup
+  - load_dotenv(.env) (must happen BEFORE any module that reads env vars at import)
+  - the public + form-handling routes (status, pilot-requests, public briefs)
+  - CORS middleware + shutdown hook
+"""
+from __future__ import annotations
+
 import logging
-import re
+import os
+from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
-import uuid
-from datetime import datetime, timezone
-import resend
+from typing import List
 
-from brandfetch import domain_from_email, fetch_brand
-from briefing import generate_briefing_pdf
-from public_brief import render_public_brief_pdf
-from models import (
-    StatusCheck,
-    StatusCheckCreate,
-    PilotRequestCreate,
-    PilotRequest,
-    BriefingGenerateRequest,
-    BriefingPreview,
-)
-from rate_limit import (
-    check_pilot_rate as _rate_limit_check,
-    check_brief_pdf_rate as _brief_pdf_rate_check,
-    get_client_ip as _client_ip,
-)
+from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
+from fastapi.responses import Response
+from starlette.middleware.cors import CORSMiddleware
 
-
+# load_dotenv MUST run before any module reads os.environ.* at import time.
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+load_dotenv(ROOT_DIR / ".env")
 
-
-# --- Diagnostic qualifier allowlists --------------------------------------------
-# Mirror the labels in /app/frontend/src/pages/DiagnosticIntake.jsx. The frontend
-# only ever submits these exact strings — anything else is either a stale UI or a
-# tampered request and must be silently dropped, NOT echoed into emails.
-ORG_SCALE_ALLOWLIST = frozenset({
-    "Under 1,000 employees",
-    "1,000 – 5,000 employees",
-    "5,000 – 25,000 employees",
-    "25,000 – 100,000 employees",
-    "100,000+ employees",
-})
-WORKFORCE_ALLOWLIST = frozenset({
-    "EU / EEA only",
-    "EU + UK",
-    "Global with major EU footprint",
-    "Global with minor EU footprint",
-})
-CURRENT_VENDOR_ALLOWLIST = frozenset({
-    "No travel-risk vendor",
-    "International SOS",
-    "WTW / Crisis24",
-    "Control Risks",
-    "Anvil / GardaWorld",
-    "In-house / internal",
-    "Other (note in reply)",
-})
-
-
-def _sanitize_qualifier(value: Optional[str], allowlist: frozenset) -> Optional[str]:
-    """Return the value only if it's an exact match for an allowlisted label.
-    Free-text bypasses are silently dropped so they never reach Resend or Mongo.
-    """
-    if not value:
-        return None
-    v = value.strip()
-    return v if v in allowlist else None
-
-
-# Strip CR/LF and surrounding whitespace from anything that lands in an email
-# subject line. Prevents header-injection via name/role/email.
-_HEADER_STRIP_RE = re.compile(r"[\r\n\t]+")
-
-
-def _strip_for_header(value: str) -> str:
-    if not value:
-        return ""
-    return _HEADER_STRIP_RE.sub(" ", value).strip()[:200]
-
-
-
-# Configure logging first so helpers below can use `logger`.
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# --- Internal imports (env-dependent must come AFTER load_dotenv) ---------------
+from auth import require_admin  # noqa: E402
+from database import client, db  # noqa: E402
+from models import (  # noqa: E402, F401
+    BriefingGenerateRequest,  # re-export for legacy `from server import ...` callers
+    BriefingPreview,
+    PilotRequest,
+    PilotRequestCreate,
+    StatusCheck,
+    StatusCheckCreate,
+)
+from public_brief import render_public_brief_pdf  # noqa: E402
+from rate_limit import (  # noqa: E402
+    check_brief_pdf_rate as _brief_pdf_rate_check,
+    check_pilot_rate as _rate_limit_check,
+    get_client_ip as _client_ip,
+)
+from routers.admin import router as admin_router  # noqa: E402
+from services.email import (  # noqa: E402
+    _send_notification,
+    _send_prospect_confirmation,
+)
+from validation import (  # noqa: E402
+    CURRENT_VENDOR_ALLOWLIST,
+    ORG_SCALE_ALLOWLIST,
+    WORKFORCE_ALLOWLIST,
+    _sanitize_qualifier,
+    _strip_for_header,
+)
 
-# Resend config
-RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '').strip()
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev').strip()
-REPLY_TO_EMAIL = os.environ.get('REPLY_TO_EMAIL', '').strip()
-NOTIFICATION_RECIPIENT = os.environ.get('NOTIFICATION_RECIPIENT', '').strip()
-FALLBACK_RECIPIENT = os.environ.get('FALLBACK_RECIPIENT', '').strip()
-ADMIN_TOKEN = os.environ.get('ADMIN_TOKEN', '').strip()
-
-if RESEND_API_KEY:
-    resend.api_key = RESEND_API_KEY
-
-# Create the main app without a prefix
 app = FastAPI(title="Third Rail Systems OÜ API")
-
-# Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
 
-def require_admin(x_admin_token: Optional[str] = Header(default=None)) -> str:
-    """FastAPI dependency gating admin endpoints.
-
-    Behavior:
-      - ADMIN_TOKEN unset in env → 404 (endpoint appears not to exist; no info leak).
-      - Token missing or incorrect → 401.
-      - Correct token → returns the token (dependency is truthy).
-    """
-    if not ADMIN_TOKEN:
-        raise HTTPException(status_code=404, detail="Not found")
-    if x_admin_token != ADMIN_TOKEN:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    return x_admin_token
-
-
-# ---- Routes ----
+# --- Trivial / demo routes ------------------------------------------------------
 @api_router.get("/")
 async def root():
-    return {"message": "Third Rail Systems OÜ API"}
+    return {"message": "Hello World"}
 
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_obj = StatusCheck(**input.model_dump())
     doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
+    doc["timestamp"] = doc["timestamp"].isoformat()
     await db.status_checks.insert_one(doc)
     return status_obj
 
@@ -150,278 +95,16 @@ async def create_status_check(input: StatusCheckCreate):
 async def get_status_checks():
     status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
     for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
+        if isinstance(check["timestamp"], str):
+            check["timestamp"] = datetime.fromisoformat(check["timestamp"])
     return status_checks
 
 
-def _build_notification_html(req: PilotRequest) -> str:
-    """Inline-styled HTML email body for deliverability."""
-    diag_rows = ""
-    if req.request_type == "diagnostic":
-        def _row(label: str, value: Optional[str]) -> str:
-            if not value:
-                return ""
-            return (
-                f'<tr><td style="padding:8px 0;color:#94a3b8;">{label}</td>'
-                f'<td style="color:#e2e8f0;">{_escape_html(value)}</td></tr>'
-            )
-        diag_rows = (
-            _row("Org scale", req.org_scale_band)
-            + _row("Workforce composition", req.workforce_composition)
-            + _row("Current vendor", req.current_vendor)
-        )
-    intake_label = "Catch-22 Diagnostic Request" if req.request_type == "diagnostic" else "Pilot Assessment Request"
-    intake_title = "New Catch-22 diagnostic intake" if req.request_type == "diagnostic" else "New enterprise pilot intake"
-    return f"""
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
-      <tr><td align="center">
-        <table width="560" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #1f2937;border-radius:8px;padding:28px;">
-          <tr><td style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22d3ee;">{intake_label}</td></tr>
-          <tr><td style="padding-top:12px;font-size:22px;font-weight:600;color:#ffffff;">
-            {intake_title}
-          </td></tr>
-          <tr><td style="padding-top:20px;">
-            <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
-              <tr><td style="padding:8px 0;color:#94a3b8;width:160px;">First name</td><td style="color:#e2e8f0;">{req.first_name}</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Last name</td><td style="color:#e2e8f0;">{req.last_name}</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Corporate email</td><td style="color:#e2e8f0;"><a href="mailto:{req.corporate_email}" style="color:#22d3ee;text-decoration:none;">{req.corporate_email}</a></td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Role</td><td style="color:#e2e8f0;">{req.role}</td></tr>
-              {diag_rows}
-              <tr><td style="padding:8px 0;color:#94a3b8;">Request ID</td><td style="color:#64748b;font-family:monospace;">{req.id}</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Submitted</td><td style="color:#64748b;font-family:monospace;">{req.submitted_at.isoformat()}</td></tr>
-            </table>
-          </td></tr>
-          <tr><td style="padding-top:24px;border-top:1px solid #1f2937;margin-top:20px;font-size:11px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;">
-            Third Rail Systems OÜ · Tallinn, Estonia
-          </td></tr>
-        </table>
-      </td></tr>
-    </table>
-    """
-
-
-def _is_test_lead(req: PilotRequest) -> bool:
-    """Detect synthetic test leads so we never hit Resend / burn the daily quota.
-
-    Two signals: (a) first or last name starts with ``TEST_`` (the convention
-    used by the testing agent), or (b) the corporate email's local-part starts
-    with ``test`` or ends with ``@example.com``/``@example.org``. Belt-and-
-    braces — either signal short-circuits the email send.
-    """
-    fn = (req.first_name or "").lstrip()
-    ln = (req.last_name or "").lstrip()
-    if fn.startswith("TEST_") or ln.startswith("TEST_"):
-        return True
-    email = (req.corporate_email or "").lower()
-    local, _, domain = email.partition("@")
-    if domain in ("example.com", "example.org", "example.net"):
-        return True
-    if local.startswith(("test_", "test-")):
-        return True
-    return False
-
-
-async def _send_notification(req: PilotRequest) -> tuple[str, Optional[str]]:
-    """Send the notification email. Returns (status, error)."""
-    if _is_test_lead(req):
-        logger.info(f"[EMAIL TEST-BYPASS] not sending notification for synthetic lead {req.id} ({req.first_name} / {req.corporate_email})")
-        return ("test_bypass", None)
-    if not RESEND_API_KEY:
-        logger.info(f"[EMAIL STUB] would notify {NOTIFICATION_RECIPIENT} of pilot request {req.id}")
-        return ("stubbed", None)
-
-    recipient = NOTIFICATION_RECIPIENT or FALLBACK_RECIPIENT
-    if not recipient:
-        return ("failed", "No recipient configured")
-
-    subject_prefix = "[Third Rail] Diagnostic request" if req.request_type == "diagnostic" else "[Third Rail] Pilot request"
-    # Resend headers must be CR/LF-free. Strip and cap before splicing user input.
-    safe_first = _strip_for_header(req.first_name)
-    safe_last = _strip_for_header(req.last_name)
-    safe_role = _strip_for_header(req.role)
-    params = {
-        "from": SENDER_EMAIL,
-        "to": [recipient],
-        "reply_to": req.corporate_email,
-        "subject": f"{subject_prefix} — {safe_first} {safe_last} ({safe_role})",
-        "html": _build_notification_html(req),
-    }
-    try:
-        await asyncio.to_thread(resend.Emails.send, params)
-        return ("sent", None)
-    except Exception as exc:  # noqa: BLE001
-        logger.error(f"Resend send failed for {req.id}: {exc}")
-        return ("failed", str(exc))
-
-
-def _build_prospect_confirmation_html(req: PilotRequest) -> str:
-    """Prospect-facing confirmation email — system tone, Reply-To routes to Levi."""
-    return f"""
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
-      <tr><td align="center">
-        <table width="560" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #1f2937;border-radius:8px;padding:32px;">
-          <tr><td style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22d3ee;">Third Rail Systems · Intake</td></tr>
-          <tr><td style="padding-top:14px;font-size:22px;font-weight:600;color:#ffffff;line-height:1.3;">
-            Pilot request received.
-          </td></tr>
-          <tr><td style="padding-top:18px;font-size:14px;line-height:1.7;color:#cbd5e1;">
-            Hi {req.first_name},<br/><br/>
-            This is an automated confirmation from the Third Rail Systems platform. Your pilot assessment request has been logged under reference <span style="font-family:monospace;color:#22d3ee;">{req.id[:8]}</span>.<br/><br/>
-            A founding-team operator will reach out within one business day with a 20-minute architecture fit-call slot. No HRIS integration is required for the pilot.<br/><br/>
-            In the meantime, you may find the published liability brief useful for your CSO / DPO conversations:
-          </td></tr>
-          <tr><td style="padding:18px 0 8px 0;">
-            <a href="https://thirdrailsystems.ee/catch-22" style="display:inline-block;background:#22d3ee;color:#0b0f14;padding:10px 18px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;letter-spacing:0.3px;">
-              Read · The Duty of Care vs. Data Privacy Catch-22
-            </a>
-          </td></tr>
-          <tr><td style="padding-top:18px;font-size:13px;line-height:1.6;color:#94a3b8;">
-            Reply directly to this email to reach the founding team.
-          </td></tr>
-          <tr><td style="padding-top:24px;border-top:1px solid #1f2937;font-size:11px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;padding-bottom:0;">
-            Third Rail Systems OÜ · Tallinn, Estonia · EU-Native
-          </td></tr>
-        </table>
-      </td></tr>
-    </table>
-    """
-
-
-async def _send_briefing_to_lead(
-    req_doc: dict,
-    pdf_bytes: bytes,
-    pdf_filename: str,
-    variant: str,
-    briefing_id: str,
-) -> tuple[str, Optional[str]]:
-    """Email the generated briefing PDF to the lead as a Resend attachment.
-
-    Reply-To routes to Levi's inbox so a "Reply" from the prospect lands
-    directly in the founder's mailbox.
-    """
-    # Synthetic lead guard — never email a TEST_-prefixed or example.com lead.
-    fn = (req_doc.get("first_name") or "")
-    ln = (req_doc.get("last_name") or "")
-    email = (req_doc.get("corporate_email") or "").lower()
-    _, _, domain = email.partition("@")
-    if (
-        fn.lstrip().startswith("TEST_")
-        or ln.lstrip().startswith("TEST_")
-        or domain in ("example.com", "example.org", "example.net")
-        or email.partition("@")[0].startswith(("test_", "test-"))
-    ):
-        logger.info(f"[EMAIL TEST-BYPASS] not emailing briefing {briefing_id} to synthetic lead {email}")
-        return ("test_bypass", None)
-    if not RESEND_API_KEY:
-        logger.info(f"[EMAIL STUB] would email briefing {briefing_id} to {req_doc.get('corporate_email')}")
-        return ("stubbed", None)
-
-    first_name = (req_doc.get("first_name") or "there").strip()
-    recipient = req_doc.get("corporate_email")
-    if not recipient:
-        return ("failed", "Lead has no corporate_email")
-
-    variant_label = (
-        "Executive Summary" if variant == "exec" else "Full Strategic Briefing"
-    )
-    subject = f"{variant_label} — Third Rail Systems OÜ"
-
-    html_body = f"""
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
-      <tr><td align="center">
-        <table width="560" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid #1f2937;border-radius:8px;padding:32px;">
-          <tr><td style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#22d3ee;">Third Rail Systems · Briefing</td></tr>
-          <tr><td style="padding-top:14px;font-size:22px;font-weight:600;color:#ffffff;line-height:1.3;">
-            Your {variant_label.lower()} is attached.
-          </td></tr>
-          <tr><td style="padding-top:18px;font-size:14px;line-height:1.7;color:#cbd5e1;">
-            Hi {_escape_html(first_name)},<br/><br/>
-            As discussed, please find attached your co-branded {variant_label.lower()}
-            (briefing reference <span style="font-family:monospace;color:#22d3ee;">{briefing_id}</span>).<br/><br/>
-            Reply directly to this email to schedule a 20-minute architecture fit-call —
-            no HRIS integration is required for the pilot.
-          </td></tr>
-          <tr><td style="padding-top:24px;border-top:1px solid #1f2937;font-size:11px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;">
-            Third Rail Systems OÜ · Tallinn, Estonia · EU-Native
-          </td></tr>
-        </table>
-      </td></tr>
-    </table>
-    """
-
-    reply_to = REPLY_TO_EMAIL or NOTIFICATION_RECIPIENT or FALLBACK_RECIPIENT
-    # Resend accepts the attachment `content` as a base64 string. Encoding once
-    # here avoids materialising ~N Python ints from list(pdf_bytes) for a
-    # multi-hundred-KB PDF.
-    encoded_pdf = base64.b64encode(pdf_bytes).decode("ascii")
-    params = {
-        "from": SENDER_EMAIL,
-        "to": [recipient],
-        "subject": subject,
-        "html": html_body,
-        "attachments": [
-            {
-                "filename": pdf_filename,
-                "content": encoded_pdf,
-            }
-        ],
-    }
-    if reply_to:
-        params["reply_to"] = reply_to
-
-    try:
-        await asyncio.to_thread(resend.Emails.send, params)
-        return ("sent", None)
-    except Exception as exc:  # noqa: BLE001
-        logger.error(f"Resend briefing-to-lead failed for {briefing_id}: {exc}")
-        return ("failed", str(exc))
-
-
-def _escape_html(s: Optional[str]) -> str:
-    if s is None:
-        return ""
-    return (
-        str(s)
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
-    )
-
-
-async def _send_prospect_confirmation(req: PilotRequest) -> tuple[str, Optional[str]]:
-    """Confirmation email sent TO the prospect with Reply-To = Levi's inbox."""
-    if _is_test_lead(req):
-        logger.info(f"[EMAIL TEST-BYPASS] not sending confirmation for synthetic lead {req.id} ({req.first_name} / {req.corporate_email})")
-        return ("test_bypass", None)
-    if not RESEND_API_KEY:
-        logger.info(f"[EMAIL STUB] would confirm pilot request {req.id} to {req.corporate_email}")
-        return ("stubbed", None)
-
-    reply_to = REPLY_TO_EMAIL or NOTIFICATION_RECIPIENT or FALLBACK_RECIPIENT
-    params = {
-        "from": SENDER_EMAIL,
-        "to": [req.corporate_email],
-        "subject": "Pilot request received — Third Rail Systems OÜ",
-        "html": _build_prospect_confirmation_html(req),
-    }
-    if reply_to:
-        params["reply_to"] = reply_to
-
-    try:
-        await asyncio.to_thread(resend.Emails.send, params)
-        return ("sent", None)
-    except Exception as exc:  # noqa: BLE001
-        logger.error(f"Resend prospect-confirmation failed for {req.id}: {exc}")
-        return ("failed", str(exc))
-
-
+# --- Pilot / diagnostic intake --------------------------------------------------
 @api_router.post("/pilot-requests", response_model=PilotRequest, status_code=201)
 async def create_pilot_request(payload: PilotRequestCreate, request: Request):
-    # --- Anti-spam guard 1: per-IP sliding-window rate limit.
-    # Applied FIRST so honeypot/fast-submit bots can't spam rejected payloads
-    # indefinitely to burn CPU / pollute logs.
+    # Guard 1: per-IP sliding-window rate limit. Applied FIRST so honeypot/
+    # fast-submit bots can't spam rejected payloads indefinitely.
     ip = _client_ip(request)
     allowed, retry_after = _rate_limit_check(ip)
     if not allowed:
@@ -432,8 +115,7 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
             headers={"Retry-After": str(retry_after)},
         )
 
-    # --- Anti-spam guard 2: honeypot.
-    # Tarpit response — looks like success to the bot, no persistence, no email.
+    # Guard 2: honeypot. Tarpit — looks like success to the bot, no persistence.
     if payload.company_website and payload.company_website.strip():
         logger.warning(f"Honeypot triggered from {ip}")
         return PilotRequest(
@@ -445,7 +127,7 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
             email_error="honeypot",
         )
 
-    # --- Anti-spam guard 3: time-to-submit.
+    # Guard 3: time-to-submit. Humans rarely submit in <1.2s.
     if payload.submission_ms is not None and payload.submission_ms < 1200:
         logger.warning(f"Fast-submit blocked from {ip} ({payload.submission_ms}ms)")
         return PilotRequest(
@@ -484,7 +166,7 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
         )
 
     doc = req.model_dump()
-    doc['submitted_at'] = doc['submitted_at'].isoformat()
+    doc["submitted_at"] = doc["submitted_at"].isoformat()
     try:
         await db.pilot_requests.insert_one(doc)
     except Exception as exc:  # noqa: BLE001
@@ -505,8 +187,7 @@ async def list_pilot_requests(limit: int = 100, _admin: str = Depends(require_ad
     return docs
 
 
-# ---- Public brief PDF (Shadow HR Liability) ----
-# Light per-IP rate limit (independent of the form limiter): 4 per 15 min.
+# --- Public brief PDF -----------------------------------------------------------
 # Slug -> (frontend route slug, download filename)
 _PUBLIC_BRIEFS = {
     "shadow-hr": ("catch-22", "TRS_Shadow_HR_Liability_Brief_v1.0.pdf"),
@@ -545,202 +226,14 @@ async def public_brief_pdf(slug: str, request: Request):
     )
 
 
-# ---- Admin endpoints ----
-@api_router.post("/admin/auth/verify")
-async def admin_verify(_admin: str = Depends(require_admin)):
-    """Lightweight endpoint used by the /admin UI to confirm a token is valid."""
-    return {"ok": True}
-
-
-@api_router.get("/admin/pilot-requests")
-async def admin_list_pilot_requests(
-    limit: int = 500,
-    q: Optional[str] = None,
-    role: Optional[str] = None,
-    status: Optional[str] = None,
-    request_type: Optional[str] = None,
-    _admin: str = Depends(require_admin),
-):
-    """Admin-gated list with filters/search."""
-    query: dict = {}
-    if status:
-        query["email_status"] = status
-    if role:
-        query["role"] = {"$regex": f"^{role}", "$options": "i"}
-    if request_type in ("pilot", "diagnostic"):
-        query["request_type"] = request_type
-    if q:
-        qr = {"$regex": q, "$options": "i"}
-        query["$or"] = [
-            {"first_name": qr},
-            {"last_name": qr},
-            {"corporate_email": qr},
-            {"role": qr},
-        ]
-
-    cursor = db.pilot_requests.find(query, {"_id": 0}).sort("submitted_at", -1).limit(max(1, min(limit, 1000)))
-    docs = await cursor.to_list(length=limit)
-
-    total = await db.pilot_requests.count_documents({})
-    delivered = await db.pilot_requests.count_documents({"email_status": {"$in": ["sent", "stubbed"]}})
-    memo_read = await db.pilot_requests.count_documents({"memo_read": True})
-    catch22_read = await db.pilot_requests.count_documents({"catch22_read": True})
-    both_read = await db.pilot_requests.count_documents(
-        {"memo_read": True, "catch22_read": True}
-    )
-    diagnostic_count = await db.pilot_requests.count_documents({"request_type": "diagnostic"})
-
-    return {
-        "items": docs,
-        "stats": {
-            "total": total,
-            "delivered": delivered,
-            "memo_read": memo_read,
-            "memo_read_rate": round((memo_read / total) * 100, 1) if total else 0.0,
-            "catch22_read": catch22_read,
-            "catch22_read_rate": round((catch22_read / total) * 100, 1) if total else 0.0,
-            "both_read": both_read,
-            "diagnostic_count": diagnostic_count,
-        },
-    }
-
-
-@api_router.get("/admin/briefings/preview/{pilot_request_id}", response_model=BriefingPreview)
-async def admin_briefing_preview(pilot_request_id: str, _admin: str = Depends(require_admin)):
-    """Resolve the prospect's inferred company name + logo for the admin modal
-    so Levi can confirm or override before generating the PDF."""
-    doc = await db.pilot_requests.find_one({"id": pilot_request_id}, {"_id": 0})
-    if not doc:
-        raise HTTPException(status_code=404, detail="Pilot request not found")
-
-    email = doc.get("corporate_email") or ""
-    domain = domain_from_email(email)
-    inferred_name, inferred_logo = await fetch_brand(domain) if domain else (None, None)
-
-    return BriefingPreview(
-        lead_name=f"{doc.get('first_name','')} {doc.get('last_name','')}".strip() or "—",
-        lead_email=email,
-        inferred_company=inferred_name,
-        inferred_logo_url=inferred_logo,
-        domain=domain,
-    )
-
-
-_FILENAME_SAFE = re.compile(r"[^A-Za-z0-9._-]+")
-
-
-async def _render_briefing(payload: BriefingGenerateRequest) -> tuple[bytes, str, str, dict]:
-    """Resolve prospect branding, render the PDF, persist audit fields.
-
-    Returns (pdf_bytes, filename, briefing_id, lead_doc).
-    Raises HTTPException on lookup or render failure.
-    """
-    doc = await db.pilot_requests.find_one({"id": payload.pilot_request_id}, {"_id": 0})
-    if not doc:
-        raise HTTPException(status_code=404, detail="Pilot request not found")
-
-    email = doc.get("corporate_email") or ""
-    domain = domain_from_email(email)
-    lead_name = f"{doc.get('first_name','')} {doc.get('last_name','')}".strip() or "—"
-
-    company = payload.prospect_company_override
-    logo_url = payload.prospect_logo_url_override
-
-    if (not company or not logo_url) and domain:
-        inferred_name, inferred_logo = await fetch_brand(domain)
-        company = company or inferred_name or (domain.split(".")[0].title() if domain else None)
-        logo_url = logo_url or inferred_logo
-    if not company:
-        company = domain.split(".")[0].title() if domain else "Prospective Partner"
-
-    briefing_id = f"EB-{uuid.uuid4().hex[:10].upper()}"
-
-    try:
-        pdf_bytes = await generate_briefing_pdf(
-            lead_name=lead_name,
-            prospect_company=company or "Prospective Partner",
-            prospect_domain=domain,
-            prospect_logo_url=logo_url,
-            variant=payload.variant,
-            briefing_id=briefing_id,
-        )
-    except Exception as exc:  # noqa: BLE001
-        logger.error(f"PDF generation failed for {payload.pilot_request_id}: {exc}")
-        raise HTTPException(status_code=500, detail=f"PDF generation failed: {exc}") from exc
-
-    try:
-        await db.pilot_requests.update_one(
-            {"id": payload.pilot_request_id},
-            {
-                "$set": {
-                    "last_briefing_at": datetime.now(timezone.utc).isoformat(),
-                    "last_briefing_id": briefing_id,
-                    "last_briefing_variant": payload.variant,
-                },
-                "$inc": {"briefings_generated": 1},
-            },
-        )
-    except Exception as exc:  # noqa: BLE001
-        logger.warning(f"Failed to update briefing audit fields: {exc}")
-
-    safe_company = _FILENAME_SAFE.sub("-", (company or "prospect")).strip("-") or "prospect"
-    variant_tag = "ExecSummary" if payload.variant == "exec" else "FullMemo"
-    filename = f"ThirdRail-{variant_tag}-{safe_company}-{briefing_id}.pdf"
-
-    return pdf_bytes, filename, briefing_id, doc
-
-
-@api_router.post("/admin/briefings/generate")
-async def admin_briefing_generate(payload: BriefingGenerateRequest, _admin: str = Depends(require_admin)):
-    """Generate and stream a co-branded briefing PDF for the given pilot request."""
-    pdf_bytes, filename, briefing_id, _doc = await _render_briefing(payload)
-    return Response(
-        content=pdf_bytes,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
-            "X-Briefing-Id": briefing_id,
-        },
-    )
-
-
-@api_router.post("/admin/briefings/email-to-lead")
-async def admin_briefing_email_to_lead(payload: BriefingGenerateRequest, _admin: str = Depends(require_admin)):
-    """Generate the PDF AND email it to the lead's corporate inbox.
-
-    Reply-To routes to the founder so the prospect's reply lands directly
-    in Levi's mailbox.
-    """
-    pdf_bytes, filename, briefing_id, doc = await _render_briefing(payload)
-
-    status, err = await _send_briefing_to_lead(
-        req_doc=doc,
-        pdf_bytes=pdf_bytes,
-        pdf_filename=filename,
-        variant=payload.variant,
-        briefing_id=briefing_id,
-    )
-    if err:
-        raise HTTPException(status_code=502, detail=f"Email send failed: {err}")
-
-    return {
-        "ok": True,
-        "email_status": status,
-        "briefing_id": briefing_id,
-        "filename": filename,
-        "recipient": doc.get("corporate_email"),
-    }
-
-
-
-
-# Include the router in the main app
+# --- Router composition + CORS + shutdown ---------------------------------------
+api_router.include_router(admin_router)
 app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
     allow_methods=["*"],
     allow_headers=["*"],
 )
