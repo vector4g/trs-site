@@ -418,10 +418,10 @@ async def create_pilot_request(payload: PilotRequestCreate, request: Request):
         )
 
     req = PilotRequest(
-        first_name=payload.first_name.strip(),
-        last_name=payload.last_name.strip(),
+        first_name=_strip_for_header(payload.first_name),
+        last_name=_strip_for_header(payload.last_name),
         corporate_email=payload.corporate_email,
-        role=payload.role.strip(),
+        role=_strip_for_header(payload.role),
         memo_read=bool(payload.memo_read),
         catch22_read=bool(payload.catch22_read),
         request_type=payload.request_type or "pilot",

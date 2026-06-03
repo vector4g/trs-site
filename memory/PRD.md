@@ -94,13 +94,20 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - **Admin dashboard — Type column.** New column between Role and Read renders a Pilot (slate) or Diagnostic (fuchsia) badge per row via `admin-type-<id8>` testids. Stats payload gains `diagnostic_count`. `GET /api/admin/pilot-requests?request_type=` filter accepts `pilot` or `diagnostic`.
 - **Testing agent iteration_11:** 7/7 backend pytest + all frontend acceptance criteria pass (only a Playwright timing race on the 1.4s post-submit redirect was flagged — polished by switching to `window.location.assign('/catch-22')` for deterministic navigation).
 
+## Iteration 12 — 2026-06-03 (P2 cleanup batch — primitives, module split, validation, dialog polish)
+- **Brief primitives extracted.** `BriefSection`, `SubHeading`, `BulletList`, `PullQuote`, `Callout`, `DiagnosticQuestion` moved out of `CatchTwentyTwo.jsx` into `/app/frontend/src/components/brief/` with a barrel export. Catch-22 page now imports from `@/components/brief`; ~100 lines of inline primitives removed from the page file. Same primitives are now reusable from `/memo` and any future brief (e.g. `/civil-society`).
+- **Backend `models.py` + `rate_limit.py` extracted.** Pure Pydantic models (`StatusCheck`, `PilotRequestCreate`, `PilotRequest`, `BriefingGenerateRequest`, `BriefingPreview`) live in `/app/backend/models.py`. Per-IP sliding-window rate limiter (Redis + in-memory fallback) lives in `/app/backend/rate_limit.py` with two named limiters (`check_pilot_rate`, `check_brief_pdf_rate`) and `get_client_ip`. `server.py` shrunk by ~120 lines and now imports both modules.
+- **Cyan-line-draw motif (`.trs-section-line`)** added to `Eyebrow` and `BriefSection` numbered headers. Pure-CSS scaleX(0→1) animation tied to the parent `.reveal.is-visible` state — no per-component JS. Honours `prefers-reduced-motion`.
+- **BriefingDialog: diagnostic-qualifier panel.** When opened for a `request_type='diagnostic'` lead, the dialog now surfaces org-scale + workforce + current-vendor in a fuchsia-bordered panel (`briefing-diagnostic-qualifiers` testid). Hidden for pilot leads.
+- **Server-side qualifier allowlist + CR/LF strip.** Three frozen sets (`ORG_SCALE_ALLOWLIST`, `WORKFORCE_ALLOWLIST`, `CURRENT_VENDOR_ALLOWLIST`) silently drop any free-text qualifier values that don't exactly match the published labels — XSS payloads, garbage strings, oversized inputs all neutralised at the persistence layer. `_strip_for_header` now applied to `first_name`, `last_name`, `role` at the request handler (defence-in-depth, not just at the Resend subject splice). CR/LF/tabs collapse to single spaces and the field is capped at 200 chars.
+- **Testing agent iteration_12:** 13/13 backend pytest + all frontend acceptance criteria pass. Catch-22 PDF still renders all 11 pages verified via `analyze_file_tool` (post-refactor parity).
+
 ## Backlog / Next Actions
-- **P2** Refactor `CatchTwentyTwo.jsx` (~1300 lines) into reusable `BriefSection`/`Callout`/`ComparisonTable` primitives in `/components/brief/` — also reusable from `/memo` and any future briefs (e.g. `/civil-society`).
-- **P2** Split `server.py` (now ~830 lines) into `routers/admin.py`, `routers/public_briefs.py`, `services/email.py`, `services/rate_limit.py`, `services/briefings.py`.
-- **P2** Cyan-line-draw motif on numbered SectionHeaders via IntersectionObserver — visual polish for Memo + Catch-22.
-- **P2** Tighten `org_scale_band` / `workforce_composition` / `current_vendor` to a server-side allowlist (currently free-text up to 80/200 chars; frontend only sends a fixed enum of labels). Resend headers should also strip CR/LF defensively from name/role fields.
-- **P2** Admin dashboard — surface the 3 diagnostic qualifier fields inside `BriefingDialog` or a row-level expansion so Levi sees the qualifiers without leaving the table.
-- **P0** Drop `RESEND_API_KEY` (and a strong `ADMIN_TOKEN`) into `/app/backend/.env` → bounce backend.
+- **P2** Extract `routers/admin.py` and `services/email.py` + `services/briefings.py` from `server.py` (still ~830 lines after iter12 split).
+- **P2** `_sanitize_qualifier` should log a single WARN per drop so operators can spot scraper/abuse patterns.
+- **P1** CI guard for "Draft — for counsel review" banner on `/legal/*`.
+- **P1** Verify `.ee` sender domain in Resend, switch `SENDER_EMAIL` to `levi@thirdrailsystems.ee`.
+- **P0** Drop `RESEND_API_KEY` and a strong `ADMIN_TOKEN` into production `/app/backend/.env` → bounce backend.
 - **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number when registered to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`.
 - **P1** Verify the `.ee` sender domain in Resend and switch `SENDER_EMAIL` from `onboarding@resend.dev` to `levi@thirdrailsystems.ee`.
 - **P1** CI check that fails the build if the "Draft — for counsel review" banner string is removed from any `/legal/*` route.
