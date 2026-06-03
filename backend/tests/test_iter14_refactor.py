@@ -20,7 +20,9 @@ import pytest
 import requests
 
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://eu-travel-risk.preview.emergentagent.com").rstrip("/")
-ADMIN_TOKEN = "dev-admin-trs-2026"
+# Tests use the dev admin token by default; CI overrides via TEST_ADMIN_TOKEN env.
+# Never hardcode production tokens here.
+ADMIN_TOKEN = os.environ.get("TEST_ADMIN_TOKEN", "dev-admin-trs-2026")
 
 API = f"{BASE_URL}/api"
 

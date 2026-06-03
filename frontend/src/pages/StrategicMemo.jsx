@@ -119,7 +119,9 @@ export default function StrategicMemo() {
     };
   }, []);
 
-  // Scroll-depth + completion tracking
+  // Scroll-depth + completion tracking. Mounts once; `track` is module-level
+  // and the inner closures (`article`, `rect`, …) are local to onScroll — none
+  // need to live in the dep array.
   useEffect(() => {
     const milestones = [25, 50, 75];
     const fired = new Set();
@@ -149,8 +151,9 @@ export default function StrategicMemo() {
         track("memo_read_completed");
         try {
           localStorage.setItem("trs.memo_read", "1");
-        } catch (_) {
-          // ignore storage errors (private mode etc.)
+        } catch (err) {
+          // Private mode / storage disabled — analytics flag is best-effort.
+          console.debug("[StrategicMemo] memo_read persist failed:", err?.message);
         }
       }
     };
@@ -158,6 +161,7 @@ export default function StrategicMemo() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTocClick = (id) => {

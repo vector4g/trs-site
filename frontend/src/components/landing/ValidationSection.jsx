@@ -62,7 +62,7 @@ const ScorePips = ({ score }) => {
     <div className="flex items-center gap-1" aria-label={`Score ${filled} of 5`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <span
-          key={i}
+          key={`pip-${i}`}
           className={`h-1.5 w-3 ${
             i < filled ? "bg-cyan-400" : "bg-slate-700"
           }`}

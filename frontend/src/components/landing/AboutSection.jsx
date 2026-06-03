@@ -119,7 +119,12 @@ export default function AboutSection() {
                   <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-400">
                     {(Array.isArray(member.bio) ? member.bio : [member.bio]).map(
                       (paragraph, i) => (
-                        <p key={i}>{paragraph}</p>
+                        // Bio paragraphs are immutable per render, but the
+                        // content prefix gives us a stable identity even if
+                        // a paragraph is ever inserted/reordered.
+                        <p key={`${member.testid}-bio-${i}-${paragraph.slice(0, 24)}`}>
+                          {paragraph}
+                        </p>
                       ),
                     )}
                   </div>

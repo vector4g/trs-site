@@ -77,12 +77,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     document.title = "Pilot Pipeline · Admin · Third Rail Systems OÜ";
-    const t = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "";
+    let t = "";
+    try {
+      t = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "";
+    } catch (err) {
+      // localStorage can throw in private browsing — bounce to login.
+      console.debug("[AdminDashboard] localStorage read failed:", err?.message);
+    }
     if (!t) {
       navigate("/admin/login", { replace: true });
       return;
     }
     setToken(t);
+    // ADMIN_TOKEN_STORAGE_KEY is a module constant; setToken is stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const load = async (authToken) => {

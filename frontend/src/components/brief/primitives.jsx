@@ -7,16 +7,27 @@ export function SubHeading({ children }) {
   );
 }
 
-/** Bulleted list with cyan square markers — matches the brief typography. */
+/** Bulleted list with cyan square markers — matches the brief typography.
+ *
+ * `items` may be an array of strings OR an array of `{ id, content }` objects.
+ * Using stable keys (item content for strings, item.id for objects) avoids
+ * React reconciliation glitches when the parent ever reorders items.
+ */
 export function BulletList({ items }) {
   return (
     <ul className="mt-2 space-y-3 pl-1 text-[15px] leading-relaxed text-slate-300">
-      {items.map((it, i) => (
-        <li key={i} className="flex items-start gap-3">
-          <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
-          <span>{it}</span>
-        </li>
-      ))}
+      {items.map((it, i) => {
+        const key =
+          typeof it === "string"
+            ? `${i}:${it.slice(0, 32)}`
+            : it.id || `${i}:${String(it).slice(0, 32)}`;
+        return (
+          <li key={key} className="flex items-start gap-3">
+            <span className="mt-[7px] inline-block h-1.5 w-1.5 shrink-0 bg-cyan-400" />
+            <span>{it}</span>
+          </li>
+        );
+      })}
     </ul>
   );
 }

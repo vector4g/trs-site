@@ -48,8 +48,9 @@ export default function CookieConsent() {
     let stored = "";
     try {
       stored = localStorage.getItem(CONSENT_STORAGE_KEY) || "";
-    } catch (_) {
-      // private mode etc.
+    } catch (err) {
+      // Private browsing or storage disabled. Treat as no decision.
+      console.debug("[CookieConsent] localStorage read failed:", err?.message);
     }
     setDecision(stored);
     if (stored === "accepted") {
@@ -60,6 +61,8 @@ export default function CookieConsent() {
       const t = setTimeout(() => setOpen(true), 600);
       return () => clearTimeout(t);
     }
+    // bootPostHog + CONSENT_STORAGE_KEY are module-level constants; not deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Allow Footer (or any component) to re-open the banner.
@@ -69,7 +72,9 @@ export default function CookieConsent() {
     return () => {
       try {
         delete window.trsOpenCookieSettings;
-      } catch (_) {
+      } catch (err) {
+        // IE/older edge fallback.
+        console.debug("[CookieConsent] cleanup failed:", err?.message);
         window.trsOpenCookieSettings = undefined;
       }
     };
@@ -78,8 +83,8 @@ export default function CookieConsent() {
   const persist = useCallback((value) => {
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, value);
-    } catch (_) {
-      // private mode etc.
+    } catch (err) {
+      console.debug("[CookieConsent] localStorage write failed:", err?.message);
     }
     setDecision(value);
     setOpen(false);
@@ -91,8 +96,8 @@ export default function CookieConsent() {
     if (typeof window !== "undefined" && window.posthog) {
       try {
         window.posthog.capture("consent_accepted");
-      } catch (_) {
-        // ignore
+      } catch (err) {
+        console.debug("[CookieConsent] posthog capture failed:", err?.message);
       }
     }
   }, [persist]);

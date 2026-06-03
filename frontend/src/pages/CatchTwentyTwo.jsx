@@ -115,7 +115,9 @@ export default function CatchTwentyTwo() {
     };
   }, [isPrint]);
 
-  // Scroll-depth + completion tracking
+  // Scroll-depth + completion tracking. Mounts (re-)attaches the scroll
+  // listener whenever `isPrint` flips so headless renders never log fake
+  // engagement signals.
   useEffect(() => {
     if (isPrint) return; // no telemetry from headless renders
     const milestones = [25, 50, 75];
@@ -145,8 +147,9 @@ export default function CatchTwentyTwo() {
         track("brief_read_completed", { brief: "catch-22" });
         try {
           localStorage.setItem(CATCH22_READ_STORAGE_KEY, "1");
-        } catch (_) {
-          // ignore storage errors (private mode etc.)
+        } catch (err) {
+          // Private mode / storage disabled — analytics flag is best-effort.
+          console.debug("[CatchTwentyTwo] catch22_read persist failed:", err?.message);
         }
       }
     };
@@ -154,7 +157,9 @@ export default function CatchTwentyTwo() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    // CATCH22_READ_STORAGE_KEY is a module constant; track is module-level.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPrint]);
 
   const handleTocClick = (id) => {
     track("brief_toc_click", { brief: "catch-22", section: id });

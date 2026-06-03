@@ -50,7 +50,12 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
         setLogoUrl(data.inferred_logo_url || "");
       })
       .catch((err) => {
-        toast.error("Preview failed.", { description: err?.message });
+        // Network / auth / 404 — surface to the operator AND log to console
+        // for browser-devtools triage. `err.response` carries the FastAPI
+        // detail string when present.
+        const detail = err?.response?.data?.detail || err?.message;
+        console.warn("[BriefingDialog] preview fetch failed:", detail, err);
+        toast.error("Preview failed.", { description: detail });
       })
       .finally(() => setLoading(false));
   }, [open, lead, token]);
