@@ -102,6 +102,12 @@ Build a single-page React landing page for "Third Rail Systems OÜ", a European 
 - **Server-side qualifier allowlist + CR/LF strip.** Three frozen sets (`ORG_SCALE_ALLOWLIST`, `WORKFORCE_ALLOWLIST`, `CURRENT_VENDOR_ALLOWLIST`) silently drop any free-text qualifier values that don't exactly match the published labels — XSS payloads, garbage strings, oversized inputs all neutralised at the persistence layer. `_strip_for_header` now applied to `first_name`, `last_name`, `role` at the request handler (defence-in-depth, not just at the Resend subject splice). CR/LF/tabs collapse to single spaces and the field is capped at 200 chars.
 - **Testing agent iteration_12:** 13/13 backend pytest + all frontend acceptance criteria pass. Catch-22 PDF still renders all 11 pages verified via `analyze_file_tool` (post-refactor parity).
 
+## Iteration 13 — 2026-06-03 (Resend quota fix — TEST_-prefix bypass + DB wipe)
+- **Problem:** Levi reached 100% of his daily Resend quota because every `TEST_`-prefixed synthetic lead the testing agent created was hitting Resend and emailing his real `platform@sys.thirdrailsystems.ee` inbox.
+- **Fix:** Added `_is_test_lead()` guard at all three Resend send-paths (`_send_notification`, `_send_prospect_confirmation`, `_send_briefing_to_lead`). Any lead whose first/last name starts with `TEST_` OR whose email is `@example.{com|org|net}` OR whose local part starts with `test_`/`test-` short-circuits to `email_status="test_bypass"` and never touches the Resend API. Future testing agent runs cannot burn quota.
+- **DB cleanup:** Deleted all 174 leads from `pilot_requests` per user direction ('a' — full wipe). Fresh slate. Real customer leads will now populate cleanly with no historical test pollution.
+- **Verified:** synthetic submit returns `email_status="test_bypass"`; admin stats now `{total:0, ...}`.
+
 ## Backlog / Next Actions
 - **P2** Extract `routers/admin.py` and `services/email.py` + `services/briefings.py` from `server.py` (still ~830 lines after iter12 split).
 - **P2** `_sanitize_qualifier` should log a single WARN per drop so operators can spot scraper/abuse patterns.
