@@ -7,9 +7,37 @@ export const ADMIN_TOKEN_STORAGE_KEY = "trs.admin_token";
 export const LOGO_URL = "/trs_logo.png";
 
 // Published thought-leadership — wired into Share buttons + "Read on LinkedIn" CTAs.
+// LINKEDIN_ARTICLE_URL is kept as a single canonical URL for the Catch-22 brief's
+// "Companion essay on LinkedIn" share/CTA logic. LINKEDIN_ARTICLES is the full
+// publication list rendered in the "Recent writing" panel under the founder bios.
 export const LINKEDIN_ARTICLE_URL =
   "https://www.linkedin.com/pulse/duty-care-vs-data-privacy-catch-22-multi-billion-euro-levi-hankins-ugijc";
 export const LEVI_LINKEDIN_URL = "https://www.linkedin.com/in/levihankins";
+
+export const LINKEDIN_ARTICLES = [
+  {
+    id: "dadt-founder-note",
+    title:
+      "What twenty years under Don't Ask Don't Tell taught me about building Third Rail Systems.",
+    url: "https://www.linkedin.com/pulse/what-twenty-years-under-dont-ask-tell-taught-me-building-levi-hankins-q0mlc",
+    tag: "Founder note",
+    date: "Jun 2026",
+    snippet:
+      "The lived-experience operational thesis behind a minimum-disclosure architecture — why discretion under institutional scrutiny is the founding constraint, not a feature.",
+    testid: "writing-article-dadt",
+  },
+  {
+    id: "catch22-brief",
+    title:
+      "The duty-of-care vs. data-privacy Catch-22 — a multi-billion-euro liability hiding in EU enterprise HR.",
+    url: "https://www.linkedin.com/pulse/duty-care-vs-data-privacy-catch-22-multi-billion-euro-levi-hankins-ugijc",
+    tag: "Liability brief",
+    date: "May 2026",
+    snippet:
+      "The companion essay to the published liability brief. Five enforcement vectors EU GCs and CISOs are quietly under-pricing right now.",
+    testid: "writing-article-catch22",
+  },
+];
 
 /** LinkedIn share-offsite deep link for a given URL. */
 export const linkedinShareUrl = (url) =>

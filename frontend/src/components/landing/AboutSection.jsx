@@ -1,6 +1,6 @@
-import { MapPin, Globe } from "lucide-react";
+import { MapPin, Globe, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SectionHeader, LEVI_LINKEDIN_URL } from "./shared";
+import { SectionHeader, LEVI_LINKEDIN_URL, LINKEDIN_ARTICLES } from "./shared";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
   return (
@@ -150,6 +150,73 @@ export default function AboutSection() {
                   overreach.
                 </p>
               </div>
+            </div>
+
+            {/* Recent writing — founder publications, surfaced under the team
+              * bios so the personal-thesis pieces (DADT story) sit close to
+              * Levi's bio card. Each entry opens the LinkedIn article in a new
+              * tab. The list is data-driven from `LINKEDIN_ARTICLES` so adding
+              * a new article is a one-line append in shared.jsx. */}
+            <div
+              className="reveal mt-10 rounded-lg border border-slate-800 bg-slate-900/60 p-6 sm:p-7"
+              data-testid="recent-writing"
+            >
+              <div className="flex items-baseline justify-between gap-4">
+                <div>
+                  <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                    Recent writing · LinkedIn
+                  </div>
+                  <h3 className="mt-2 text-lg font-semibold tracking-tight text-white sm:text-xl">
+                    From the founder's desk
+                  </h3>
+                </div>
+                <a
+                  href={LEVI_LINKEDIN_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mono hidden shrink-0 items-center gap-1.5 text-[10px] uppercase tracking-[0.22em] text-slate-400 transition-colors hover:text-cyan-400 sm:inline-flex"
+                  data-testid="recent-writing-follow"
+                  aria-label="Follow Levi Hankins on LinkedIn"
+                >
+                  Follow
+                  <ArrowUpRight className="h-3 w-3" />
+                </a>
+              </div>
+
+              <ul className="mt-6 divide-y divide-slate-800/70">
+                {LINKEDIN_ARTICLES.map((article) => (
+                  <li key={article.id} className="py-4 first:pt-0 last:pb-0">
+                    <a
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-5"
+                      data-testid={article.testid}
+                    >
+                      <div className="flex shrink-0 items-center gap-3 sm:w-44 sm:flex-col sm:items-start sm:gap-1.5">
+                        <span className="inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 mono text-[9px] uppercase tracking-[0.2em] text-cyan-300">
+                          {article.tag}
+                        </span>
+                        <span className="mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+                          {article.date}
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-base font-medium leading-snug text-slate-100 transition-colors group-hover:text-cyan-300 sm:text-[17px]">
+                          {article.title}
+                        </p>
+                        <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                          {article.snippet}
+                        </p>
+                      </div>
+                      <ArrowUpRight
+                        className="hidden h-4 w-4 shrink-0 text-slate-600 transition-colors group-hover:text-cyan-400 sm:mt-1 sm:inline-block"
+                        aria-hidden="true"
+                      />
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
