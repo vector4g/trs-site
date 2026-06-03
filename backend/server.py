@@ -201,8 +201,32 @@ def _build_notification_html(req: PilotRequest) -> str:
     """
 
 
+def _is_test_lead(req: PilotRequest) -> bool:
+    """Detect synthetic test leads so we never hit Resend / burn the daily quota.
+
+    Two signals: (a) first or last name starts with ``TEST_`` (the convention
+    used by the testing agent), or (b) the corporate email's local-part starts
+    with ``test`` or ends with ``@example.com``/``@example.org``. Belt-and-
+    braces — either signal short-circuits the email send.
+    """
+    fn = (req.first_name or "").lstrip()
+    ln = (req.last_name or "").lstrip()
+    if fn.startswith("TEST_") or ln.startswith("TEST_"):
+        return True
+    email = (req.corporate_email or "").lower()
+    local, _, domain = email.partition("@")
+    if domain in ("example.com", "example.org", "example.net"):
+        return True
+    if local.startswith(("test_", "test-")):
+        return True
+    return False
+
+
 async def _send_notification(req: PilotRequest) -> tuple[str, Optional[str]]:
     """Send the notification email. Returns (status, error)."""
+    if _is_test_lead(req):
+        logger.info(f"[EMAIL TEST-BYPASS] not sending notification for synthetic lead {req.id} ({req.first_name} / {req.corporate_email})")
+        return ("test_bypass", None)
     if not RESEND_API_KEY:
         logger.info(f"[EMAIL STUB] would notify {NOTIFICATION_RECIPIENT} of pilot request {req.id}")
         return ("stubbed", None)
@@ -276,6 +300,19 @@ async def _send_briefing_to_lead(
     Reply-To routes to Levi's inbox so a "Reply" from the prospect lands
     directly in the founder's mailbox.
     """
+    # Synthetic lead guard — never email a TEST_-prefixed or example.com lead.
+    fn = (req_doc.get("first_name") or "")
+    ln = (req_doc.get("last_name") or "")
+    email = (req_doc.get("corporate_email") or "").lower()
+    _, _, domain = email.partition("@")
+    if (
+        fn.lstrip().startswith("TEST_")
+        or ln.lstrip().startswith("TEST_")
+        or domain in ("example.com", "example.org", "example.net")
+        or email.partition("@")[0].startswith(("test_", "test-"))
+    ):
+        logger.info(f"[EMAIL TEST-BYPASS] not emailing briefing {briefing_id} to synthetic lead {email}")
+        return ("test_bypass", None)
     if not RESEND_API_KEY:
         logger.info(f"[EMAIL STUB] would email briefing {briefing_id} to {req_doc.get('corporate_email')}")
         return ("stubbed", None)
@@ -355,6 +392,9 @@ def _escape_html(s: Optional[str]) -> str:
 
 async def _send_prospect_confirmation(req: PilotRequest) -> tuple[str, Optional[str]]:
     """Confirmation email sent TO the prospect with Reply-To = Levi's inbox."""
+    if _is_test_lead(req):
+        logger.info(f"[EMAIL TEST-BYPASS] not sending confirmation for synthetic lead {req.id} ({req.first_name} / {req.corporate_email})")
+        return ("test_bypass", None)
     if not RESEND_API_KEY:
         logger.info(f"[EMAIL STUB] would confirm pilot request {req.id} to {req.corporate_email}")
         return ("stubbed", None)
