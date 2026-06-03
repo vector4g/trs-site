@@ -104,50 +104,70 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
         <a
-            id="emergent-badge"
-            target="_blank"
-            href="https://app.emergent.sh/?utm_source=emergent-badge"
+            id="trs-build-badge"
+            href="/legal/imprint"
+            aria-label="Third Rail Systems OÜ · Tallinn · EU-Native"
             style="
                 display: inline-flex !important;
                 box-sizing: border-box;
-                width: 178px;
-                height: 40px;
-                padding: 8px 12px 8px 12px;
                 align-items: center !important;
-                gap: 8px;
+                gap: 10px;
+                padding: 8px 14px 8px 12px;
                 border-radius: 50px !important;
-                background: #000 !important;
+                background: rgba(15, 23, 42, 0.92) !important;
+                border: 1px solid rgba(0, 229, 255, 0.22) !important;
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.5) inset !important;
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
                 position: fixed !important;
                 bottom: 16px;
                 right: 16px;
                 text-decoration: none;
-                font-family: -apple-system, BlinkMacSystemFont,
-                    &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell,
-                    &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;,
-                    sans-serif !important;
-                font-size: 12px !important;
+                font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+                font-size: 11px !important;
+                letter-spacing: 0.14em !important;
+                text-transform: uppercase !important;
+                color: #cbd5e1 !important;
                 z-index: 9999 !important;
+                transition: border-color 200ms ease, transform 200ms ease;
             "
+            onmouseover="this.style.borderColor='rgba(0,229,255,0.55)';this.style.transform='translateY(-1px)';"
+            onmouseout="this.style.borderColor='rgba(0,229,255,0.22)';this.style.transform='translateY(0)';"
+            data-testid="trs-build-badge"
         >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M15.5702 8.13142C15.7729 8.0412 16.0007 8.18878 15.9892 8.4103C15.8374 11.3192 14.0965 14.0405 11.2531 15.3065C8.40964 16.5725 5.2224 16.0453 2.95912 14.2117C2.78676 14.072 2.82955 13.804 3.03219 13.7137L4.95677 12.8568C5.04866 12.8159 5.15446 12.823 5.24204 12.8725C6.73377 13.7153 8.59176 13.8649 10.2772 13.1145C11.9626 12.3641 13.0947 10.8833 13.4665 9.21075C13.4883 9.11256 13.5539 9.02918 13.6457 8.98827L15.5702 8.13142Z" fill="white"/>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.3066 4.74698L15.5067 5.19653C15.5759 5.35178 15.5061 5.53366 15.3508 5.60278L1.29992 11.8586C1.14467 11.9278 0.962794 11.8579 0.893675 11.7027L0.701732 11.2716L0.693457 11.2531C-1.10317 7.21778 0.711626 2.49007 4.74692 0.693443C8.78221 -1.10318 13.51 0.711693 15.3066 4.74698ZM2.82356 8.55367C2.63552 8.63739 2.41991 8.51617 2.40853 8.31065C2.28373 6.05724 3.53858 3.85787 5.72286 2.88536C7.90715 1.91286 10.3813 2.45199 11.9724 4.05256C12.1175 4.19854 12.0633 4.43988 11.8753 4.5236L2.82356 8.55367Z" fill="white"/>
-            </svg>
-            <p
+            <span
+                aria-hidden="true"
                 style="
-                    color: #FFF !important;
-                    font-family: 'Inter', sans-serif !important;
-                    font-size: 13px !important;
-                    font-style: normal !important;
-                    font-weight: 600 !important;
-                    line-height: 20px !important;
-                    margin: 0 !important;
-                    white-space: nowrap !important;
+                    position: relative;
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 999px;
+                    background: #00E5FF;
+                    box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.18), 0 0 12px rgba(0, 229, 255, 0.45);
+                    animation: trsBadgePulse 2.6s ease-in-out infinite;
                 "
-            >
-                Made with Emergent
-            </p>
+            ></span>
+            <span style="display:inline-flex; align-items:baseline; gap:8px;">
+                <span style="color:#94a3b8;">v1.0</span>
+                <span style="color:#475569; font-weight:300;">·</span>
+                <span style="color:#e2e8f0; letter-spacing:0.18em;">Tallinn</span>
+                <span style="color:#475569; font-weight:300;">·</span>
+                <span style="color:#00E5FF; letter-spacing:0.18em; font-weight:600;">EU-Native</span>
+            </span>
         </a>
+        <style>
+            @keyframes trsBadgePulse {
+                0%, 100% { opacity: 0.45; transform: scale(0.92); }
+                50%      { opacity: 1;    transform: scale(1.08); }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                #trs-build-badge span[aria-hidden="true"] { animation: none; opacity: 1; }
+            }
+            @media (max-width: 540px) {
+                #trs-build-badge { font-size: 10px !important; padding: 6px 10px !important; bottom: 10px; right: 10px; }
+            }
+        </style>
         <script>
             !(function (t, e) {
                 var o, n, p, r;
