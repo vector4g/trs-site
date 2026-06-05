@@ -208,7 +208,7 @@ export default function CatchTwentyTwo() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "TRS_Shadow_HR_Liability_Brief_v1.0.pdf";
+      a.download = "TRS_Shadow_HR_Liability_Brief_v1.1.pdf";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -259,7 +259,7 @@ export default function CatchTwentyTwo() {
           </Link>
 
           <div className="mt-8">
-            <Eyebrow index="MAY 2026 · v1.0">Analytical Brief</Eyebrow>
+            <Eyebrow index="MAY 2026 · v1.1">Analytical Brief</Eyebrow>
           </div>
 
           <a
@@ -290,7 +290,7 @@ export default function CatchTwentyTwo() {
 
           <p className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg">
             Why every multinational with a diverse workforce is sitting on the
-            next €35 million GDPR fine — and the architectural pattern that
+            next €35 million GDPR fine, and the architectural pattern that
             resolves it.
           </p>
 
@@ -302,7 +302,7 @@ export default function CatchTwentyTwo() {
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
             <span>8-minute read</span>
             <span className="hidden h-3 w-px bg-slate-700 sm:inline-block" />
-            <span>v1.0 · May 2026</span>
+            <span>v1.1 · May 2026</span>
           </div>
 
           {/* Headline stat strip */}
@@ -317,7 +317,7 @@ export default function CatchTwentyTwo() {
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
                 Hamburg DPA fine against H&amp;M for internal special-category
-                accumulation — five years of Welcome Back Talks, exposed by a
+                accumulation. Five years of Welcome Back Talks, exposed by a
                 five-hour configuration error.
               </p>
             </div>
@@ -330,9 +330,9 @@ export default function CatchTwentyTwo() {
                 76% do not fully disclose
               </div>
               <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                Neurodivergent employees — City &amp; Guilds Neurodiversity
-                Index 2023. HRC 2026: 47.5% of LGBTQ+ adults less out than a
-                year ago.
+                Neurodivergent employees, per the City &amp; Guilds
+                Neurodiversity Index 2023. HRC 2026: 47.5% of LGBTQ+ adults
+                less out than a year ago.
               </p>
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
@@ -401,12 +401,12 @@ export default function CatchTwentyTwo() {
                 for a violation that involved no external attack, no data
                 breach in the conventional sense, and no malicious actor.
                 The breach was structural. Middle managers had been quietly
-                accumulating digital dossiers on their employees — health
-                information, religious beliefs, family circumstances — over
-                five years, stored on an internal network drive, generated
-                through well-intentioned manager conversations. The data
-                became visible to the wider company only because of a
-                configuration error.
+                accumulating digital dossiers on their employees, covering
+                health information, religious beliefs, and family
+                circumstances, over five years, stored on an internal network
+                drive and generated through well-intentioned manager
+                conversations. The data became visible to the wider company
+                only because of a configuration error.
               </p>
               <p>
                 This document argues that the H&amp;M case is not an outlier.
@@ -421,11 +421,11 @@ export default function CatchTwentyTwo() {
                 the disclosed subset.
               </p>
               <p>
-                The architectural pattern that resolves it —{" "}
+                The architectural pattern that resolves it,{" "}
                 <span className="text-white">
                   minimum-disclosure stateless synthesis
-                </span>{" "}
-                — is the only approach that survives both the duty-of-care
+                </span>
+                , is the only approach that survives both the duty-of-care
                 obligation and the data-protection prohibition simultaneously.
                 Five operational diagnostic questions appear at the close. A
                 General Counsel, Chief Privacy Officer, or Chief Security
@@ -477,7 +477,7 @@ export default function CatchTwentyTwo() {
                 Prof. Dr. Johannes Caspar, the Hamburg Commissioner at the
                 time, characterized the H&amp;M conduct as constituting:
               </p>
-              <PullQuote source="Hamburg Commissioner for Data Protection · 1 October 2020">
+              <PullQuote source="Hamburg Commissioner for Data Protection, 1 October 2020">
                 A particularly intensive encroachment on employees' civil
                 rights.
               </PullQuote>
@@ -517,23 +517,23 @@ export default function CatchTwentyTwo() {
 
               <SubHeading>The structural origin</SubHeading>
               <p>
-                Modern duty-of-care frameworks —{" "}
+                Modern duty-of-care frameworks, including{" "}
                 <span className="text-white">ISO 31030</span> for travel
                 risk, the Corporate Sustainability Due Diligence Directive
                 (CSDDD) for supply chain and workforce obligations, the
                 Worker Protection Act 2024 in the United Kingdom, the
                 Equality Act jurisprudence on reasonable adjustments, and
-                parallel European employer-liability evolution — all demand
+                parallel European employer-liability evolution, all demand
                 that employers protect specific marginalized employees from
                 specific identity-aware harms. Generic protection is
                 inadequate. Tailored protection is required.
               </p>
               <p>
-                Modern data protection frameworks —{" "}
+                Modern data protection frameworks, including{" "}
                 <span className="text-white">GDPR Article 9</span> on special
                 category data, the EU AI Act prohibition on
                 demographic-attribute training inputs in employment contexts,
-                sector-specific regulation on health and disability data —
+                and sector-specific regulation on health and disability data,
                 all prohibit employers from centrally recording the
                 attributes that would let them deliver that tailored
                 protection.
@@ -560,11 +560,11 @@ export default function CatchTwentyTwo() {
               <BulletList
                 items={[
                   "Spreadsheets maintained by individual managers or HR business partners tracking employee accommodations, dietary requirements, medical conditions, family circumstances, religious observances, or identity factors relevant to travel and assignment decisions.",
-                  "Network drives where ERG (Employee Resource Group) coordinators store membership lists for LGBTQ+ networks, disability networks, neurodiversity networks, veteran networks, and parent networks — typically without DPIA, without explicit consent for the processing purpose, and without documented retention policy.",
+                  "Network drives where ERG (Employee Resource Group) coordinators store membership lists for LGBTQ+ networks, disability networks, neurodiversity networks, veteran networks, and parent networks, typically without DPIA, without explicit consent for the processing purpose, and without documented retention policy.",
                   "HRIS custom fields that someone in middle management began populating without explicit corporate authorization, capturing accommodation needs, medical restrictions, or identity factors in free-text or structured form.",
                   "Email threads and chat archives where managers and HR staff have discussed individual employees' personal circumstances in detail, with the threads retained indefinitely under default corporate retention policies.",
                   "OHS (Occupational Health and Safety) files containing medical disclosure information that is then referenced informally by line managers for non-OHS purposes.",
-                  "Travel-risk vendor platforms that have accumulated traveler profile data including health conditions, dietary restrictions, and emergency contact relationships — all of which constitute special-category data under Article 9.",
+                  "Travel-risk vendor platforms that have accumulated traveler profile data including health conditions, dietary restrictions, and emergency contact relationships, all of which constitute special-category data under Article 9.",
                 ]}
               />
               <p>
@@ -652,19 +652,19 @@ export default function CatchTwentyTwo() {
                 being tracked through official channels.
               </p>
 
-              <SubHeading>The 15-to-20 percent dimension</SubHeading>
+              <SubHeading>The 15 to 20 percent dimension</SubHeading>
               <p>
                 The most underappreciated dimension of this problem is scale.
-                Neurodivergent individuals — those with autism, ADHD,
-                dyslexia, dyspraxia, and related conditions — account for an
-                estimated <span className="text-white">15–20%</span> of the
-                global adult population. A multinational with 50,000
+                Neurodivergent individuals, those with autism, ADHD,
+                dyslexia, dyspraxia, and related conditions, account for an
+                estimated <span className="text-white">15 to 20%</span> of
+                the global adult population. A multinational with 50,000
                 employees has approximately{" "}
                 <span className="text-white">7,500 to 10,000</span>{" "}
                 neurodivergent workers. Approximately 24% have formally
                 disclosed (per CIPD 2024). The disclosed subset is tracked
-                somewhere — in HRIS accommodation fields, ERG membership
-                lists, manager notes, OHS files. Each of those tracking
+                somewhere, in HRIS accommodation fields, ERG membership
+                lists, manager notes, or OHS files. Each of those tracking
                 locations is processing special-category health data under
                 Article 9. A configuration error of the H&amp;M variety,
                 exposing one of these tracking locations, would generate a
@@ -748,7 +748,7 @@ export default function CatchTwentyTwo() {
               <p>
                 The Shadow HR problem cannot be solved by policy. Stronger
                 manager training, clearer compliance documentation, more
-                frequent DPIAs — all are useful, none are sufficient.
+                frequent DPIAs. All are useful, none are sufficient.
                 Managers will continue to receive duty-of-care obligations
                 they cannot legally discharge using sanctioned data
                 infrastructure, and they will continue to build informal
@@ -801,7 +801,7 @@ export default function CatchTwentyTwo() {
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
                     The audit trail required for ISO 31030 and EU AI Act
                     compliance captures the assessment outputs and decision
-                    logic — not the demographic inputs. The compliance
+                    logic, not the demographic inputs. The compliance
                     evidence exists. The Article 9 exposure does not.
                   </p>
                 </div>
@@ -823,8 +823,8 @@ export default function CatchTwentyTwo() {
 
               <SubHeading>Why this is the only pattern that survives</SubHeading>
               <p>
-                Centralized data brokerage — the architectural pattern that
-                defines the legacy travel-risk-management industry — cannot
+                Centralized data brokerage, the architectural pattern that
+                defines the legacy travel-risk-management industry, cannot
                 survive the current regulatory environment. The enforcement
                 trajectory is too steep, the disclosure-collapse multiplier
                 is too aggressive, and the population-based penalty
@@ -866,7 +866,7 @@ export default function CatchTwentyTwo() {
                   Can you produce, within 72 hours, the documented legal
                   basis under GDPR Article 6 and Article 9 for every employee
                   accommodation, ERG membership, or identity-related data
-                  field currently held in any system — official or informal —
+                  field currently held in any system, official or informal,
                   within your organization? If the answer requires
                   consultation with multiple HR business partners, ERG
                   coordinators, or line managers to compile, the
@@ -886,11 +886,11 @@ export default function CatchTwentyTwo() {
                 <DiagnosticQuestion index="3" title="Manager training content">
                   Do your line manager training materials contain explicit,
                   named guidance against informal tracking of employee
-                  accommodations, identity factors, or personal circumstances
-                  — with examples of what does and does not constitute
-                  Article 9 special-category data? Generic GDPR training does
-                  not satisfy this question. The guidance must be specific to
-                  the Shadow HR pattern.
+                  accommodations, identity factors, or personal circumstances,
+                  with examples of what does and does not constitute Article
+                  9 special-category data? Generic GDPR training does not
+                  satisfy this question. The guidance must be specific to the
+                  Shadow HR pattern.
                 </DiagnosticQuestion>
                 <DiagnosticQuestion index="4" title="DPIA coverage on ERG data">
                   When was the last DPIA (Data Protection Impact Assessment)
@@ -961,9 +961,9 @@ export default function CatchTwentyTwo() {
               </p>
               <BulletList
                 items={[
-                  "Organizational scale — multinational with 5,000+ employees.",
-                  "Workforce composition — substantive marginalized-cohort population, including but not limited to LGBTQ+, neurodivergent, and disability cohorts.",
-                  "Current exposure — organization is processing employee data through travel-risk vendors, ERG infrastructure, or accommodation-tracking systems.",
+                  "Organizational scale: multinational with 5,000+ employees.",
+                  "Workforce composition: substantive marginalized-cohort population, including but not limited to LGBTQ+, neurodivergent, and disability cohorts.",
+                  "Current exposure: organization is processing employee data through travel-risk vendors, ERG infrastructure, or accommodation-tracking systems.",
                 ]}
               />
 
@@ -1107,7 +1107,7 @@ export default function CatchTwentyTwo() {
                   "Human Rights Campaign Foundation Corporate Equality Index 2026.",
                   "CSDDD (Corporate Sustainability Due Diligence Directive), Official Journal of the European Union, 5 July 2024; Omnibus I amendments 24 February 2026.",
                   "GDPR Article 9 and Article 83, Regulation (EU) 2016/679.",
-                  "ISO 31030:2021 Travel Risk Management — Guidance for Organizations, International Organization for Standardization.",
+                  "ISO 31030:2021 Travel Risk Management: Guidance for Organizations, International Organization for Standardization.",
                   "KTH Royal Institute of Technology, Deeptech Startup Network IRL Framework Evidence Report, Third Rail Systems OÜ, March 2026.",
                 ].map((cite) => (
                   <li key={cite} className="flex items-start gap-3">
@@ -1127,7 +1127,7 @@ export default function CatchTwentyTwo() {
 
               <p className="mt-6 mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
                 © 2026 Third Rail Systems OÜ · Tallinn, Estonia · Registry
-                17488655 · v1.0 · May 2026
+                17488655 · v1.1 · May 2026
               </p>
             </BriefSection>
           </article>
