@@ -178,6 +178,26 @@ These are real findings, but each is a multi-day refactor with non-trivial regre
 - **P1** CI guard for "Draft — for counsel review" banner on `/legal/*`.
 - **P1** Verify `.ee` sender domain in Resend, switch `SENDER_EMAIL` to `levi@thirdrailsystems.ee`.
 - **P0** Drop `RESEND_API_KEY` and a strong `ADMIN_TOKEN` into production `/app/backend/.env` → bounce backend.
+
+## Iteration 16 — 2026-02-06 (Code Quality Report triage, Batch 1)
+
+### Done
+- Created `/app/frontend/src/lib/debug.js` exporting `devLog(...)` that no-ops when `NODE_ENV === "production"`. Replaced all 6 `console.debug` call sites (`CookieConsent` ×4, `StrategicMemo`, `CatchTwentyTwo`) with `devLog` so production builds stay quiet but devtools still see swallowed errors in dev/preview.
+- Added `devLog` to the previously-silent `CookieConsent` PostHog init `catch` (was the one true empty catch — the rest already had fallbacks or comments).
+- Hoisted `TOASTER_OPTIONS` to module scope in `App.js` so React doesn't allocate a new toaster-options object per `<App />` render.
+
+### Investigated & rejected (false positives in the Code Quality Report)
+- **"exec() calls in tests/test_briefings.py 148/158"** — no `exec()` builtin. Lines are a function name (`test_generate_full_pdf_larger_than_exec`) and a variable (`exec_size`) referring to the "executive summary" PDF variant. Prior agent already commented this in line 142. Linter substring false positive.
+- **"localStorage sensitive data in DiagnosticIntake / ContactSection / CatchTwentyTwo / CookieConsent"** — what's actually stored are `trs.memo_read` / `trs.catch22_read` (boolean read-completion flags for lead qualification) and `trs.consent` (cookie-consent decision). None are PII or credentials. The consent decision **must** be JS-readable to gate PostHog per EDPB Guidelines 03/2022 — making it httpOnly would break privacy compliance. The actually-sensitive item (`trs.admin_token`) was already migrated to an httpOnly cookie in iter15.
+- **"21 React hook missing-dep warnings"** — spot-checked StrategicMemo:182, CatchTwentyTwo:94/181, CookieConsent:48/82, AdminDashboard:84. Every one is correct: the "missing" identifiers are either browser globals (`URLSearchParams`, `localStorage`), local consts inside the effect, React setState (stable by guarantee), or module-level constants. The external linter is hallucinating non-dependencies. Adding them to dep arrays would cause infinite loops and double-fires. The pre-existing intentional `[]`-deps comments stand.
+- **"Python `is True/False/None` is an anti-pattern"** — PEP 8 explicitly recommends `is None`, and `is True`/`is False` is the *stricter* check (matches exact singleton, not just truthy/falsy). Replacing with `==` would be a worse pattern. The report's stated rationale ("fails unpredictably for strings/numbers") applies to non-singletons, not these.
+- **4 of 5 inline-object/array props** (in `CatchTwentyTwo.jsx` BulletList sites) — BulletList isn't `React.memo`'d and the page is mostly read-once. Theoretical perf gain ≈ 0, file-noise cost is real. Documented decision rather than churn the file.
+
+### Pending (deferred to user pick on next turn)
+- **Batch 3** — component refactors (`CatchTwentyTwo`, `BriefingDialog`, `ContactSection`, `DiagnosticIntake`, `StrategicMemo`, `AdminDashboard`). One component per turn, ~1–1.5 hr each.
+- **Batch 4** — Python function complexity (`render_briefing`, `create_pilot_request`, `fetch_brand`, `_build_full_html`, `_build_exec_html`, `send_briefing_to_lead`). ~30–45 min each.
+
+
 - **P0** Take the four `/legal/*` drafts to Estonian counsel (TGS Baltic, COBALT, or Sorainen). Provide EE VAT number when registered to replace the last `[TBC]` on `/legal/imprint` and `/legal/privacy`.
 - **P1** Verify the `.ee` sender domain in Resend and switch `SENDER_EMAIL` from `onboarding@resend.dev` to `levi@thirdrailsystems.ee`.
 - **P1** CI check that fails the build if the "Draft — for counsel review" banner string is removed from any `/legal/*` route.

@@ -14,6 +14,17 @@ import Imprint from "@/pages/legal/Imprint";
 import CookieConsent from "@/components/consent/CookieConsent";
 import { Toaster } from "@/components/ui/sonner";
 
+// Hoisted to module scope so React doesn't create a new object reference per
+// render of <App />. Inline-prop objects break referential-equality memoisation
+// on child components (Toaster in particular re-evaluates `toastOptions`).
+const TOASTER_OPTIONS = {
+  style: {
+    background: "#0f172a",
+    border: "1px solid #1e293b",
+    color: "#e2e8f0",
+  },
+};
+
 /**
  * Support landing navigation with hash (e.g. "/#contact") from other pages.
  * When the user clicks a "Request Pilot Assessment" CTA from /memo we navigate
@@ -61,13 +72,7 @@ function App() {
       <Toaster
         theme="dark"
         position="bottom-right"
-        toastOptions={{
-          style: {
-            background: "#0f172a",
-            border: "1px solid #1e293b",
-            color: "#e2e8f0",
-          },
-        }}
+        toastOptions={TOASTER_OPTIONS}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Cookie, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { devLog } from "@/lib/debug";
 
 /**
  * EDPB-compliant cookie / consent banner.
@@ -33,8 +34,9 @@ function bootPostHog() {
       },
     });
     window.posthog.__loaded = true;
-  } catch (_) {
+  } catch (err) {
     // ignore — analytics must never break UX
+    devLog("[CookieConsent] PostHog init failed:", err?.message);
   }
 }
 
@@ -51,7 +53,7 @@ export default function CookieConsent() {
       stored = localStorage.getItem(CONSENT_STORAGE_KEY) || "";
     } catch (err) {
       // Private browsing or storage disabled. Treat as no decision.
-      console.debug("[CookieConsent] localStorage read failed:", err?.message);
+      devLog("[CookieConsent] localStorage read failed:", err?.message);
     }
     setDecision(stored);
     if (stored === "accepted") {
@@ -73,7 +75,7 @@ export default function CookieConsent() {
         delete window.trsOpenCookieSettings;
       } catch (err) {
         // IE/older edge fallback.
-        console.debug("[CookieConsent] cleanup failed:", err?.message);
+        devLog("[CookieConsent] cleanup failed:", err?.message);
         window.trsOpenCookieSettings = undefined;
       }
     };
@@ -83,7 +85,7 @@ export default function CookieConsent() {
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, value);
     } catch (err) {
-      console.debug("[CookieConsent] localStorage write failed:", err?.message);
+      devLog("[CookieConsent] localStorage write failed:", err?.message);
     }
     setDecision(value);
     setOpen(false);
@@ -96,7 +98,7 @@ export default function CookieConsent() {
       try {
         window.posthog.capture("consent_accepted");
       } catch (err) {
-        console.debug("[CookieConsent] posthog capture failed:", err?.message);
+        devLog("[CookieConsent] posthog capture failed:", err?.message);
       }
     }
   }, [persist]);

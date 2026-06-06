@@ -30,6 +30,7 @@ import {
   openExternal,
 } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
+import { devLog } from "@/lib/debug";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
   return (
@@ -210,7 +211,7 @@ export default function StrategicMemo() {
           localStorage.setItem("trs.memo_read", "1");
         } catch (err) {
           // Private mode / storage disabled — analytics flag is best-effort.
-          console.debug("[StrategicMemo] memo_read persist failed:", err?.message);
+          devLog("[StrategicMemo] memo_read persist failed:", err?.message);
         }
       }
     };

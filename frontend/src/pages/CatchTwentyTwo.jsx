@@ -40,6 +40,7 @@ import {
   DiagnosticQuestion,
 } from "@/components/brief";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
+import { devLog } from "@/lib/debug";
 
 // LinkedIn glyph — lucide-react has no LinkedIn icon, so use a tiny inline SVG.
 function LinkedInGlyph({ className = "h-4 w-4" }) {
@@ -209,7 +210,7 @@ export default function CatchTwentyTwo() {
           localStorage.setItem(CATCH22_READ_STORAGE_KEY, "1");
         } catch (err) {
           // Private mode / storage disabled — analytics flag is best-effort.
-          console.debug("[CatchTwentyTwo] catch22_read persist failed:", err?.message);
+          devLog("[CatchTwentyTwo] catch22_read persist failed:", err?.message);
         }
       }
     };
