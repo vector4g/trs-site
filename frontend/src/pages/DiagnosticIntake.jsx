@@ -32,7 +32,7 @@ import {
   CATCH22_READ_STORAGE_KEY,
   useReveal,
 } from "@/components/landing/shared";
-import { useSEO } from "@/lib/useSEO";
+import { useSEO, useJsonLd } from "@/lib/useSEO";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const CONSENT_STORAGE_KEY = "trs.consent";
@@ -91,9 +91,30 @@ export default function DiagnosticIntake() {
   useSEO({
     title: "Confidential Diagnostic Request · Third Rail Systems OÜ",
     description:
-      "Request a 60-minute confidential architectural diagnostic from Third Rail Systems OÜ. Triages Shadow HR exposure for multinational enterprises. No HRIS integration required.",
+      "60-minute confidential diagnostic for multinational security & GRC teams. Triages Shadow HR exposure under ISO 31030 + GDPR. No HRIS integration.",
     canonical: "https://thirdrailsystems.ee/diagnostic",
   });
+  useJsonLd(
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://thirdrailsystems.ee/",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Confidential Diagnostic",
+          item: "https://thirdrailsystems.ee/diagnostic",
+        },
+      ],
+    },
+    "diagnostic-breadcrumb-jsonld",
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -22,7 +22,7 @@ export default function LandingPage() {
   // correct after any client-side navigation back to the homepage.
   useSEO({
     title:
-      "Third Rail Systems OÜ — Minimum-Disclosure Travel Risk Compliance",
+      "Third Rail Systems OÜ · Minimum-Disclosure Travel Risk Compliance",
     description:
       "EU-native compliance platform that resolves the ISO 31030 vs. GDPR catch-22 for marginalized employee travel risk. Built in Tallinn, Estonia.",
     canonical: "https://thirdrailsystems.ee/",

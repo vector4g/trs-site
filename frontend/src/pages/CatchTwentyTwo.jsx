@@ -109,9 +109,9 @@ export default function CatchTwentyTwo() {
   // publisher. Critical for thought-leadership ranking.
   useSEO({
     title:
-      "The Shadow HR Liability — Analytical Brief · Third Rail Systems OÜ",
+      "The Shadow HR Liability · Analytical Brief · Third Rail Systems OÜ",
     description:
-      "Why every multinational with a diverse workforce is sitting on the next €35 million GDPR fine, and the architectural pattern that resolves it. v1.1 · May 2026.",
+      "Why multinationals with diverse workforces are sitting on the next €35M GDPR fine, and the architectural pattern that resolves it. v1.1, May 2026.",
     canonical: "https://thirdrailsystems.ee/catch-22",
   });
   useJsonLd(
@@ -120,7 +120,7 @@ export default function CatchTwentyTwo() {
       "@type": "Article",
       headline: "The Shadow HR Liability",
       description:
-        "Why every multinational with a diverse workforce is sitting on the next €35 million GDPR fine, and the architectural pattern that resolves it.",
+        "Why multinationals with diverse workforces are sitting on the next €35M GDPR fine, and the architectural pattern that resolves it.",
       author: {
         "@type": "Person",
         name: "Levi Hankins",
@@ -136,7 +136,7 @@ export default function CatchTwentyTwo() {
           url: "https://thirdrailsystems.ee/og.png",
         },
       },
-      datePublished: "2026-05-13",
+      datePublished: "2026-05-01",
       dateModified: "2026-06-05",
       mainEntityOfPage: "https://thirdrailsystems.ee/catch-22",
       image: "https://thirdrailsystems.ee/og.png",
@@ -145,6 +145,27 @@ export default function CatchTwentyTwo() {
         "GDPR Article 9, ISO 31030, Shadow HR, employee data protection, EU AI Act, Hamburg DPA, H&M precedent, travel risk management, minimum-disclosure architecture",
     },
     "catch22-article-jsonld",
+  );
+  useJsonLd(
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://thirdrailsystems.ee/",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "The Shadow HR Liability",
+          item: "https://thirdrailsystems.ee/catch-22",
+        },
+      ],
+    },
+    "catch22-breadcrumb-jsonld",
   );
 
   useEffect(() => {

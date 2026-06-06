@@ -112,16 +112,16 @@ export default function StrategicMemo() {
 
   useSEO({
     title:
-      "The Strategic Memo — Resolving the ISO 31030 Catch-22 · Third Rail Systems OÜ",
+      "The Strategic Memo · Resolving the ISO 31030 Catch-22 · Third Rail Systems OÜ",
     description:
-      "Long-form strategic memo from the founder of Third Rail Systems OÜ on minimum-disclosure compliance architecture, KTH IRL 5 validation, and the Estonia advantage.",
+      "Founder memo on minimum-disclosure compliance architecture, KTH IRL 5 validation, and why the EU's catch-22 is solvable from Tallinn.",
     canonical: "https://thirdrailsystems.ee/memo",
   });
   useJsonLd(
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      headline: "The Strategic Memo — Resolving the ISO 31030 Catch-22",
+      headline: "The Strategic Memo",
       description:
         "Long-form strategic memo on minimum-disclosure compliance architecture for enterprise travel risk.",
       author: {
@@ -139,7 +139,7 @@ export default function StrategicMemo() {
           url: "https://thirdrailsystems.ee/og.png",
         },
       },
-      datePublished: "2026-04-20",
+      datePublished: "2026-04-15",
       dateModified: "2026-06-03",
       mainEntityOfPage: "https://thirdrailsystems.ee/memo",
       image: "https://thirdrailsystems.ee/og.png",
@@ -148,6 +148,27 @@ export default function StrategicMemo() {
         "ISO 31030, GDPR, EU AI Act, duty of care, travel risk management, KTH Royal Institute of Technology, IRL 5, Tallinn, Estonia",
     },
     "memo-article-jsonld",
+  );
+  useJsonLd(
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://thirdrailsystems.ee/",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "The Strategic Memo",
+          item: "https://thirdrailsystems.ee/memo",
+        },
+      ],
+    },
+    "memo-breadcrumb-jsonld",
   );
 
   useEffect(() => {

@@ -5,7 +5,7 @@ import { ArrowLeft, AlertTriangle } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Eyebrow, useReveal } from "@/components/landing/shared";
-import { useSEO } from "@/lib/useSEO";
+import { useSEO, useJsonLd } from "@/lib/useSEO";
 
 const NAV_ITEMS = [
   { to: "/legal/privacy", label: "Privacy" },
@@ -19,11 +19,11 @@ const NAV_ITEMS = [
 // supersede these later — they're intentionally short and factual.
 const LEGAL_DESCRIPTIONS = {
   "/legal/privacy":
-    "Privacy notice for Third Rail Systems OÜ. How we process pilot intake submissions, lawful basis, retention, and data subject rights under GDPR.",
+    "Third Rail Systems OÜ privacy notice: pilot intake processing, lawful basis, retention, data subject rights under GDPR. Tallinn, Estonia.",
   "/legal/terms":
     "Terms of service for the Third Rail Systems OÜ website and enterprise pilot engagements. Tallinn, Estonia.",
   "/legal/cookies":
-    "Cookie notice for thirdrailsystems.ee. Strictly necessary cookies, optional analytics via PostHog, and EDPB-compliant consent gating.",
+    "Cookie notice for thirdrailsystems.ee: strictly necessary cookies and EDPB-compliant consent gating for optional PostHog analytics.",
   "/legal/imprint":
     "Legal imprint for Third Rail Systems OÜ — Estonian Äriregister code 17488655, Tallinn. ODR contact and supervisory authority disclosures.",
 };
@@ -48,6 +48,36 @@ export default function LegalLayout({
       ? `https://thirdrailsystems.ee${currentPath}`
       : undefined,
   });
+
+  useJsonLd(
+    currentPath
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: "https://thirdrailsystems.ee/",
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Legal",
+              item: "https://thirdrailsystems.ee/legal/privacy",
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: title,
+              item: `https://thirdrailsystems.ee${currentPath}`,
+            },
+          ],
+        }
+      : null,
+    "legal-breadcrumb-jsonld",
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
