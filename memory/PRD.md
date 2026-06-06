@@ -141,6 +141,37 @@ These are real findings, but each is a multi-day refactor with non-trivial regre
 - **Component size:** iter12 already extracted `/components/brief/*` primitives from `CatchTwentyTwo.jsx` (the largest one). The remainder is mostly static content; splitting further yields little real reusability.
 - **Admin token in localStorage:** moving to `httpOnly` cookies requires a backend cookie-issuance route, a session-table in Mongo, CSRF token plumbing, and a different `require_admin` dependency. ~1.5 days of work + risk. Currently mitigated by: (a) one-time CSP-protected JWT use, (b) tiny attack surface (only Levi has the token), (c) localStorage XSS exposure exists only if a future regression introduces unsafe HTML rendering on `/admin`. Flagged in backlog as P1 ahead of any operations-team expansion.
 
+## Iteration 15 — 2026-02-06 (SEO finalisation + a11y batch + P1 cookie-auth migration)
+
+### SEO copy + schema (user-approved wording, no em-dashes)
+- Rewrote meta descriptions on `/`, `/catch-22`, `/memo`, `/diagnostic`, `/legal/privacy`, `/legal/cookies` to ≤155 chars with global em-dash purge (middle-dot or comma).
+- Replaced em-dashes in `<title>`, `og:title`, `twitter:title`, and SoftwareApplication schema name (`index.html`).
+- Tightened `og:description` (`EU AI Act — resolved.` → `EU AI Act, resolved.`).
+- Added `BreadcrumbList` JSON-LD on `/catch-22`, `/memo`, `/diagnostic`, and all `/legal/*`.
+- Schema dates corrected: `/catch-22` `datePublished` → 2026-05-01, `/memo` → 2026-04-15.
+- Lighthouse on production: **SEO 100/100**, Best Practices 82, A11y 79 → improved by this iteration, Performance 67 (LCP 4.2s; deferred to P2 code-splitting).
+
+### Accessibility (Lighthouse fixes)
+- Footer mono labels + cookie-settings: `text-slate-500/600` → `text-slate-400` (contrast 3.73 → ≥4.5).
+- `Navbar` mobile-menu trigger: added `aria-label="Open menu"/"Close menu"`.
+- `Navbar` logo Link: added `aria-label="Third Rail Systems OÜ · Home"` (visible text was `sm:` only).
+- `ValidationSection` `ScorePips` div: added `role="img"` so `aria-label="Score N of 5"` is valid.
+- `#trs-build-badge`: aria-label aligned with visible text → `"v1.0 · Tallinn · EU-Native"`.
+- Cookie-consent policy link: `min-h-[24px]` to satisfy 24px touch-target rule.
+
+### P1 — Admin auth: localStorage → httpOnly cookies (security)
+- New endpoints `POST /api/admin/login`, `POST /api/admin/logout`. Login sets `trs_admin_session` JWT cookie (HttpOnly · Secure · SameSite=Strict · Max-Age=28800).
+- `require_admin` now reads the cookie first; legacy `X-Admin-Token` header retained for pytest + server-to-server callers.
+- Frontend: `localStorage` shared-secret eliminated. Every admin request uses `withCredentials: true`. Verified live: localStorage empty after login, `document.cookie` cannot see `trs_admin_session`.
+- `ADMIN_TOKEN_STORAGE_KEY` removed from shared.jsx; AdminLogin/AdminDashboard/BriefingDialog rewired.
+- New test file: `/app/backend/tests/test_admin_cookie_auth.py` — **5/5 passing** (login OK + sets cookie with required attrs, cookie-only auth works on 3 protected routes, logout invalidates session, legacy header still works).
+- `JWT_SECRET` added to `backend/.env`. `/app/memory/test_credentials.md` updated with new flow.
+
+### Verification
+- testing_agent_v3_fork iteration_14: backend 72/77 (5 pre-existing failures out-of-scope: deprecated `rejected` stat key, in-test IP rate-limit collision, `test_bypass` vs `stubbed` status, sitemap 8 vs expected 6); frontend 8/9 spec-mapped flows. Two action items both addressed in same turn (og:description em-dash + build-badge aria-label).
+
+
+
 ## Backlog / Next Actions
 - **P2** Extract `routers/admin.py` and `services/email.py` + `services/briefings.py` from `server.py` (still ~830 lines after iter12 split).
 - **P2** `_sanitize_qualifier` should log a single WARN per drop so operators can spot scraper/abuse patterns.
