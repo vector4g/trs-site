@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import LegalLayout, {
   H2,
   H3,

@@ -5,6 +5,7 @@ import { ArrowLeft, AlertTriangle } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Eyebrow, useReveal } from "@/components/landing/shared";
+import { useSEO } from "@/lib/useSEO";
 
 const NAV_ITEMS = [
   { to: "/legal/privacy", label: "Privacy" },
@@ -12,6 +13,20 @@ const NAV_ITEMS = [
   { to: "/legal/cookies", label: "Cookies" },
   { to: "/legal/imprint", label: "Legal / Imprint" },
 ];
+
+// Stable descriptions for each legal route so search engines don't see four
+// pages with identical generic blurbs. The legal team's review wording can
+// supersede these later — they're intentionally short and factual.
+const LEGAL_DESCRIPTIONS = {
+  "/legal/privacy":
+    "Privacy notice for Third Rail Systems OÜ. How we process pilot intake submissions, lawful basis, retention, and data subject rights under GDPR.",
+  "/legal/terms":
+    "Terms of service for the Third Rail Systems OÜ website and enterprise pilot engagements. Tallinn, Estonia.",
+  "/legal/cookies":
+    "Cookie notice for thirdrailsystems.ee. Strictly necessary cookies, optional analytics via PostHog, and EDPB-compliant consent gating.",
+  "/legal/imprint":
+    "Legal imprint for Third Rail Systems OÜ — Estonian Äriregister code 17488655, Tallinn. ODR contact and supervisory authority disclosures.",
+};
 
 export default function LegalLayout({
   title,
@@ -24,13 +39,18 @@ export default function LegalLayout({
 }) {
   useReveal();
 
+  useSEO({
+    title: `${title} · Third Rail Systems OÜ`,
+    description:
+      LEGAL_DESCRIPTIONS[currentPath] ||
+      "Legal documentation for Third Rail Systems OÜ, Tallinn, Estonia.",
+    canonical: currentPath
+      ? `https://thirdrailsystems.ee${currentPath}`
+      : undefined,
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    const prev = document.title;
-    document.title = `${title} · Third Rail Systems OÜ`;
-    return () => {
-      document.title = prev;
-    };
   }, [title]);
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { ShieldAlert, Lock, Users, ArrowRight, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SectionHeader } from "./shared";

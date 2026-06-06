@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -38,6 +39,7 @@ import {
   Callout,
   DiagnosticQuestion,
 } from "@/components/brief";
+import { useSEO, useJsonLd } from "@/lib/useSEO";
 
 // LinkedIn glyph — lucide-react has no LinkedIn icon, so use a tiny inline SVG.
 function LinkedInGlyph({ className = "h-4 w-4" }) {
@@ -102,17 +104,54 @@ export default function CatchTwentyTwo() {
     }
   }, [isPrint]);
 
+  // SEO meta — sets <title>, description, canonical, og:url for the brief.
+  // Article JSON-LD adds E-E-A-T signals for Google: author + publish date +
+  // publisher. Critical for thought-leadership ranking.
+  useSEO({
+    title:
+      "The Shadow HR Liability — Analytical Brief · Third Rail Systems OÜ",
+    description:
+      "Why every multinational with a diverse workforce is sitting on the next €35 million GDPR fine, and the architectural pattern that resolves it. v1.1 · May 2026.",
+    canonical: "https://thirdrailsystems.ee/catch-22",
+  });
+  useJsonLd(
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "The Shadow HR Liability",
+      description:
+        "Why every multinational with a diverse workforce is sitting on the next €35 million GDPR fine, and the architectural pattern that resolves it.",
+      author: {
+        "@type": "Person",
+        name: "Levi Hankins",
+        url: "https://www.linkedin.com/in/levihankins",
+        jobTitle: "Founder & CEO, Third Rail Systems OÜ",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Third Rail Systems OÜ",
+        url: "https://thirdrailsystems.ee/",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://thirdrailsystems.ee/og.png",
+        },
+      },
+      datePublished: "2026-05-13",
+      dateModified: "2026-06-05",
+      mainEntityOfPage: "https://thirdrailsystems.ee/catch-22",
+      image: "https://thirdrailsystems.ee/og.png",
+      inLanguage: "en",
+      keywords:
+        "GDPR Article 9, ISO 31030, Shadow HR, employee data protection, EU AI Act, Hamburg DPA, H&M precedent, travel risk management, minimum-disclosure architecture",
+    },
+    "catch22-article-jsonld",
+  );
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    const prev = document.title;
-    document.title =
-      "The Shadow HR Liability · Analytical Brief · Third Rail Systems OÜ";
     if (!isPrint) {
       track("brief_viewed", { brief: "catch-22" });
     }
-    return () => {
-      document.title = prev;
-    };
   }, [isPrint]);
 
   // Scroll-depth + completion tracking. Mounts (re-)attaches the scroll
@@ -157,8 +196,6 @@ export default function CatchTwentyTwo() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-    // CATCH22_READ_STORAGE_KEY is a module constant; track is module-level.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPrint]);
 
   const handleTocClick = (id) => {

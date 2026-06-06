@@ -32,6 +32,7 @@ import {
   CATCH22_READ_STORAGE_KEY,
   useReveal,
 } from "@/components/landing/shared";
+import { useSEO } from "@/lib/useSEO";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const CONSENT_STORAGE_KEY = "trs.consent";
@@ -87,14 +88,15 @@ export default function DiagnosticIntake() {
   const [errors, setErrors] = useState({});
   const mountedAt = useRef(Date.now());
 
+  useSEO({
+    title: "Confidential Diagnostic Request · Third Rail Systems OÜ",
+    description:
+      "Request a 60-minute confidential architectural diagnostic from Third Rail Systems OÜ. Triages Shadow HR exposure for multinational enterprises. No HRIS integration required.",
+    canonical: "https://thirdrailsystems.ee/diagnostic",
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    const prev = document.title;
-    document.title =
-      "Confidential Diagnostic Request · Third Rail Systems OÜ";
-    return () => {
-      document.title = prev;
-    };
   }, []);
 
   const validate = () => {

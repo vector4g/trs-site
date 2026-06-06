@@ -13,9 +13,20 @@ import AdvisoryBoard from "@/components/landing/AdvisoryBoard";
 import ContactSection from "@/components/landing/ContactSection";
 import Footer from "@/components/landing/Footer";
 import { useReveal, scrollToId } from "@/components/landing/shared";
+import { useSEO } from "@/lib/useSEO";
 
 export default function LandingPage() {
   useReveal();
+  // Per-page SEO. The static tags in /public/index.html cover this same page,
+  // but explicitly setting them here means the canonical & og:url are always
+  // correct after any client-side navigation back to the homepage.
+  useSEO({
+    title:
+      "Third Rail Systems OÜ — Minimum-Disclosure Travel Risk Compliance",
+    description:
+      "EU-native compliance platform that resolves the ISO 31030 vs. GDPR catch-22 for marginalized employee travel risk. Built in Tallinn, Estonia.",
+    canonical: "https://thirdrailsystems.ee/",
+  });
   const navigate = useNavigate();
 
   const scrollToContact = () => scrollToId("contact");

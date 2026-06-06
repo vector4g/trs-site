@@ -34,6 +34,9 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
   const [generating, setGenerating] = useState(null); // "exec" | "full" | null
   const [emailing, setEmailing] = useState(null); // "exec" | "full" | null
 
+  // The set-state calls here intentionally fire during the effect to reset
+  // derived state when `open`/`lead`/`token` change — that's the correct
+  // pattern for prop-driven reset.
   useEffect(() => {
     if (!open || !lead) return;
     setPreview(null);

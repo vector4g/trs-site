@@ -43,7 +43,8 @@ export default function CookieConsent() {
   const [decision, setDecision] = useState(null);
   const [open, setOpen] = useState(false);
 
-  // Read stored decision once on mount.
+  // Read stored decision once on mount. Intentional set-state-in-effect
+  // pattern — we synchronise client-only localStorage into React state.
   useEffect(() => {
     let stored = "";
     try {
@@ -61,8 +62,6 @@ export default function CookieConsent() {
       const t = setTimeout(() => setOpen(true), 600);
       return () => clearTimeout(t);
     }
-    // bootPostHog + CONSENT_STORAGE_KEY are module-level constants; not deps.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Allow Footer (or any component) to re-open the banner.

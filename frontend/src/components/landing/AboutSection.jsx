@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { MapPin, Globe, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import {

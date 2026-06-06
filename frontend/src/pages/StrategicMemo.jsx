@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -28,6 +29,7 @@ import {
   linkedinShareUrl,
   openExternal,
 } from "@/components/landing/shared";
+import { useSEO, useJsonLd } from "@/lib/useSEO";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
   return (
@@ -108,15 +110,49 @@ export default function StrategicMemo() {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
+  useSEO({
+    title:
+      "The Strategic Memo — Resolving the ISO 31030 Catch-22 · Third Rail Systems OÜ",
+    description:
+      "Long-form strategic memo from the founder of Third Rail Systems OÜ on minimum-disclosure compliance architecture, KTH IRL 5 validation, and the Estonia advantage.",
+    canonical: "https://thirdrailsystems.ee/memo",
+  });
+  useJsonLd(
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "The Strategic Memo — Resolving the ISO 31030 Catch-22",
+      description:
+        "Long-form strategic memo on minimum-disclosure compliance architecture for enterprise travel risk.",
+      author: {
+        "@type": "Person",
+        name: "Levi Hankins",
+        url: "https://www.linkedin.com/in/levihankins",
+        jobTitle: "Founder & CEO, Third Rail Systems OÜ",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Third Rail Systems OÜ",
+        url: "https://thirdrailsystems.ee/",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://thirdrailsystems.ee/og.png",
+        },
+      },
+      datePublished: "2026-04-20",
+      dateModified: "2026-06-03",
+      mainEntityOfPage: "https://thirdrailsystems.ee/memo",
+      image: "https://thirdrailsystems.ee/og.png",
+      inLanguage: "en",
+      keywords:
+        "ISO 31030, GDPR, EU AI Act, duty of care, travel risk management, KTH Royal Institute of Technology, IRL 5, Tallinn, Estonia",
+    },
+    "memo-article-jsonld",
+  );
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    const prev = document.title;
-    document.title =
-      "The Strategic Memo — Resolving the ISO 31030 Catch-22 · Third Rail Systems OÜ";
     track("memo_viewed");
-    return () => {
-      document.title = prev;
-    };
   }, []);
 
   // Scroll-depth + completion tracking. Mounts once; `track` is module-level
@@ -161,7 +197,6 @@ export default function StrategicMemo() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleTocClick = (id) => {

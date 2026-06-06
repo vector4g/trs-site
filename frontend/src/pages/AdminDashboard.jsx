@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -89,8 +90,6 @@ export default function AdminDashboard() {
       return;
     }
     setToken(t);
-    // ADMIN_TOKEN_STORAGE_KEY is a module constant; setToken is stable.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const load = async (authToken) => {
@@ -124,7 +123,6 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!token) return;
     load(token);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const handleSearch = (e) => {
