@@ -1,13 +1,17 @@
 """All admin-gated routes under /api/admin/*.
 
 Endpoints:
-  - POST   /admin/auth/verify             — confirm token validity
+  - POST   /admin/login                   — set httpOnly session cookie
+  - POST   /admin/logout                  — clear session cookie
+  - POST   /admin/auth/verify             — confirm session validity
   - GET    /admin/pilot-requests          — paginated list + aggregate stats
   - GET    /admin/briefings/preview/{id}  — resolve prospect branding via Brandfetch
   - POST   /admin/briefings/generate      — generate + stream a co-branded PDF
   - POST   /admin/briefings/email-to-lead — generate + email the PDF to the lead
 
-All routes require `X-Admin-Token` (validated by `require_admin` dependency).
+All routes except `/admin/login` require a valid session (validated by the
+`require_admin` dependency, which accepts either the `trs_admin_session`
+cookie or the legacy `X-Admin-Token` header).
 """
 from __future__ import annotations
 
@@ -15,9 +19,16 @@ import logging
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse, Response
+from pydantic import BaseModel
 
-from auth import require_admin
+from auth import (
+    ADMIN_TOKEN,
+    SESSION_COOKIE,
+    SESSION_TTL_SECONDS,
+    create_session_token,
+    require_admin,
+)
 from brandfetch import domain_from_email, fetch_brand
 from database import db
 from models import BriefingGenerateRequest, BriefingPreview
@@ -29,9 +40,57 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+class AdminLoginRequest(BaseModel):
+    token: str
+
+
+@router.post("/admin/login")
+async def admin_login(payload: AdminLoginRequest):
+    """Exchange the shared admin secret for an httpOnly session cookie.
+
+    The body's `token` is the static `ADMIN_TOKEN` env value. On success the
+    response sets a signed JWT in `trs_admin_session` and the client never
+    sees the secret again — subsequent requests just need
+    `credentials: "include"` on fetch/axios.
+    """
+    if not ADMIN_TOKEN:
+        # Admin surface is disabled — mirror require_admin's fail-closed behaviour.
+        raise HTTPException(status_code=404, detail="Not found")
+    if (payload.token or "").strip() != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    session_jwt = create_session_token()
+    response = JSONResponse({"ok": True})
+    response.set_cookie(
+        key=SESSION_COOKIE,
+        value=session_jwt,
+        max_age=SESSION_TTL_SECONDS,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        path="/",
+    )
+    return response
+
+
+@router.post("/admin/logout")
+async def admin_logout():
+    """Clear the session cookie. Idempotent — safe to call without an active
+    session (e.g., when the cookie has already expired)."""
+    response = JSONResponse({"ok": True})
+    response.delete_cookie(
+        key=SESSION_COOKIE,
+        path="/",
+        secure=True,
+        samesite="strict",
+    )
+    return response
+
+
 @router.post("/admin/auth/verify")
 async def admin_verify(_admin: str = Depends(require_admin)):
-    """Lightweight endpoint used by the /admin UI to confirm a token is valid."""
+    """Lightweight endpoint used by the /admin UI to confirm the current
+    session cookie (or legacy header) is still valid."""
     return {"ok": True}
 
 

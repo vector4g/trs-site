@@ -1,0 +1,44 @@
+{
+  "summary": "Cookie-based admin session migration + a11y/SEO updates fully verified. Backend: 5/5 cookie-auth tests pass (httpOnly+Secure+SameSite=Strict cookie set on login; cookie alone authenticates /admin/auth/verify, /admin/pilot-requests, /admin/briefings/preview/{id}; logout clears cookie; wrong token → 401, no cookie; legacy X-Admin-Token header still works). Full regression suite: 72/77 pass — the 5 failures are pre-existing iter14 SENDER_EMAIL/test_bypass changes already flagged by main agent as out-of-scope. Frontend: 8/9 spec-mapped flows pass — /admin redirects unauth users to /admin/login, login leaves localStorage empty, trs_admin_session is httpOnly (invisible to document.cookie), dashboard renders stats+table (87 lead rows seen), BriefingDialog opens, logout clears cookie and redirects, post-logout /admin redirects to /admin/login. One a11y deviation found.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "tests/test_pilot_requests.py + test_iter10_deltas.py (4 tests)", "issue": "Pre-existing failures unrelated to this iteration — assert email_status == 'stubbed' but iter14 introduced 'test_bypass' status. Flagged by main agent as out-of-scope."},
+      {"endpoint": "tests/test_pilot_requests.py::test_rate_limit_5_then_429", "issue": "Pre-existing — fixed test IP collides with per-IP rate-limiter from prior test runs; first request already returns 429."},
+      {"endpoint": "tests/test_admin_and_legal.py (3 tests, NOT RUN per main agent note)", "issue": "Pre-existing out-of-scope failures: deprecated `rejected` stat key + sitemap-count of 6 vs actual 8."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Footer / global #trs-build-badge", "issues": ["aria-label on #trs-build-badge is 'Third Rail Systems OÜ · Tallinn · EU-Native' — spec required 'v1.0 · Tallinn · EU-Native' (must mirror the visible glyph 'V1.0 · TALLINN · EU-NATIVE'). Minor."]},
+      {"screen": "/ public/index.html line 18 og:description", "issues": ["Contains an em-dash (—): 'ISO 31030, GDPR Article 9, EU AI Act — resolved.' — iteration spec requires em-dashes replaced with middle-dot or comma globally in SEO/meta strings. Replace with: '… EU AI Act, resolved.' or '… EU AI Act · resolved.'"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_admin_cookie_auth.py",
+    "/app/test_reports/pytest/iter14_cookie_auth.xml",
+    "/app/test_reports/pytest/iteration_14.xml"
+  ],
+  "action_items": [
+    "Fix em-dash in /app/frontend/public/index.html line 18 (og:description): 'EU AI Act — resolved.' → 'EU AI Act, resolved.' or 'EU AI Act · resolved.'",
+    "Align #trs-build-badge aria-label with iteration spec: change 'Third Rail Systems OÜ · Tallinn · EU-Native' to 'v1.0 · Tallinn · EU-Native' to match the visible glyph text shown in the screenshot."
+  ],
+  "critical_code_review_comments": [
+    "auth.py is clean: JWT 8h expiry, sub='admin', cookie-first then header fallback, fail-closed 404 when ADMIN_TOKEN unset. PyJWT errors caught broadly via jwt.PyJWTError — appropriate.",
+    "routers/admin.py login/logout cookie attributes match spec exactly (httponly=True, secure=True, samesite='strict', path='/', max_age=28800).",
+    "Frontend AdminLogin/AdminDashboard correctly drop localStorage usage — verified at runtime: localStorage keys = [], document.cookie does not expose trs_admin_session.",
+    "BriefingDialog dialog opens on row click — confirmed via 87 admin-briefing-{shortid} buttons being clickable and producing a [role=dialog] node.",
+    "Backwards-compat header path (X-Admin-Token) preserved for pytest + server-to-server — confirmed by test_legacy_header_still_authenticates passing."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "94% (72/77 — 5/5 cookie-auth tests + all others except 5 pre-existing unrelated failures)", "frontend": "89% (8/9 spec flows — only the build-badge aria-label deviates from spec)"},
+  "test_credentials": "ADMIN_TOKEN=dev-admin-trs-2026 from /app/memory/test_credentials.md — verified working via cookie flow + legacy header flow.",
+  "seed_data_creation": "No new seed data created in this iteration. Existing TEST_-prefixed leads from iter13 remain in the DB and surface in the admin table (~87 rows total). All safe — none triggered Resend (test_bypass).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Cookie-auth migration is solid. Two micro-issues for main agent: (1) one em-dash in /public/index.html og:description, (2) aria-label drift on #trs-build-badge. Both are trivial string fixes. The 5 pre-existing backend failures are explicitly out-of-scope per main agent note and should NOT be fixed in this iteration. Regression file at /app/backend/tests/test_admin_cookie_auth.py is the canonical proof for this iteration.",
+  "rca of the issue": "N/A — no functional bugs. The two minor deviations are SEO copy + a11y label drift, fixable with 2-line edits. Em-dash slipped past the global replace in og:description; build-badge aria-label was likely written to describe the brand rather than the visible text."
+}

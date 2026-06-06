@@ -59,7 +59,11 @@ const HEADLINE_QUOTE =
 const ScorePips = ({ score }) => {
   const filled = Math.max(0, Math.min(5, Number(score) || 0));
   return (
-    <div className="flex items-center gap-1" aria-label={`Score ${filled} of 5`}>
+    <div
+      className="flex items-center gap-1"
+      role="img"
+      aria-label={`Score ${filled} of 5`}
+    >
       {Array.from({ length: 5 }).map((_, i) => (
         <span
           key={`pip-${i}`}

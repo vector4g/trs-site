@@ -25,8 +25,13 @@ import {
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
+// All admin API calls run with credentials so the browser sends the
+// `trs_admin_session` httpOnly cookie set at login. No bearer header is
+// attached client-side.
+const adminAxios = axios.create({ withCredentials: true });
+
 /** Modal that resolves prospect branding then generates a co-branded PDF. */
-export default function BriefingDialog({ open, onOpenChange, lead, token }) {
+export default function BriefingDialog({ open, onOpenChange, lead }) {
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
   const [company, setCompany] = useState("");
@@ -34,19 +39,17 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
   const [generating, setGenerating] = useState(null); // "exec" | "full" | null
   const [emailing, setEmailing] = useState(null); // "exec" | "full" | null
 
-  // The set-state calls here intentionally fire during the effect to reset
-  // derived state when `open`/`lead`/`token` change — that's the correct
-  // pattern for prop-driven reset.
+  // Reset derived state whenever the modal is reopened against a different
+  // lead. The set-state calls are intentional reset behaviour, not effects
+  // chained off mounted state.
   useEffect(() => {
     if (!open || !lead) return;
     setPreview(null);
     setCompany("");
     setLogoUrl("");
     setLoading(true);
-    axios
-      .get(`${API}/admin/briefings/preview/${lead.id}`, {
-        headers: { "X-Admin-Token": token },
-      })
+    adminAxios
+      .get(`${API}/admin/briefings/preview/${lead.id}`)
       .then(({ data }) => {
         setPreview(data);
         setCompany(data.inferred_company || "");
@@ -61,13 +64,13 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
         toast.error("Preview failed.", { description: detail });
       })
       .finally(() => setLoading(false));
-  }, [open, lead, token]);
+  }, [open, lead]);
 
   const handleGenerate = async (variant) => {
     if (!lead) return;
     setGenerating(variant);
     try {
-      const resp = await axios.post(
+      const resp = await adminAxios.post(
         `${API}/admin/briefings/generate`,
         {
           pilot_request_id: lead.id,
@@ -76,7 +79,6 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
           prospect_logo_url_override: logoUrl.trim() || null,
         },
         {
-          headers: { "X-Admin-Token": token },
           responseType: "blob",
         },
       );
@@ -132,7 +134,7 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
     if (!lead) return;
     setEmailing(variant);
     try {
-      const { data } = await axios.post(
+      const { data } = await adminAxios.post(
         `${API}/admin/briefings/email-to-lead`,
         {
           pilot_request_id: lead.id,
@@ -140,7 +142,6 @@ export default function BriefingDialog({ open, onOpenChange, lead, token }) {
           prospect_company_override: company.trim() || null,
           prospect_logo_url_override: logoUrl.trim() || null,
         },
-        { headers: { "X-Admin-Token": token } },
       );
       toast.success(
         variant === "exec"

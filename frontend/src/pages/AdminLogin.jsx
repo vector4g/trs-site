@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ADMIN_TOKEN_STORAGE_KEY } from "@/components/landing/shared";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -28,12 +27,15 @@ export default function AdminLogin() {
     }
     setSubmitting(true);
     try {
+      // POST the admin secret once. Server sets an httpOnly
+      // `trs_admin_session` cookie; the token never lives in localStorage
+      // and is unreadable from JS after this call returns.
       await axios.post(
-        `${API}/admin/auth/verify`,
-        {},
-        { headers: { "X-Admin-Token": token.trim() } },
+        `${API}/admin/login`,
+        { token: token.trim() },
+        { withCredentials: true },
       );
-      localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, token.trim());
+      setToken("");
       toast.success("Authenticated.");
       navigate("/admin", { replace: true });
     } catch (err) {
@@ -102,7 +104,8 @@ export default function AdminLogin() {
 
             <p className="text-xs text-slate-500">
               The admin endpoint is fail-closed. If ADMIN_TOKEN is not set
-              server-side, this page will not let you in.
+              server-side, this page will not let you in. Sessions are
+              issued as httpOnly cookies and expire after 8 hours.
             </p>
           </form>
         </div>

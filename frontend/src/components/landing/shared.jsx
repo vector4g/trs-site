@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 export const MEMO_READ_STORAGE_KEY = "trs.memo_read";
 export const CATCH22_READ_STORAGE_KEY = "trs.catch22_read";
-export const ADMIN_TOKEN_STORAGE_KEY = "trs.admin_token";
 
 export const LOGO_URL = "/trs_logo.png";
 

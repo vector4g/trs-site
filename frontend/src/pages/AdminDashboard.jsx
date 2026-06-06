@@ -24,10 +24,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { ADMIN_TOKEN_STORAGE_KEY } from "@/components/landing/shared";
 import BriefingDialog from "@/components/admin/BriefingDialog";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
+// Authenticated admin requests carry the httpOnly `trs_admin_session` cookie
+// set by /api/admin/login. Every axios call below opts into that cookie via
+// `withCredentials: true`. The previous header-based shared secret is gone
+// from the client entirely.
+const adminAxios = axios.create({ withCredentials: true });
 
 const STATUS_STYLE = {
   sent: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
@@ -67,7 +72,7 @@ function fmtDate(iso) {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [token, setToken] = useState("");
+  const [authReady, setAuthReady] = useState(false);
   const [rows, setRows] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,21 +83,28 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     document.title = "Pilot Pipeline · Admin · Third Rail Systems OÜ";
-    let t = "";
-    try {
-      t = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || "";
-    } catch (err) {
-      // localStorage can throw in private browsing — bounce to login.
-      console.debug("[AdminDashboard] localStorage read failed:", err?.message);
-    }
-    if (!t) {
-      navigate("/admin/login", { replace: true });
-      return;
-    }
-    setToken(t);
+    // Probe the session cookie. 200 → render the dashboard. 401/404 → kick
+    // the user to /admin/login.
+    let cancelled = false;
+    (async () => {
+      try {
+        await adminAxios.post(`${API}/admin/auth/verify`);
+        if (!cancelled) setAuthReady(true);
+      } catch (err) {
+        const code = err?.response?.status;
+        if (!cancelled && (code === 401 || code === 404)) {
+          navigate("/admin/login", { replace: true });
+        } else if (!cancelled) {
+          toast.error("Auth check failed.", { description: err?.message });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [navigate]);
 
-  const load = async (authToken) => {
+  const load = async () => {
     setLoading(true);
     try {
       const params = {};
@@ -100,8 +112,7 @@ export default function AdminDashboard() {
       if (roleFilter && roleFilter !== "all") params.role = roleFilter;
       if (statusFilter && statusFilter !== "all") params.status = statusFilter;
 
-      const { data } = await axios.get(`${API}/admin/pilot-requests`, {
-        headers: { "X-Admin-Token": authToken },
+      const { data } = await adminAxios.get(`${API}/admin/pilot-requests`, {
         params,
       });
       setRows(data.items || []);
@@ -109,7 +120,6 @@ export default function AdminDashboard() {
     } catch (err) {
       const code = err?.response?.status;
       if (code === 401 || code === 404) {
-        localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
         toast.error("Session expired.");
         navigate("/admin/login", { replace: true });
       } else {
@@ -121,17 +131,25 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    if (!token) return;
-    load(token);
-  }, [token]);
+    if (!authReady) return;
+    load();
+    // `load` is intentionally not in the dep array; it closes over filter
+    // state and is invoked explicitly by handleSearch / handleLogout.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authReady]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    load(token);
+    load();
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+  const handleLogout = async () => {
+    try {
+      await adminAxios.post(`${API}/admin/logout`);
+    } catch (_) {
+      // Logout is best-effort. The cookie may already be expired or the
+      // network may be flaky — either way we still drop the user at /login.
+    }
     navigate("/admin/login", { replace: true });
   };
 
@@ -223,7 +241,7 @@ export default function AdminDashboard() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => load(token)}
+              onClick={() => load()}
               className="border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 hover:text-white"
               data-testid="admin-refresh"
             >
@@ -431,7 +449,6 @@ export default function AdminDashboard() {
         open={briefingLead !== null}
         onOpenChange={(v) => !v && setBriefingLead(null)}
         lead={briefingLead}
-        token={token}
       />
     </div>
   );

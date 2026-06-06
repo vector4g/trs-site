@@ -167,7 +167,7 @@ export default function CookieConsent() {
               <Link
                 to="/legal/cookies"
                 onClick={() => setOpen(false)}
-                className="mono text-[11px] uppercase tracking-[0.18em] text-slate-400 hover:text-cyan-400 sm:ml-2"
+                className="inline-flex min-h-[24px] items-center mono text-[11px] uppercase tracking-[0.18em] text-slate-400 hover:text-cyan-400 sm:ml-2"
                 data-testid="cookie-consent-policy-link"
               >
                 Cookie policy →

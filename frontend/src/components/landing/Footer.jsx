@@ -40,7 +40,7 @@ export default function Footer() {
               <div className="text-base font-semibold text-white">
                 Third Rail Systems OÜ
               </div>
-              <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+              <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-400">
                 Tallinn, Estonia · EU-Native
               </div>
             </div>
@@ -69,7 +69,7 @@ export default function Footer() {
             className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-3 py-1.5 transition-colors hover:border-cyan-500/40 hover:bg-slate-900"
             data-testid="footer-founder-updates"
           >
-            <span className="mono text-[9px] uppercase tracking-[0.22em] text-slate-500">
+            <span className="mono text-[9px] uppercase tracking-[0.22em] text-slate-400">
               Founder updates
             </span>
             <LinkedInGlyph className="h-3.5 w-3.5 text-cyan-400" />
@@ -81,7 +81,7 @@ export default function Footer() {
 
         {/* Company */}
         <div className="lg:col-span-3">
-          <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+          <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-400">
             Company
           </div>
           <ul className="mt-4 space-y-3 text-sm text-slate-300">
@@ -122,7 +122,7 @@ export default function Footer() {
 
         {/* Legal */}
         <div className="lg:col-span-4">
-          <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+          <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-400">
             Legal
           </div>
           <ul className="mt-4 space-y-3 text-sm text-slate-300">
@@ -142,7 +142,7 @@ export default function Footer() {
       </div>
 
       <div className="mx-auto mt-10 max-w-7xl border-t border-slate-900 px-5 pt-6 sm:px-8 lg:px-10">
-        <div className="flex flex-col items-start justify-between gap-2 mono text-[10px] uppercase tracking-[0.22em] text-slate-600 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-start justify-between gap-2 mono text-[10px] uppercase tracking-[0.22em] text-slate-400 sm:flex-row sm:items-center">
           <span>© {new Date().getFullYear()} Third Rail Systems OÜ</span>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <button

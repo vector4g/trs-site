@@ -45,6 +45,7 @@ export default function Navbar({ onCtaClick }) {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="group flex items-center gap-3"
           data-testid="logo-button"
+          aria-label="Third Rail Systems OÜ · Home"
         >
           <span className="relative flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105 sm:h-12 sm:w-12">
             <LogoMark />
@@ -92,6 +93,7 @@ export default function Navbar({ onCtaClick }) {
                 size="icon"
                 className="md:hidden text-slate-200 hover:bg-slate-800/60 hover:text-white"
                 data-testid="mobile-menu-trigger"
+                aria-label={open ? "Close menu" : "Open menu"}
               >
                 {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
