@@ -209,3 +209,28 @@ These are real findings, but each is a multi-day refactor with non-trivial regre
 - **P2** PostHog `identify()` on form submit with hashed email, then surface per-lead memo read-time in admin.
 - **P2** Optional refactor: split `CatchTwentyTwo.jsx` (~1100 lines) into reusable `BriefSection`/`Callout`/`ComparisonTable` primitives in `/components/brief/` — also reusable from `/memo`.
 - **P3** DKIM/SPF records on `.ee`, redesigned `og.png` with the full logo artwork.
+
+
+## Iteration 17 — 2026-02-06 (Outreach-readiness pass)
+
+### A. Production smoke pass
+- All public HTML routes return 200 on `thirdrailsystems.ee` (`/`, `/memo`, `/catch-22`, `/diagnostic`, `/admin/login`, `/robots.txt`, `/sitemap.xml`).
+- **🚨 Production-only bug found**: `GET /api/public/briefs/shadow-hr.pdf` returns 500 (`PDF render failed`). Root cause: `render_public_brief_pdf` was hardcoded to `http://localhost:3000`, which exists in preview (CRA dev server) but not in production (React ships as static files). This is the URL most likely to go in outreach emails.
+- **Fix shipped in preview** (`backend/public_brief.py`): resilient candidate chain. Tries `INTERNAL_FRONTEND_URL` first (preview default `http://localhost:3000`), falls back to `PUBLIC_FRONTEND_URL`. Action required: **set `PUBLIC_FRONTEND_URL=https://thirdrailsystems.ee` in production env vars and redeploy** to fix prod.
+
+### B. Performance quick wins on first paint
+- `index.html`: Google Fonts now load off the critical path via `<link rel="preload" as="style">` + media-print swap with `<noscript>` fallback. Lighthouse heuristic gain ~600–900ms on first paint.
+- Added `preconnect` to `us.i.posthog.com` so the post-consent boot handshake is warm.
+
+### C. Admin engagement funnel column
+- New 5-pip funnel strip per row: `Intake → Memo read → Brief read → Briefing generated → Briefing emailed`. Cyan = lit, slate = empty. `role="img"`, per-step `title` tooltips, `data-testid="admin-funnel-{shortid}"`.
+- Backend (`routers/admin.py`): `POST /api/admin/briefings/email-to-lead` now stamps the doc with `briefing_emailed_at`, `last_briefing_email_status`, `last_briefing_email_variant`, and `$inc: { briefings_emailed: 1 }`. `test_bypass` counts as a send for funnel rendering.
+- Frontend (`AdminDashboard.jsx`): new `FunnelStrip` component + `funnelStateFor()` helper.
+
+### Em-dash sweep on public-facing copy
+Replaced em-dashes with `·`, `, ` or `:` in `Hero`, `AboutSection`, `Footer`, `ProblemSection`, `PersonasSection`, `ValidationSection`, `AdvisoryBoard`, `ArchitectureDiagram`, `shared.jsx` (LinkedIn snippet), `CookieConsent` (banner body), and `services/email.py` (prospect-facing email subject + body + internal admin subject for consistency). Skipped legal pages (em-dashes appropriate in formal prose, counsel hasn't reviewed yet) and intentional section-number placeholders `<BriefSection number="—">`.
+
+### Verification
+- 17/17 backend tests pass (`test_admin_cookie_auth` + `test_briefings`).
+- Preview smoke: hero subhead clean; admin login → funnel column header rendered; LinkedIn-article snippet + cookie banner copy clean.
+

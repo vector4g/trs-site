@@ -39,7 +39,7 @@ const IRL_DIMENSIONS = [
     label: "Team",
     score: 5,
     finding:
-      "Initial founding team working together — all spending significant time on the venture.",
+      "Initial founding team working together, all spending significant time on the venture.",
   },
   {
     code: "FRL",
@@ -87,8 +87,8 @@ export default function ValidationSection() {
         <SectionHeader
           index="06"
           eyebrow="Independent validation"
-          title="KTH Innovation Readiness Level (IRL) — Evidence Report"
-          description="Third Rail Systems OÜ has been evidenced under KTH Royal Institute of Technology's Deeptech Startup Network IRL framework — six structured dimensions of readiness, scored against the international standard."
+          title="KTH Innovation Readiness Level (IRL) · Evidence Report"
+          description="Third Rail Systems OÜ has been evidenced under KTH Royal Institute of Technology's Deeptech Startup Network IRL framework: six structured dimensions of readiness, scored against the international standard."
         />
 
         <div className="reveal mt-14 grid gap-6 lg:grid-cols-12">
@@ -105,7 +105,7 @@ export default function ValidationSection() {
                       KTH IRL Evidence Report
                     </div>
                     <div className="text-sm font-semibold text-white">
-                      Deeptech Startup Network — six-dimension assessment
+                      Deeptech Startup Network · six-dimension assessment
                     </div>
                   </div>
                 </div>

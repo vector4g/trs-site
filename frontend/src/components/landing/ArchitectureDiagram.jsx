@@ -23,16 +23,16 @@ const LAYERS = [
     annotation:
       "Multi-agent deliberation across heterogeneous model families · transient memory · adversarial review",
     components: [
-      "TRS-01 Grandin — Sensory and Neuro-Safety",
-      "TRS-02 Heumann — Physical Accessibility",
-      "TRS-03 Crenshaw — Intersectional Identity",
+      "TRS-01 Grandin · Sensory and Neuro-Safety",
+      "TRS-02 Heumann · Physical Accessibility",
+      "TRS-03 Crenshaw · Intersectional Identity",
     ],
   },
   {
     num: "L3",
     title: "Output Synthesis & Regulatory Alignment",
     sub: "Layer 3",
-    annotation: "Zero retention — special-category inputs purged",
+    annotation: "Zero retention · special-category inputs purged",
     components: [
       "Sanitized dossier · audit trail",
       "Enterprise and traveler outputs",
@@ -68,7 +68,7 @@ export default function ArchitectureDiagram() {
           index="03"
           eyebrow="ISI Architecture"
           title="Three layers. One zero-retention boundary."
-          description="The Inclusion & Accessibility Intelligence (ISI) flow — context grounded, statelessly analysed, and synthesised into a sanitized dossier. Special-category inputs are purged from transient memory before output."
+          description="The Inclusion & Accessibility Intelligence (ISI) flow: context grounded, statelessly analysed, and synthesised into a sanitized dossier. Special-category inputs are purged from transient memory before output."
         />
 
         {/* The diagram */}
@@ -160,7 +160,7 @@ export default function ArchitectureDiagram() {
           <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-slate-800 pt-5 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3 text-xs text-slate-400">
               <FileBadge className="h-4 w-4 text-cyan-400" />
-              Original schematic — Third Rail Systems OÜ, internal architecture
+              Original schematic · Third Rail Systems OÜ, internal architecture
               brief.
             </div>
             <a

@@ -86,7 +86,7 @@ export default function PersonasSection({ onCtaClick }) {
               {outcome && (
                 <p className="mt-5 rounded-md border border-cyan-500/20 bg-cyan-500/[0.04] p-3 text-[13px] leading-relaxed text-slate-300">
                   <span className="mono text-[10px] uppercase tracking-[0.18em] text-cyan-300">
-                    Outcome —{" "}
+                    Outcome ·{" "}
                   </span>
                   {outcome}
                 </p>

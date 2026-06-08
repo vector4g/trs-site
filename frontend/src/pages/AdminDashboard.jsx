@@ -228,6 +228,60 @@ export default function AdminDashboard() {
     );
   };
 
+  // Outreach activation funnel: five binary stages the prospect can move
+  // through after submitting. Rendered as a compact 5-pip row in the table
+  // so Levi can scan the column and spot stalls at a glance.
+  //
+  //   1. INTAKE          → always lit (the row exists)
+  //   2. MEMO READ       → memo_read flag captured at intake time
+  //   3. BRIEF READ      → catch22_read flag captured at intake time
+  //   4. BRIEFING GEN    → operator generated a co-branded PDF
+  //   5. BRIEFING SENT   → operator emailed that PDF to the lead
+  //
+  // The funnel intentionally tracks operator + prospect actions in one
+  // strip so a row showing ●●●○○ instantly reads "lead engaged, needs a
+  // briefing." A row showing ●○○○○ reads "submitted but never opened anything."
+  const FUNNEL_STEPS = [
+    { key: "intake", label: "Intake" },
+    { key: "memo", label: "Memo read" },
+    { key: "brief", label: "Brief read" },
+    { key: "gen", label: "Briefing generated" },
+    { key: "sent", label: "Briefing emailed" },
+  ];
+
+  const funnelStateFor = (r) => ({
+    intake: true,
+    memo: !!r.memo_read,
+    brief: !!r.catch22_read,
+    gen: (r.briefings_generated || 0) > 0,
+    sent: !!r.briefing_emailed_at,
+  });
+
+  const FunnelStrip = ({ row }) => {
+    const state = funnelStateFor(row);
+    const litCount = FUNNEL_STEPS.filter((s) => state[s.key]).length;
+    return (
+      <div
+        className="inline-flex items-center gap-1"
+        role="img"
+        aria-label={`Engagement: ${litCount} of ${FUNNEL_STEPS.length} stages`}
+        data-testid={`admin-funnel-${row.id.slice(0, 8)}`}
+      >
+        {FUNNEL_STEPS.map((step) => (
+          <span
+            key={step.key}
+            title={`${step.label}: ${state[step.key] ? "yes" : "no"}`}
+            className={`h-2 w-2 rounded-full ${
+              state[step.key]
+                ? "bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.5)]"
+                : "bg-slate-700"
+            }`}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200" data-testid="admin-dashboard-root">
       <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
@@ -346,6 +400,11 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3 font-medium">Role</th>
                   <th className="px-4 py-3 font-medium">Type</th>
                   <th className="px-4 py-3 font-medium">Read</th>
+                  <th className="px-4 py-3 font-medium">
+                    <span title="Intake → Memo read → Brief read → Briefing generated → Briefing emailed">
+                      Funnel
+                    </span>
+                  </th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">
                     <span className="inline-flex items-center gap-1">
@@ -360,14 +419,14 @@ export default function AdminDashboard() {
               <tbody>
                 {loading && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-10 text-center text-slate-500">
+                    <td colSpan={9} className="px-4 py-10 text-center text-slate-500">
                       Loading…
                     </td>
                   </tr>
                 )}
                 {!loading && rows.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-4 py-10 text-center text-slate-500" data-testid="admin-empty">
+                    <td colSpan={9} className="px-4 py-10 text-center text-slate-500" data-testid="admin-empty">
                       No submissions match these filters.
                     </td>
                   </tr>
@@ -402,6 +461,9 @@ export default function AdminDashboard() {
                         data-testid={`admin-read-${r.id.slice(0, 8)}`}
                       >
                         {readBadge(r.memo_read, r.catch22_read)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <FunnelStrip row={r} />
                       </td>
                       <td className="px-4 py-3">
                         <span

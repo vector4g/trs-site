@@ -70,7 +70,7 @@ export default function Hero({ onPrimary, onSecondary }) {
             data-testid="hero-subheadline"
           >
             Third Rail Systems enables Fortune 500 security teams to fulfill ISO
-            31030 travel risk mandates for marginalized employees—without
+            31030 travel risk mandates for marginalized employees, without
             triggering GDPR special-category data liabilities.
           </p>
 
@@ -202,7 +202,7 @@ export default function Hero({ onPrimary, onSecondary }) {
             </div>
           </div>
           <p className="mt-3 mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-            Illustrative operator view — sanitized dossier
+            Illustrative operator view · sanitized dossier
           </p>
         </div>
       </div>

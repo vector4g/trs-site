@@ -212,7 +212,7 @@ async def send_prospect_confirmation(req: PilotRequest) -> tuple[str, Optional[s
     params = {
         "from": SENDER_EMAIL,
         "to": [req.corporate_email],
-        "subject": "Pilot request received — Third Rail Systems OÜ",
+        "subject": "Pilot request received · Third Rail Systems OÜ",
         "html": build_prospect_confirmation_html(req),
     }
     if reply_to:
@@ -253,7 +253,7 @@ async def send_briefing_to_lead(
     variant_label = (
         "Executive Summary" if variant == "exec" else "Full Strategic Briefing"
     )
-    subject = f"{variant_label} — Third Rail Systems OÜ"
+    subject = f"{variant_label} · Third Rail Systems OÜ"
 
     html_body = f"""
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
@@ -267,8 +267,8 @@ async def send_briefing_to_lead(
             Hi {escape_html(first_name)},<br/><br/>
             As discussed, please find attached your co-branded {variant_label.lower()}
             (briefing reference <span style="font-family:monospace;color:#22d3ee;">{briefing_id}</span>).<br/><br/>
-            Reply directly to this email to schedule a 20-minute architecture fit-call —
-            no HRIS integration is required for the pilot.
+            Reply directly to this email to schedule a 20-minute architecture fit-call.
+            No HRIS integration is required for the pilot.
           </td></tr>
           <tr><td style="padding-top:24px;border-top:1px solid #1f2937;font-size:11px;color:#64748b;letter-spacing:1.5px;text-transform:uppercase;">
             Third Rail Systems OÜ · Tallinn, Estonia · EU-Native

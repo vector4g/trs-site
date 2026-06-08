@@ -13,11 +13,11 @@ const ADVISORS = [
     name: "Dr. Sidra Azmat Butt",
     role: "Scientific Advisor · Head of Algorithmic Validation",
     affiliation:
-      "Researcher, Next Gen Digital State Research Group, Department of Software Science — Tallinn University of Technology (TalTech)",
+      "Researcher, Next Gen Digital State Research Group, Department of Software Science · Tallinn University of Technology (TalTech)",
     credentials: [
       {
         Icon: GraduationCap,
-        text: "PhD, Information Technology — TalTech (2019 – 2023).",
+        text: "PhD, Information Technology · TalTech (2019 – 2023).",
       },
       {
         Icon: FlaskConical,
@@ -32,7 +32,7 @@ const ADVISORS = [
       {
         Icon: Globe,
         text:
-          "Contributor to three EU-funded research programmes — Interreg Baltic Sea Region (OSIRIS), ESF IT Academy, and EGov4Youth (Erasmus+).",
+          "Contributor to three EU-funded research programmes: Interreg Baltic Sea Region (OSIRIS), ESF IT Academy, and EGov4Youth (Erasmus+).",
       },
     ],
     scope: [
@@ -55,7 +55,7 @@ export default function AdvisoryBoard() {
           index="08"
           eyebrow="Scientific Advisory"
           title="Independent algorithmic validation"
-          description="A working scientific advisor — not a logo — providing public-sector-grade oversight of our AI conformity posture."
+          description="A working scientific advisor (not a logo) providing public-sector-grade oversight of our AI conformity posture."
         />
 
         <div className="mt-14 grid gap-6">
@@ -138,7 +138,7 @@ export default function AdvisoryBoard() {
                 </div>
 
                 <p className="mt-4 mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-                  Independent academic oversight — Third Rail Systems OÜ does
+                  Independent academic oversight. Third Rail Systems OÜ does
                   not control Dr. Butt's research output.
                 </p>
               </div>

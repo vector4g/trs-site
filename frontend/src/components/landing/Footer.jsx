@@ -74,7 +74,7 @@ export default function Footer() {
             </span>
             <LinkedInGlyph className="h-3.5 w-3.5 text-cyan-400" />
             <span className="text-[11px] font-medium text-slate-200">
-              LinkedIn — Levi Hankins
+              LinkedIn · Levi Hankins
             </span>
           </a>
         </div>

@@ -201,6 +201,24 @@ async def admin_briefing_email_to_lead(payload: BriefingGenerateRequest, _admin:
     if err:
         raise HTTPException(status_code=502, detail=f"Email send failed: {err}")
 
+    # Stamp the pilot_requests doc with the outbound status so the admin
+    # pipeline view can show "briefing delivered" as a distinct funnel step.
+    # `test_bypass` is treated as a successful send for funnel-rendering
+    # purposes (the synthetic-lead bypass is intentional, not a failure).
+    if status in ("sent", "stubbed", "test_bypass"):
+        from datetime import datetime, timezone  # local import — only path that needs it
+        await db.pilot_requests.update_one(
+            {"id": doc.get("id")},
+            {
+                "$set": {
+                    "briefing_emailed_at": datetime.now(timezone.utc).isoformat(),
+                    "last_briefing_email_status": status,
+                    "last_briefing_email_variant": payload.variant,
+                },
+                "$inc": {"briefings_emailed": 1},
+            },
+        )
+
     return {
         "ok": True,
         "email_status": status,

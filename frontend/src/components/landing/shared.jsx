@@ -22,7 +22,7 @@ export const LINKEDIN_ARTICLES = [
     tag: "Founder note",
     date: "Jun 2026",
     snippet:
-      "The lived-experience operational thesis behind a minimum-disclosure architecture — why discretion under institutional scrutiny is the founding constraint, not a feature.",
+      "The lived-experience operational thesis behind a minimum-disclosure architecture: why discretion under institutional scrutiny is the founding constraint, not a feature.",
     testid: "writing-article-dadt",
   },
   {

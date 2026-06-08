@@ -146,7 +146,7 @@ export default function CookieConsent() {
               <span className="text-white">strictly necessary</span> storage
               by default. With your consent, we additionally load{" "}
               <span className="text-white">PostHog</span> (EU region) to
-              measure aggregate usage of this site — no special-category
+              measure aggregate usage of this site. No special-category
               data, no advertising, no cross-site tracking. You can change
               your choice at any time from the footer.
             </p>

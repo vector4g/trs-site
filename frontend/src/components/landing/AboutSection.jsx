@@ -27,7 +27,7 @@ const TEAM = [
     name: "Levi Hankins",
     bio: [
       '20-year US Navy combat veteran with lived experience under "Don\'t Ask, Don\'t Tell." Operational authority on discretion under institutional scrutiny.',
-      "Founded Third Rail Systems to build the infrastructure that did not exist when he served — for enterprises managing duty-of-care obligations, and for civil-society organizations protecting the activists who do the most exposed work.",
+      "Founded Third Rail Systems to build the infrastructure that did not exist when he served, for enterprises managing duty-of-care obligations, and for civil-society organizations protecting the activists who do the most exposed work.",
     ],
     testid: "founder-ceo",
     linkedinUrl: LEVI_LINKEDIN_URL,
@@ -45,7 +45,7 @@ const TEAM = [
     role: "Head of Algorithmic Validation",
     name: "Dr. Sidra Azmat Butt",
     bio: [
-      "PhD, Information Technology — TalTech. Researcher, Next Gen Digital State Research Group. Independent oversight on EU AI Act conformity and GDPR privacy-by-design.",
+      "PhD, Information Technology · TalTech. Researcher, Next Gen Digital State Research Group. Independent oversight on EU AI Act conformity and GDPR privacy-by-design.",
     ],
     testid: "core-team-sidra",
     badge: "TalTech · Tallinn",
@@ -82,7 +82,7 @@ export default function AboutSection() {
                   Registered
                 </div>
                 <div className="text-sm text-slate-100">
-                  Tallinn, Estonia — European Union
+                  Tallinn, Estonia · European Union
                 </div>
               </div>
             </div>

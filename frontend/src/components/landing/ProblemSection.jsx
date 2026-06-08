@@ -20,7 +20,7 @@ const ITEMS = [
     Icon: Users,
     title: 'The "Shadow HR" Risk',
     body:
-      "Well-intentioned teams track vulnerable travelers on informal spreadsheets—creating an un-audited legal nightmare for Data Protection Officers.",
+      "Well-intentioned teams track vulnerable travelers on informal spreadsheets, creating an un-audited legal nightmare for Data Protection Officers.",
   },
 ];
 
@@ -86,7 +86,7 @@ export default function ProblemSection() {
               </div>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
                 Why every multinational with a diverse workforce is exposed
-                to the same regulatory pattern — and the architectural
+                to the same regulatory pattern, and the architectural
                 alternative that resolves it. Read the brief.
               </p>
             </div>
