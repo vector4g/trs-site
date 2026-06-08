@@ -93,7 +93,12 @@
         </script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="preconnect" href="https://us.i.posthog.com" crossorigin />
+        <!--
+          PostHog preconnect was removed: Lighthouse correctly flagged it as
+          unused on first paint because PostHog only boots after a user
+          accepts the cookie banner. The handshake will happen at boot time
+          anyway. Re-add this if PostHog is later moved to load before consent.
+        -->
         <!--
           Google Fonts: load with media=print + onload swap. CSS is fetched
           off the critical path; the noscript fallback keeps it working when

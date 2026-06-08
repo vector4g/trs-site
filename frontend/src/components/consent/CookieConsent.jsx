@@ -60,8 +60,12 @@ export default function CookieConsent() {
       bootPostHog();
     }
     if (!stored) {
-      // Defer banner mount slightly so it doesn't fight the initial paint.
-      const t = setTimeout(() => setOpen(true), 600);
+      // Defer banner mount well past first paint. Lighthouse was attributing
+      // LCP to the cookie-banner paragraph (longest single-block text on the
+      // page) instead of the hero headline. Pushing the banner to 1500ms
+      // guarantees the hero `<h1>` is fully laid out and painted first,
+      // then the banner slides in over the still-empty viewport bottom.
+      const t = setTimeout(() => setOpen(true), 1500);
       return () => clearTimeout(t);
     }
   }, []);
