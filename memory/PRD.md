@@ -282,3 +282,30 @@ Replaced em-dashes with `·`, `, ` or `:` in `Hero`, `AboutSection`, `Footer`, `
 - Smoke-checked all 4 URLs (3 canonical + 1 alias) — 200, correct title/H1/canonical, 5 JSON-LD blocks each (3 page-level + 2 site-level from index.html).
 - Live POST to `/api/pilot-requests` with all 5 read-flags returned them all in the response payload.
 
+
+
+## Iteration 19 — 2026-06-17 (Exposure series index + staggered-rollout config)
+
+### `/writing` series index page (single discovery target for the trilogy)
+- New page at `/writing` lists all three essays in reading order. Each card shows part label, title, lede, lens tag, and read-time. Self-canonical, in sitemap.
+- **Staggered-rollout aware**: driven off a single config in `/app/frontend/src/lib/exposureSeries.js`. Each essay has a `published: boolean` + `publishedAt: string|null` flag. Published parts render as full clickable cards. Forthcoming parts render as muted dashed-border cards with no link, labelled "Forthcoming in this series" — reads as deliberate editorial cadence, not as missing pages.
+- All three flags currently `published: false` — by design. To go live with Part One: flip its `published` flag → true (one-line change), commit, redeploy. Parts Two and Three follow the same one-line flip on the weekly cadence.
+- SEO: `useSEO` (title/description/canonical), `BreadcrumbList` JSON-LD (Home › Writing), `CollectionPage` JSON-LD with `mainEntity.itemListElement` filtered to only the published parts (so we don't promise URLs that aren't yet live to Google).
+
+### Routes + sitemap
+- `/writing` added to `App.js` (before the per-essay routes, with explanatory comment).
+- `/writing` added to `sitemap.xml` (lastmod 2026-06-17, priority 0.7). Sitemap URL count is now 12 (was 11).
+
+### Discoverability surfaces — DELIBERATELY DEFERRED to Part One deploy day
+- Per Section 8 of the trilogy build handoff, the navbar item / ProblemSection teaser / footer link must NOT be wired until Part One actually goes live. A TODO comment block was added at the top of `/app/frontend/src/components/landing/Navbar.jsx` flagging exactly what to do at that time.
+- When Part One deploys:
+  1. Add `{ id: "writing", label: "Writing", href: "/writing" }` to `NAV_LINKS` in `shared.jsx`.
+  2. Render a `<Link to="/writing">` in the desktop nav and the mobile sheet alongside existing items.
+  3. Add a `/catch-22`-style teaser card to `ProblemSection.jsx` pointing at `/writing`.
+  4. Add a "Writing" link to the `Footer.jsx` block.
+
+### Verification
+- `/writing` smoke-tested live: title, H1, canonical, 5 JSON-LD blocks (Organization + WebSite + SoftwareApplication site-wide + BreadcrumbList + CollectionPage page-level), 3 forthcoming cards rendered, no anchor wrapping the forthcoming cards (no broken pseudo-links).
+- All three essay routes still 200 directly (Drew or anyone with a URL can review).
+- No backend changes this iteration — backend test suite unchanged.
+

@@ -14,6 +14,7 @@ import Imprint from "@/pages/legal/Imprint";
 import NothingHappened from "@/pages/exposure/NothingHappened";
 import TheSwitch from "@/pages/exposure/TheSwitch";
 import NotDemocratic from "@/pages/exposure/NotDemocratic";
+import WritingIndex from "@/pages/WritingIndex";
 import CookieConsent from "@/components/consent/CookieConsent";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -71,7 +72,11 @@ function App() {
           <Route path="/legal" element={<Imprint />} />
           {/* Exposure trilogy — long-form essay series. Canonical URLs live
               under /writing/*. /exposure/* aliases are kept for inbound links
-              that may reference either convention. */}
+              that may reference either convention. /writing (no slug) is the
+              series index page — the single discovery target for the navbar
+              + footer + ProblemSection teaser that get wired on Part One's
+              deploy day. */}
+          <Route path="/writing" element={<WritingIndex />} />
           <Route path="/writing/nothing-happened" element={<NothingHappened />} />
           <Route path="/exposure/nothing-happened" element={<NothingHappened />} />
           <Route path="/writing/the-switch" element={<TheSwitch />} />

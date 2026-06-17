@@ -14,6 +14,12 @@ import {
 import { NAV_LINKS, scrollToId } from "./shared";
 import LogoMark from "./LogoMark";
 
+// DEPLOY-DAY TODO (Exposure Part One): when Part One goes live,
+// add a "Writing" item to NAV_LINKS in ./shared.jsx pointing at /writing,
+// and uncomment the matching <Link to="/writing">Writing</Link> entries in
+// the desktop nav (line ~70 of this file) and the mobile sheet (line ~115).
+// Held until then per Section 8 of the trilogy build handoff.
+
 export default function Navbar({ onCtaClick }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
