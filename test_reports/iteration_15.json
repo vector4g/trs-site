@@ -1,0 +1,47 @@
+{
+  "summary": "Iteration 15 Lighthouse hardening fully verified. Backend: 5/5 new iter15 tests pass — all 7 security headers present on /api/ (X-Content-Type-Options nosniff, X-Frame-Options DENY, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy locked-down, COOP same-origin, HSTS max-age=31536000, CSP frame-ancestors 'none'); same headers carried through the public brief PDF route; PDF still 100KB+ with %PDF- magic; admin cookie login → auth/verify → pilot-requests round-trip works; TEST_-prefixed pilot intake returns test_bypass status. Frontend: all 21 React.lazy routes return 200, render real content, Suspense fallback (data-testid='route-suspense-fallback') resolves cleanly on every deep-link, zero console errors, zero CSP violations on initial routing. Admin login E2E works (cookie httpOnly, 91 leads visible, stats render). PostHog initialises after consent accept (7 network requests to us.i.posthog.com / us-assets.i.posthog.com, window.posthog.__loaded === true). ONE CSP regression found: PostHog session-recorder creates a Web Worker from a blob: URL which the new script-src directive does not allow.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "PostHog session recording (post-consent)",
+        "issue": "CSP violation: 'Creating a worker from blob:... violates the following Content Security Policy directive: \"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://us.i.posthog.com https://us-assets.i.posthog.com https://assets.emergent.sh https://static.cloudflareinsights.com\".' Page-view capture & autocapture still work (7 PostHog requests succeed), but session-replay/recorder cannot spawn its Worker. Fix: add `worker-src 'self' blob:` (or include `blob:` in script-src) to the CSP meta tag in /app/frontend/public/index.html line 23.",
+        "affected_selectors": ["public/index.html CSP meta tag"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter15_security_headers.py",
+    "/app/test_reports/pytest/iter15_security.xml"
+  ],
+  "action_items": [
+    "Add `worker-src 'self' blob:` directive (or extend script-src with `blob:`) to the CSP meta in /app/frontend/public/index.html so PostHog session-recorder Worker can boot. Without this, session-replay silently fails after consent accept; page-view + autocapture telemetry still flows.",
+    "Optional belt-and-braces: also add `worker-src 'self' blob:` to the backend SecurityHeadersMiddleware CSP in /app/backend/server.py line 263 so that any HTML served by the API (none today, but defensive) stays consistent."
+  ],
+  "critical_code_review_comments": [
+    "SecurityHeadersMiddleware uses headers.setdefault() — correct choice: lets per-route headers (e.g. PDF Cache-Control) take precedence. Header set is minimal and correct.",
+    "frame-ancestors 'none' on the API CSP is the right scope — API returns JSON/PDF only, so omitting script-src/style-src directives keeps the policy tight without noise.",
+    "App.js lazy boundary structure is correct: LandingPage remains eager (LCP target), every other route is lazy, single Suspense above <Routes> with a branded fallback. Verified live: fallback resolves on every deep-link, never sticks.",
+    "CSP meta in public/index.html is missing `worker-src` — modern browsers fall back to script-src for workers, but blob: workers still need explicit allowance. PostHog session-recorder is the only consumer affected today; if PostHog session-replay is a product requirement, this is a HIGH priority fix, otherwise MINOR.",
+    "Cookie consent banner data-testids are complete and clean (cookie-consent-banner / -accept / -reject / -close / -policy-link)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter15_security_headers.py (new — 5 tests, pytest)"
+  ],
+  "success_rate": {
+    "backend": "100% (5/5 new iter15 tests)",
+    "frontend": "95% (21/21 routes render clean; 1 CSP worker block on post-consent PostHog session recorder)"
+  },
+  "test_credentials": "ADMIN_TOKEN=dev-admin-trs-2026 (from /app/memory/test_credentials.md) — verified working via cookie flow.",
+  "seed_data_creation": "One synthetic TEST_LIGHTHOUSE pilot-request was inserted by test_pilot_request_stub_for_test_prefix. The admin dashboard total jumped to 91 (+1 over iter14's 90-ish baseline). No real emails sent (test_bypass).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iter15 (Lighthouse perf/security batch) is solid. ONE follow-up: CSP needs `worker-src 'self' blob:` for PostHog session recorder. Everything else is green — all 21 routes lazy-load cleanly, all 7 security headers wire through correctly, admin auth and PDF endpoints unaffected. Regression test file is /app/backend/tests/test_iter15_security_headers.py — re-run before any future CSP changes.",
+  "rca of the issue": "Root cause: the CSP meta tag in /app/frontend/public/index.html (line 23) sets script-src to a fixed allowlist that excludes the `blob:` scheme. PostHog's posthog-recorder.js instantiates a Web Worker from a Blob (URL.createObjectURL(blob)) for its session-replay buffering. Modern browsers fall back to script-src when worker-src is absent, so the Worker constructor is blocked. Reproduction: load /, click cookie-consent-accept, watch DevTools → Console for 'Creating a worker from blob: ... violates ... script-src ...'. Mitigation: append `; worker-src 'self' blob:` to the CSP content attribute (or add `blob:` to script-src). One-line fix."
+}

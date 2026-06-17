@@ -30,6 +30,7 @@ from typing import List
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
 from fastapi.responses import Response
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
 # load_dotenv MUST run before any module reads os.environ.* at import time.
@@ -232,6 +233,49 @@ async def public_brief_pdf(slug: str, request: Request):
 # --- Router composition + CORS + shutdown ---------------------------------------
 api_router.include_router(admin_router)
 app.include_router(api_router)
+
+
+# --- Security headers middleware ------------------------------------------------
+# Lighthouse Best-Practices flagged missing CSP / COOP / X-Frame-Options on
+# API responses. The React app is a static SPA served outside FastAPI, so we
+# apply headers here to (1) lock down the JSON/PDF API surface and (2) protect
+# the public brief PDF endpoint from being framed. The frontend HTML gets a
+# parallel CSP via a meta tag in `frontend/public/index.html`.
+#
+# Notes:
+#  - frame-ancestors 'none' on CSP supersedes X-Frame-Options for modern
+#    browsers, but we keep X-Frame-Options as a belt-and-braces fallback for
+#    legacy crawlers / corporate proxies.
+#  - HSTS is safe because every deployed origin is HTTPS-only (preview +
+#    production). It is harmless on the localhost dev path because browsers
+#    ignore HSTS on bare http://localhost.
+#  - We deliberately don't set CSP on `/api/*` responses themselves beyond
+#    frame-ancestors — those payloads are JSON/PDF, never rendered as HTML,
+#    so script-src directives are irrelevant noise.
+_SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "geolocation=(), microphone=(), camera=(), payment=()",
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    # Locks down embedding of API responses (JSON, briefing PDFs) in iframes.
+    "Content-Security-Policy": "frame-ancestors 'none'",
+}
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        for key, value in _SECURITY_HEADERS.items():
+            # Don't clobber if a route already set its own (e.g., briefing PDF
+            # cache-control). All keys above are non-overlapping with existing
+            # route headers today, but defensive merge keeps that contract.
+            response.headers.setdefault(key, value)
+        return response
+
+
+app.add_middleware(SecurityHeadersMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

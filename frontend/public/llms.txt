@@ -1,0 +1,24 @@
+# Third Rail Systems OÜ
+
+> EU-native minimum-disclosure compliance architecture for enterprise travel risk. Resolves the ISO 31030 duty-of-care mandate without triggering GDPR Article 9 special-category data liabilities. Built in Tallinn, Estonia.
+
+Third Rail Systems OÜ is a deep-tech compliance company building the architectural pattern that lets multinationals fulfil their ISO 31030 duty-of-care obligations to marginalised employees without collecting the GDPR Article 9 data that turns protection into liability. The founder, Levi Hankins, is a 20-year US Navy veteran. The work is independently overseen by Dr. Mubashar Iqbal Butt (PhD, Information Technology, TalTech) on AI-conformity and privacy-by-design.
+
+## Core pages
+
+- [Homepage](https://thirdrailsystems.ee/): platform overview, architecture, advisory board, validation, and pilot contact form.
+- [The Shadow HR Liability Brief](https://thirdrailsystems.ee/catch-22): long-form analytical brief explaining why every multinational with a diverse workforce is exposed to the same regulatory pattern, the H&M and Hamburg DPA precedents, and the architectural pattern that resolves it.
+- [The Strategic Memo](https://thirdrailsystems.ee/memo): founder's operational thesis on minimum-disclosure compliance architecture, KTH IRL 5 validation, and why the EU's catch-22 is solvable from Tallinn.
+- [Diagnostic intake](https://thirdrailsystems.ee/diagnostic): confidential 60-minute architectural diagnostic for security and GRC teams at multinational enterprises. No HRIS integration required.
+
+## Legal
+
+- [Privacy notice](https://thirdrailsystems.ee/legal/privacy)
+- [Terms of service](https://thirdrailsystems.ee/legal/terms)
+- [Cookie notice](https://thirdrailsystems.ee/legal/cookies)
+- [Imprint](https://thirdrailsystems.ee/legal/imprint)
+
+## Optional
+
+- [Sitemap](https://thirdrailsystems.ee/sitemap.xml)
+- [Robots](https://thirdrailsystems.ee/robots.txt)

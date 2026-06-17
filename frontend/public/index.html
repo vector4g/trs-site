@@ -4,6 +4,26 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#16181D" />
+        <!--
+          Content-Security-Policy applied via meta. Allows the runtime
+          surface the SPA actually needs:
+            - PostHog (us.i.posthog.com / us-assets.i.posthog.com)
+            - Google Fonts (fonts.googleapis.com / fonts.gstatic.com)
+            - Emergent main script (assets.emergent.sh)
+            - Brandfetch CDN logos (cdn.brandfetch.io) + generic https: imgs
+          'unsafe-inline' on script/style is required by CRA's runtime
+          (inline boot script + Tailwind dev-mode style injection). The same-
+          origin connect-src catches our /api/* calls; the production preview
+          origin is same-origin with the API behind the ingress.
+          NOTE: frame-ancestors is not enforceable via meta — it is set as an
+          HTTP header by the backend SecurityHeaders middleware.
+        -->
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://us.i.posthog.com https://us-assets.i.posthog.com https://assets.emergent.sh https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com https://cloudflareinsights.com https://static.cloudflareinsights.com; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
+        />
+        <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="description" content="EU-native compliance platform that resolves the ISO 31030 vs. GDPR catch-22 for marginalized employee travel risk. Built in Tallinn, Estonia." />
         <link rel="canonical" href="https://thirdrailsystems.ee/" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
