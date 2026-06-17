@@ -1,7 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
-import { ShieldAlert, Lock, Users, ArrowRight, FileText } from "lucide-react";
+import { ShieldAlert, Lock, Users, ArrowRight, FileText, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SectionHeader } from "./shared";
+import { SERIES_LIVE } from "@/lib/exposureSeries";
 
 const ITEMS = [
   {
@@ -96,6 +97,41 @@ export default function ProblemSection() {
             <ArrowRight className="h-4 w-4" />
           </span>
         </Link>
+
+        {/* Exposure series teaser — gated on SERIES_LIVE. Activates the
+            moment any essay in /lib/exposureSeries.js flips to published.
+            Until then it renders nothing, so a cold visitor today sees no
+            premature advertisement of the held trilogy. */}
+        {SERIES_LIVE && (
+          <Link
+            to="/writing"
+            className="reveal group mt-6 flex flex-col items-start justify-between gap-5 rounded-lg border border-fuchsia-500/30 bg-fuchsia-500/5 p-6 transition-colors hover:border-fuchsia-400/60 hover:bg-fuchsia-500/10 sm:flex-row sm:items-center sm:p-7"
+            data-testid="exposure-series-teaser"
+          >
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-fuchsia-500/30 bg-slate-950/60 text-fuchsia-300">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="mono text-[10px] uppercase tracking-[0.22em] text-fuchsia-200">
+                  Insights · the Exposure series
+                </div>
+                <div className="mt-1 text-base font-semibold text-white sm:text-lg">
+                  Three essays on dependency, accumulation, and who holds the leverage.
+                </div>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+                  Long-form pieces from the founder. Read in order, or pick
+                  the lens that matches your concern: data, platform, or
+                  human.
+                </p>
+              </div>
+            </div>
+            <span className="mono inline-flex shrink-0 items-center gap-2 text-xs uppercase tracking-[0.18em] text-fuchsia-200 transition-transform group-hover:translate-x-1">
+              Open the reading room
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
+        )}
       </div>
     </section>
   );

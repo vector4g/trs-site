@@ -5,6 +5,7 @@ import EssayLayout from "@/components/brief/EssayLayout";
 import { BriefSection } from "@/components/brief";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
 import { EXPOSURE2_READ_STORAGE_KEY } from "@/components/landing/shared";
+import { essayRobots } from "@/lib/exposureSeries";
 
 const CANONICAL = "https://thirdrailsystems.ee/writing/the-switch";
 
@@ -23,6 +24,7 @@ export default function TheSwitch() {
     description:
       "When one government can disable a model worldwide overnight, dependency is the vulnerability. Why digital sovereignty is architectural, not geographic.",
     canonical: CANONICAL,
+    robots: essayRobots("the-switch"),
   });
   useJsonLd(
     {

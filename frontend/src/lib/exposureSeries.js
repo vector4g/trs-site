@@ -65,3 +65,66 @@ export const EXPOSURE_SERIES = [
     publishedAt: null,
   },
 ];
+
+/**
+ * SERIES_LIVE is the single boolean every discoverability surface gates on.
+ * Computed from the trilogy config so flipping a `published` flag in one
+ * place activates the navbar item swap, the ProblemSection teaser, the
+ * footer link, and the /writing hub's CollectionPage JSON-LD in lockstep.
+ *
+ * Set to `true` automatically the moment ANY essay flips to published.
+ * No separate global switch to forget about.
+ */
+export const SERIES_LIVE = EXPOSURE_SERIES.some((e) => e.published);
+
+/** Lookup helper: pull the trilogy config row for a given slug, or null. */
+export function essayBySlug(slug) {
+  return EXPOSURE_SERIES.find((e) => e.slug === slug) || null;
+}
+
+/**
+ * Per-essay robots directive. Held (unpublished) essays return
+ * "noindex,nofollow" so search engines don't index them via accidental
+ * backlinks during the review period. Published essays return undefined,
+ * which leaves the default index,follow behaviour in place.
+ */
+export function essayRobots(slug) {
+  const e = essayBySlug(slug);
+  if (!e) return undefined;
+  return e.published ? undefined : "noindex,nofollow";
+}
+
+/**
+ * Companion reading rendered alongside the trilogy on the /writing hub.
+ * These are the already-live long-form pieces on the site (the Strategic
+ * Memo and the Shadow HR Liability Brief). They're always shown — the
+ * `published` gating only applies to the trilogy. Same card treatment as
+ * the essay cards so /writing reads as one curated reading room.
+ *
+ * NOTE: keep `kind: "companion"` on these so the card renderer can tweak
+ * the eyebrow label (no "Part X", different tag).
+ */
+export const COMPANION_READING = [
+  {
+    kind: "companion",
+    slug: "memo",
+    tag: "Operational thesis",
+    title: "The Strategic Memo",
+    lede:
+      "The founder's long-form memo on minimum-disclosure compliance architecture, KTH IRL 5 validation, and why the EU's catch-22 is solvable from Tallinn.",
+    readTimeMinutes: 12,
+    route: "/memo",
+    canonical: "https://thirdrailsystems.ee/memo",
+  },
+  {
+    kind: "companion",
+    slug: "catch-22",
+    tag: "Analytical brief",
+    title: "The Shadow HR Liability Brief",
+    lede:
+      "Why multinationals with diverse workforces are sitting on the next €35M GDPR fine, and the architectural pattern that resolves it. v1.1.",
+    readTimeMinutes: 18,
+    route: "/catch-22",
+    canonical: "https://thirdrailsystems.ee/catch-22",
+  },
+];

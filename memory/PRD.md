@@ -309,3 +309,45 @@ Replaced em-dashes with `·`, `, ` or `:` in `Hero`, `AboutSection`, `Footer`, `
 - All three essay routes still 200 directly (Drew or anyone with a URL can review).
 - No backend changes this iteration — backend test suite unchanged.
 
+
+
+## Iteration 20 — 2026-06-17 (Deploy-day surfaces built, held until flip)
+
+### 1. Nav restructure (gated on `SERIES_LIVE`)
+- `Navbar.jsx` desktop + mobile sheet: the **Memo** item now auto-swaps to **Insights** → `/writing` the moment any essay flips to `published: true`. Driven off a single boolean `SERIES_LIVE = EXPOSURE_SERIES.some(e => e.published)` in `/lib/exposureSeries.js`. Final nav order on go-live: Platform · Architecture · Solutions · Compliance · Validation · Advisory · Insights. The Memo URL stays reachable at `/memo` and from inside the `/writing` hub as a companion card.
+
+### 2. `/writing` is now a proper reading-room hub
+- The hub renders the three trilogy cards (forthcoming or live) followed by a subtle divider, then two companion cards rendered with the **same visual treatment**: the **Strategic Memo** (tag "Operational thesis", 12 min) and the **Shadow HR Liability Brief** (tag "Analytical brief", 18 min). Cold visitor sees one curated reading set, not "trilogy + buried link to other stuff". Closing fuchsia callout points to `/diagnostic`.
+- `WritingIndex.jsx` title updated to "Insights · Third Rail Systems OÜ".
+
+### 3. Discoverability surfaces — built, gated, will auto-activate on flip
+- **Navbar item swap** (above): Memo ↔ Insights.
+- **ProblemSection teaser**: new fuchsia card between the existing Catch-22 teaser and the section close, wrapped in `{SERIES_LIVE && (...)}`. Same visual pattern as the Catch-22 teaser, with the `Insights · the Exposure series` label.
+- **Footer link**: new `Insights` row in the left column, also wrapped in `{SERIES_LIVE && (...)}`, rendered above the existing `Strategic Memo` link.
+
+### 4. Pre-launch visibility lock-down
+- Removed `/writing` + the three essay URLs from `sitemap.xml`. The static file now lists only the 8 pre-trilogy URLs. The flipped URLs get added back manually via the DEPLOY_EXPOSURE.md checklist with a real (not backdated) `lastmod`.
+- Added a `robots` parameter to `useSEO`. Each held essay emits `<meta name="robots" content="noindex,nofollow">` via `essayRobots(slug)` helper that reads from the same per-essay `published` flag. `/writing` itself emits noindex while no part is published.
+- Net result: a search engine that finds an essay URL via accidental backlink (Drew sharing a preview link, etc.) sees a noindex directive and won't pick it up.
+
+### 5. `/app/DEPLOY_EXPOSURE.md` — ordered deploy-day checklist
+- New doc at repo root. Five-step go-live sequence for Part One: flip `published` + `publishedAt` (one file), update `datePublished` in the essay's JSON-LD (one file), add `/writing` and the essay's `<url>` to `sitemap.xml` (one file), redeploy, verify.
+- Documents the same three-step pattern (no new files) for Parts Two and Three.
+- Includes a rollback section and a per-file change matrix.
+
+### Surface gating verified end-to-end
+With all flags `published: false` (held state):
+- Homepage: nav-memo=1, nav-insights=0, teaser=0, footer-insights=0. ✓
+- `/writing`: 3 forthcoming cards + 2 companion cards, robots=noindex,nofollow. ✓
+- Held essay pages emit robots=noindex,nofollow. ✓
+- `sitemap.xml`: 8 URLs, no trilogy entries. ✓
+
+After flipping just Part One's `published: true` (then reverted):
+- Homepage: nav-memo=0, nav-insights=1, teaser=1, footer-insights=1. ✓
+- `/writing`: Part One now clickable; Parts Two & Three stay forthcoming. robots meta removed. ✓
+- Part One essay: robots meta removed. ✓
+- Parts Two & Three essays: still noindex. ✓
+
+### Verification
+- Live smoke against the preview env confirmed both held-state and live-state behaviours. Flip ↔ revert tested in-session. No backend changes this iteration.
+

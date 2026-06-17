@@ -5,6 +5,7 @@ import EssayLayout from "@/components/brief/EssayLayout";
 import { BriefSection } from "@/components/brief";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
 import { EXPOSURE3_READ_STORAGE_KEY } from "@/components/landing/shared";
+import { essayRobots } from "@/lib/exposureSeries";
 
 const CANONICAL =
   "https://thirdrailsystems.ee/writing/exposure-is-not-democratic";
@@ -26,6 +27,7 @@ export default function NotDemocratic() {
     description:
       "Collected data lands hardest on the most exposed. How duty of care under ISO 31030 collides with GDPR Article 9, and why minimum disclosure is the resolution.",
     canonical: CANONICAL,
+    robots: essayRobots("exposure-is-not-democratic"),
   });
   useJsonLd(
     {

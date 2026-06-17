@@ -50,7 +50,7 @@ function setMeta(selector, attribute, value) {
   return prev;
 }
 
-export function useSEO({ title, description, canonical, ogTitle, ogDescription }) {
+export function useSEO({ title, description, canonical, ogTitle, ogDescription, robots }) {
   useEffect(() => {
     const prevTitle = title ? document.title : null;
     if (title) document.title = title;
@@ -99,6 +99,14 @@ export function useSEO({ title, description, canonical, ogTitle, ogDescription }
             ogDescription ?? description ?? "",
           )
         : null;
+    // `robots` lets a page opt itself out of indexing while still being
+    // reachable via direct URL (used for held/unpublished trilogy essays so
+    // search engines don't pick them up from accidental backlinks during
+    // the review period). Pass e.g. `robots: "noindex,nofollow"`.
+    const prevRobots =
+      robots !== undefined
+        ? setMeta('meta[name="robots"]', "content", robots)
+        : null;
 
     return () => {
       if (prevTitle !== null) document.title = prevTitle;
@@ -116,8 +124,10 @@ export function useSEO({ title, description, canonical, ogTitle, ogDescription }
         setMeta('meta[name="twitter:title"]', "content", prevTwTitle);
       if (prevTwDesc !== null)
         setMeta('meta[name="twitter:description"]', "content", prevTwDesc);
+      if (prevRobots !== null)
+        setMeta('meta[name="robots"]', "content", prevRobots);
     };
-  }, [title, description, canonical, ogTitle, ogDescription]);
+  }, [title, description, canonical, ogTitle, ogDescription, robots]);
 }
 
 /**

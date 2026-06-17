@@ -12,13 +12,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { NAV_LINKS, scrollToId } from "./shared";
+import { SERIES_LIVE } from "@/lib/exposureSeries";
 import LogoMark from "./LogoMark";
 
-// DEPLOY-DAY TODO (Exposure Part One): when Part One goes live,
-// add a "Writing" item to NAV_LINKS in ./shared.jsx pointing at /writing,
-// and uncomment the matching <Link to="/writing">Writing</Link> entries in
-// the desktop nav (line ~70 of this file) and the mobile sheet (line ~115).
-// Held until then per Section 8 of the trilogy build handoff.
+// EXPOSURE TRILOGY NAV SWAP: while no essay is published, the standalone
+// "Memo" nav item stays in place. The moment any essay flips
+// `published: true` in /lib/exposureSeries.js, SERIES_LIVE becomes true and
+// the nav automatically swaps "Memo" for "Insights" (→ /writing). The Memo
+// itself stays reachable directly at /memo and from inside the /writing hub
+// as a companion-reading card.
 
 export default function Navbar({ onCtaClick }) {
   const [scrolled, setScrolled] = useState(false);
@@ -74,11 +76,11 @@ export default function Navbar({ onCtaClick }) {
             </button>
           ))}
           <Link
-            to="/memo"
+            to={SERIES_LIVE ? "/writing" : "/memo"}
             className="rounded-md px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800/60 hover:text-white"
-            data-testid="nav-link-memo"
+            data-testid={SERIES_LIVE ? "nav-link-insights" : "nav-link-memo"}
           >
-            Memo
+            {SERIES_LIVE ? "Insights" : "Memo"}
           </Link>
         </div>
 
@@ -128,12 +130,12 @@ export default function Navbar({ onCtaClick }) {
                   </button>
                 ))}
                 <Link
-                  to="/memo"
+                  to={SERIES_LIVE ? "/writing" : "/memo"}
                   onClick={() => setOpen(false)}
                   className="border-b border-slate-800 py-4 text-left text-base text-slate-200 hover:text-cyan-400"
-                  data-testid="mobile-nav-link-memo"
+                  data-testid={SERIES_LIVE ? "mobile-nav-link-insights" : "mobile-nav-link-memo"}
                 >
-                  Memo
+                  {SERIES_LIVE ? "Insights" : "Memo"}
                 </Link>
                 <Button
                   onClick={() => {

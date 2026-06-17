@@ -6,7 +6,7 @@ import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Eyebrow } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
-import { EXPOSURE_SERIES } from "@/lib/exposureSeries";
+import { EXPOSURE_SERIES, COMPANION_READING, SERIES_LIVE } from "@/lib/exposureSeries";
 
 const CANONICAL = "https://thirdrailsystems.ee/writing";
 
@@ -22,10 +22,14 @@ const CANONICAL = "https://thirdrailsystems.ee/writing";
  */
 export default function WritingIndex() {
   useSEO({
-    title: "Writing · Third Rail Systems OÜ",
+    title: "Insights · Third Rail Systems OÜ",
     description:
       "Exposure: a three-part series on dependency, accumulation, and who holds the leverage. Long-form essays from Levi Hankins. Read in order.",
     canonical: CANONICAL,
+    // Hide the hub from search engines until at least one essay is live.
+    // Visitors with the URL can still reach it; this just prevents premature
+    // indexing of a page whose cards are all still "Forthcoming".
+    robots: SERIES_LIVE ? undefined : "noindex,nofollow",
   });
 
   useJsonLd(
@@ -103,26 +107,45 @@ export default function WritingIndex() {
         <ol
           className="mt-14 space-y-5"
           data-testid="writing-index-list"
-          aria-label="Exposure series, three essays"
+          aria-label="Reading room: the Exposure series plus companion long-form pieces"
         >
           {EXPOSURE_SERIES.map((essay) => (
             <li key={essay.slug}>
               <EssayCard essay={essay} />
             </li>
           ))}
+          {/* Divider — visual separation between the trilogy reading order
+              and the always-available companion long-form pieces. Subtle so
+              the page still reads as one reading room, not two stacked
+              sections. */}
+          <li
+            aria-hidden="true"
+            className="!my-10 flex items-center gap-4"
+          >
+            <span className="h-px flex-1 bg-slate-800" />
+            <span className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+              Also at Third Rail Systems
+            </span>
+            <span className="h-px flex-1 bg-slate-800" />
+          </li>
+          {COMPANION_READING.map((c) => (
+            <li key={c.slug}>
+              <CompanionCard companion={c} />
+            </li>
+          ))}
         </ol>
 
-        <div className="mt-20 rounded-lg border border-slate-800 bg-slate-900/40 p-6 text-sm leading-relaxed text-slate-400">
-          The series companion pieces sit on the existing site: the{" "}
-          <Link to="/catch-22" className="text-cyan-400 hover:text-cyan-300">
-            Shadow HR Liability brief
-          </Link>{" "}
-          (the corporate-liability application of these arguments) and the{" "}
-          <Link to="/memo" className="text-cyan-400 hover:text-cyan-300">
-            Strategic Memo
-          </Link>{" "}
-          (the operational thesis). If a single essay resonates, those are
-          the next two reads.
+        <div className="mt-20 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-6 text-sm leading-relaxed text-slate-300">
+          If anything above describes your organisation's exposure, the
+          architectural fix is closer than the policy debate suggests. We
+          do confidential 60-minute diagnostics under NDA, with no HRIS
+          integration required.{" "}
+          <Link
+            to="/diagnostic"
+            className="font-semibold text-cyan-300 hover:text-cyan-200"
+          >
+            Request a diagnostic →
+          </Link>
         </div>
       </main>
 
@@ -194,5 +217,41 @@ function CardEyebrow({ essay, forthcoming }) {
         {essay.readTimeMinutes} min read
       </span>
     </div>
+  );
+}
+
+/**
+ * Companion-card variant for the always-live long-form pieces (Memo,
+ * Catch-22). Same visual treatment as a published essay card so /writing
+ * reads as one reading room, but the eyebrow drops the "Part X" label and
+ * uses the companion's `tag` instead.
+ */
+function CompanionCard({ companion }) {
+  return (
+    <Link
+      to={companion.route}
+      data-testid={`writing-index-card-${companion.slug}`}
+      data-companion="true"
+      className="group block rounded-lg border border-slate-800 bg-slate-900/60 p-6 transition-colors hover:border-cyan-500/50 hover:bg-slate-900/80"
+    >
+      <div className="mono flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+        <span>{companion.tag}</span>
+        <span aria-hidden="true">·</span>
+        <span className="inline-flex items-center">
+          <Clock className="mr-1 h-3 w-3" />
+          {companion.readTimeMinutes} min read
+        </span>
+      </div>
+      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        {companion.title}
+      </h2>
+      <p className="mt-3 text-[15px] leading-relaxed text-slate-300">
+        {companion.lede}
+      </p>
+      <div className="mt-5 inline-flex items-center text-sm font-medium text-cyan-400 transition-transform group-hover:translate-x-0.5">
+        Open
+        <ArrowRight className="ml-1 h-4 w-4" />
+      </div>
+    </Link>
   );
 }

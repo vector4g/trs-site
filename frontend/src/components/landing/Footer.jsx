@@ -1,6 +1,7 @@
 import { Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LEVI_LINKEDIN_URL, openExternal } from "./shared";
+import { SERIES_LIVE } from "@/lib/exposureSeries";
 import LogoMark from "./LogoMark";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
@@ -85,6 +86,17 @@ export default function Footer() {
             Company
           </div>
           <ul className="mt-4 space-y-3 text-sm text-slate-300">
+            {SERIES_LIVE && (
+              <li>
+                <Link
+                  to="/writing"
+                  className="hover:text-cyan-400"
+                  data-testid="footer-insights-link"
+                >
+                  Insights
+                </Link>
+              </li>
+            )}
             <li>
               <Link
                 to="/memo"

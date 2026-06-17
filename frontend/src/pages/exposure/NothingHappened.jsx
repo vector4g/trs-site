@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import EssayLayout from "@/components/brief/EssayLayout";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
 import { EXPOSURE1_READ_STORAGE_KEY } from "@/components/landing/shared";
+import { essayRobots } from "@/lib/exposureSeries";
 
 const CANONICAL = "https://thirdrailsystems.ee/writing/nothing-happened";
 
@@ -17,6 +18,7 @@ export default function NothingHappened() {
     description:
       "Y2K was not a false alarm, it was a fix delivered on time. The same shape of problem now faces encryption. Why the durable move is collecting less.",
     canonical: CANONICAL,
+    robots: essayRobots("nothing-happened"),
   });
   useJsonLd(
     {

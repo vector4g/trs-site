@@ -24,30 +24,14 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://thirdrailsystems.ee/writing</loc>
-    <lastmod>2026-06-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://thirdrailsystems.ee/writing/nothing-happened</loc>
-    <lastmod>2026-06-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://thirdrailsystems.ee/writing/the-switch</loc>
-    <lastmod>2026-06-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://thirdrailsystems.ee/writing/exposure-is-not-democratic</loc>
-    <lastmod>2026-06-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+  <!--
+    Exposure trilogy URLs are intentionally OMITTED from the sitemap until
+    each part is published. See /app/DEPLOY_EXPOSURE.md for the per-part
+    flip sequence. When you flip `published: true` for a part in
+    /app/frontend/src/lib/exposureSeries.js, also add its <url> entry here
+    with `lastmod` set to the actual publish date (NOT a backdated value).
+    /writing itself is added the moment the FIRST part publishes.
+  -->
   <url>
     <loc>https://thirdrailsystems.ee/legal/privacy</loc>
     <lastmod>2026-05-13</lastmod>
