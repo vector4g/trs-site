@@ -67,6 +67,7 @@ const TOC = [
   { id: "architecture", label: "IV. The Architecture" },
   { id: "governance", label: "V. Governance Posture" },
   { id: "pilot", label: "VI. The Pilot" },
+  { id: "further-reading", label: "Further reading" },
 ];
 
 function MemoSection({ id, number, title, children }) {
@@ -633,6 +634,74 @@ export default function StrategicMemo() {
                 <Globe className="mr-2 inline h-3 w-3 text-cyan-400" />
                 Third Rail Systems OÜ · Tallinn, Estonia · EU-Native
               </p>
+            </MemoSection>
+
+            <MemoSection
+              id="further-reading"
+              number="—"
+              title="Further reading: the Exposure series"
+            >
+              <p className="text-base leading-relaxed text-slate-300">
+                Three essays on the same architectural principle, viewed
+                through different lenses: data lifespan, platform dependency,
+                and the unequal distribution of exposure itself.
+              </p>
+              <ul className="mt-6 space-y-4">
+                <li>
+                  <Link
+                    to="/writing/nothing-happened"
+                    className="group block rounded-md border border-slate-800 bg-slate-900/40 p-4 hover:border-cyan-500/40 hover:bg-slate-900/70"
+                    data-testid="memo-further-reading-part1"
+                  >
+                    <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                      Part One
+                    </div>
+                    <div className="mt-1 text-base font-semibold text-white">
+                      Nothing happened, and that was the point
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                      Y2K was a fix delivered on time. The durable answer is
+                      collecting less.
+                    </p>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/writing/the-switch"
+                    className="group block rounded-md border border-slate-800 bg-slate-900/40 p-4 hover:border-cyan-500/40 hover:bg-slate-900/70"
+                    data-testid="memo-further-reading-part2"
+                  >
+                    <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                      Part Two
+                    </div>
+                    <div className="mt-1 text-base font-semibold text-white">
+                      The Switch Someone Else Holds
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                      Dependency is the vulnerability. Sovereignty is
+                      architectural, not geographic.
+                    </p>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/writing/exposure-is-not-democratic"
+                    className="group block rounded-md border border-slate-800 bg-slate-900/40 p-4 hover:border-cyan-500/40 hover:bg-slate-900/70"
+                    data-testid="memo-further-reading-part3"
+                  >
+                    <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                      Part Three
+                    </div>
+                    <div className="mt-1 text-base font-semibold text-white">
+                      Exposure Is Not Democratic
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                      Collected data lands hardest on the most exposed. The
+                      capstone of the trilogy.
+                    </p>
+                  </Link>
+                </li>
+              </ul>
             </MemoSection>
           </article>
         </div>

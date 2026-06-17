@@ -11,6 +11,9 @@ import Privacy from "@/pages/legal/Privacy";
 import Terms from "@/pages/legal/Terms";
 import Cookies from "@/pages/legal/Cookies";
 import Imprint from "@/pages/legal/Imprint";
+import NothingHappened from "@/pages/exposure/NothingHappened";
+import TheSwitch from "@/pages/exposure/TheSwitch";
+import NotDemocratic from "@/pages/exposure/NotDemocratic";
 import CookieConsent from "@/components/consent/CookieConsent";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -66,6 +69,15 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/legal" element={<Imprint />} />
+          {/* Exposure trilogy — long-form essay series. Canonical URLs live
+              under /writing/*. /exposure/* aliases are kept for inbound links
+              that may reference either convention. */}
+          <Route path="/writing/nothing-happened" element={<NothingHappened />} />
+          <Route path="/exposure/nothing-happened" element={<NothingHappened />} />
+          <Route path="/writing/the-switch" element={<TheSwitch />} />
+          <Route path="/exposure/the-switch" element={<TheSwitch />} />
+          <Route path="/writing/exposure-is-not-democratic" element={<NotDemocratic />} />
+          <Route path="/exposure/not-democratic" element={<NotDemocratic />} />
         </Routes>
         <CookieConsent />
       </BrowserRouter>

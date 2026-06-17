@@ -3,6 +3,15 @@ import { useEffect } from "react";
 export const MEMO_READ_STORAGE_KEY = "trs.memo_read";
 export const CATCH22_READ_STORAGE_KEY = "trs.catch22_read";
 
+// Exposure trilogy read-completion flags. Mirror the memo/catch-22 pattern:
+// localStorage is set when the reader scrolls past 85% of the article body,
+// then attached to the next pilot/diagnostic intake POST so lead-qualification
+// reflects trilogy engagement. Keys must stay in lockstep with the backend
+// PilotRequestCreate model (`exposure1_read`, `exposure2_read`, `exposure3_read`).
+export const EXPOSURE1_READ_STORAGE_KEY = "trs.exposure1_read";
+export const EXPOSURE2_READ_STORAGE_KEY = "trs.exposure2_read";
+export const EXPOSURE3_READ_STORAGE_KEY = "trs.exposure3_read";
+
 export const LOGO_URL = "/trs_logo.png";
 
 // Published thought-leadership — wired into Share buttons + "Read on LinkedIn" CTAs.

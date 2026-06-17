@@ -80,6 +80,7 @@ const TOC = [
   { id: "architecture", label: "V. Architectural Resolution" },
   { id: "questions", label: "VI. Five Diagnostic Questions" },
   { id: "diagnostic", label: "Request a Diagnostic" },
+  { id: "further-reading", label: "Further reading" },
   { id: "sources", label: "Sources & Citations" },
 ];
 
@@ -1148,6 +1149,77 @@ export default function CatchTwentyTwo() {
                   </div>
                 </div>
               </div>
+            </BriefSection>
+
+            <BriefSection
+              id="further-reading"
+              number="—"
+              title="Further reading: the Exposure series"
+            >
+              <p className="text-base leading-relaxed text-slate-300">
+                Three essays on the same architectural principle, viewed
+                through different lenses: data lifespan, platform dependency,
+                and the unequal distribution of exposure itself.
+              </p>
+              <ul className="mt-6 space-y-4">
+                <li>
+                  <Link
+                    to="/writing/nothing-happened"
+                    className="group block rounded-md border border-slate-800 bg-slate-900/40 p-4 hover:border-cyan-500/40 hover:bg-slate-900/70"
+                    data-testid="catch22-further-reading-part1"
+                  >
+                    <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                      Part One
+                    </div>
+                    <div className="mt-1 text-base font-semibold text-white">
+                      Nothing happened, and that was the point
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                      Y2K was a fix delivered on time. Harvest-now-decrypt-later
+                      puts encryption in the same shape of problem. The durable
+                      answer is collecting less.
+                    </p>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/writing/the-switch"
+                    className="group block rounded-md border border-slate-800 bg-slate-900/40 p-4 hover:border-cyan-500/40 hover:bg-slate-900/70"
+                    data-testid="catch22-further-reading-part2"
+                  >
+                    <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                      Part Two
+                    </div>
+                    <div className="mt-1 text-base font-semibold text-white">
+                      The Switch Someone Else Holds
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                      When one government can disable a frontier model
+                      worldwide overnight, dependency itself is the
+                      vulnerability.
+                    </p>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/writing/exposure-is-not-democratic"
+                    className="group block rounded-md border border-slate-800 bg-slate-900/40 p-4 hover:border-cyan-500/40 hover:bg-slate-900/70"
+                    data-testid="catch22-further-reading-part3"
+                  >
+                    <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                      Part Three
+                    </div>
+                    <div className="mt-1 text-base font-semibold text-white">
+                      Exposure Is Not Democratic
+                    </div>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                      The same architecture, applied to people: how duty of
+                      care under ISO 31030 collides with GDPR Article 9 — and
+                      why minimum disclosure is the resolution.
+                    </p>
+                  </Link>
+                </li>
+              </ul>
             </BriefSection>
 
             <BriefSection

@@ -30,6 +30,9 @@ import {
   ROLE_OPTIONS,
   MEMO_READ_STORAGE_KEY,
   CATCH22_READ_STORAGE_KEY,
+  EXPOSURE1_READ_STORAGE_KEY,
+  EXPOSURE2_READ_STORAGE_KEY,
+  EXPOSURE3_READ_STORAGE_KEY,
   useReveal,
 } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
@@ -157,10 +160,16 @@ export default function DiagnosticIntake() {
 
       let memoRead = false;
       let catch22Read = false;
+      let exposure1Read = false;
+      let exposure2Read = false;
+      let exposure3Read = false;
       let consent = "";
       try {
         memoRead = localStorage.getItem(MEMO_READ_STORAGE_KEY) === "1";
         catch22Read = localStorage.getItem(CATCH22_READ_STORAGE_KEY) === "1";
+        exposure1Read = localStorage.getItem(EXPOSURE1_READ_STORAGE_KEY) === "1";
+        exposure2Read = localStorage.getItem(EXPOSURE2_READ_STORAGE_KEY) === "1";
+        exposure3Read = localStorage.getItem(EXPOSURE3_READ_STORAGE_KEY) === "1";
         consent = localStorage.getItem(CONSENT_STORAGE_KEY) || "";
       } catch (_) {
         memoRead = false;
@@ -176,6 +185,9 @@ export default function DiagnosticIntake() {
         submission_ms: Date.now() - mountedAt.current,
         memo_read: memoRead,
         catch22_read: catch22Read,
+        exposure1_read: exposure1Read,
+        exposure2_read: exposure2Read,
+        exposure3_read: exposure3Read,
         request_type: "diagnostic",
         org_scale_band: orgScaleLabel,
         workforce_composition: workforceLabel,
@@ -188,6 +200,9 @@ export default function DiagnosticIntake() {
             role: roleLabel,
             memo_read: memoRead,
             catch22_read: catch22Read,
+            exposure1_read: exposure1Read,
+            exposure2_read: exposure2Read,
+            exposure3_read: exposure3Read,
             request_type: "diagnostic",
           });
         } catch (_) {
@@ -202,6 +217,9 @@ export default function DiagnosticIntake() {
           current_vendor: vendorLabel,
           memo_read: memoRead,
           catch22_read: catch22Read,
+          exposure1_read: exposure1Read,
+          exposure2_read: exposure2Read,
+          exposure3_read: exposure3Read,
         });
       }
 

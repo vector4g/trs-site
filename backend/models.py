@@ -42,6 +42,13 @@ class PilotRequestCreate(BaseModel):
     memo_read: Optional[bool] = Field(default=False)
     # Whether the user completed reading the long-form Catch-22 brief.
     catch22_read: Optional[bool] = Field(default=False)
+    # Exposure trilogy read-completion flags. Mirror the memo/catch-22 pattern:
+    # localStorage set to "1" when the reader passes 85% scroll on the
+    # corresponding /writing/* essay, then attached to the next intake POST so
+    # admin lead qualification reflects trilogy engagement.
+    exposure1_read: Optional[bool] = Field(default=False)
+    exposure2_read: Optional[bool] = Field(default=False)
+    exposure3_read: Optional[bool] = Field(default=False)
     # Intake variant. "pilot" = generic landing CTA. "diagnostic" = the
     # qualified Catch-22 brief CTA; carries the three qualifier fields below.
     request_type: Optional[str] = Field(default="pilot", pattern="^(pilot|diagnostic)$")
@@ -63,6 +70,9 @@ class PilotRequest(BaseModel):
     email_error: Optional[str] = None
     memo_read: bool = False
     catch22_read: bool = False
+    exposure1_read: bool = False
+    exposure2_read: bool = False
+    exposure3_read: bool = False
     request_type: str = "pilot"  # pilot | diagnostic
     org_scale_band: Optional[str] = None
     workforce_composition: Optional[str] = None

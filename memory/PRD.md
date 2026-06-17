@@ -234,3 +234,51 @@ Replaced em-dashes with `·`, `, ` or `:` in `Hero`, `AboutSection`, `Footer`, `
 - 17/17 backend tests pass (`test_admin_cookie_auth` + `test_briefings`).
 - Preview smoke: hero subhead clean; admin login → funnel column header rendered; LinkedIn-article snippet + cookie banner copy clean.
 
+
+
+## Iteration 18 — 2026-06-17 (Exposure trilogy build, staged for deploy on cue)
+
+### Three new long-form essay pages (held until you give the deploy nod)
+- `/writing/nothing-happened` (alias `/exposure/nothing-happened`) — Part One. Flowing personal-narrative form; no internal H2s, no TOC; lede omitted (intentional opener). Inline `/catch-22` link on "data minimisation". Inline `check.thirdrailsystems.ee` link on "safest ciphertext is the one that was never created". Forward block to Part Two.
+- `/writing/the-switch` (alias `/exposure/the-switch`) — Part Two. Six BriefSections (I–VI). Back-link chip to Part One. Inline forward link to Part Three on "subject for its own reckoning". Forward block to Part Three.
+- `/writing/exposure-is-not-democratic` (alias `/exposure/not-democratic`) — Part Three (capstone). Six BriefSections. Back-link chips to Parts One and Two. Inline `/catch-22` link on "ISO 31030 standard for travel risk management" (the requested duty-of-care cluster). Inline `/diagnostic` CTA at section close with soft framing. No forward block (capstone).
+
+### Shared infrastructure
+- New `/app/frontend/src/components/brief/EssayLayout.jsx`. Single wrapper for every essay; owns navbar/footer, print-mode hook, eyebrow + back-link chips + H1 + lede, sticky right-rail TOC with "Read also" cross-links to /catch-22 and /memo, configurable read-progress tracking (25/50/75 milestones + 85% completion fires `<eventKey>_read_completed` and writes localStorage flag), share card (LinkedIn, copy-link, Diagnostic), micro-bio, optional forward-CTA block.
+- All three essays use the same shape: meta via `useSEO`, two `useJsonLd` blocks (Article — with `isPartOf: CreativeWorkSeries "Exposure"` position 1/2/3 — and BreadcrumbList Home › Writing › Essay), event keys `exposure1/2/3`, storage keys `trs.exposure{1,2,3}_read`.
+
+### Lead-qualification wiring (per spec)
+- New storage keys added to `components/landing/shared.jsx`: `EXPOSURE1_READ_STORAGE_KEY`, `EXPOSURE2_READ_STORAGE_KEY`, `EXPOSURE3_READ_STORAGE_KEY`.
+- `ContactSection.jsx` and `DiagnosticIntake.jsx` now read all three flags from localStorage on submit and POST them to `/api/pilot-requests` alongside `memo_read` / `catch22_read`. PostHog identify + capture also include the trilogy flags (consent-gated).
+- Backend: `PilotRequestCreate` and `PilotRequest` models extended in `models.py`. `server.py:create_pilot_request` persists `exposure{1,2,3}_read`. Curl-tested live: payload accepted and round-tripped via response JSON.
+- Admin pipeline funnel column intentionally NOT extended (user picked option 'b' on the planning prompt) — flags attach to the lead record only.
+
+### Cross-promotion blocks on existing pages
+- `/catch-22`: new `Further reading: the Exposure series` BriefSection between Diagnostic and Sources. Three card-style Link blocks to all three parts. TOC entry added.
+- `/memo`: matching `Further reading` MemoSection after `VI. The Pilot`. TOC entry added.
+
+### SEO
+- `sitemap.xml`: added 3 trilogy URLs (lastmod 2026-06-08, priority 0.8). Total URL count is now 11 (was 8).
+- All three pages have BreadcrumbList + Article JSON-LD, em-dash-free titles + descriptions, self-canonical.
+- LinkedIn share intent titles all middle-dot, no em-dashes (audited and fixed).
+
+### Pre-deploy checklist status
+- [x] All three pages built + cross-linked
+- [x] sitemap.xml updated
+- [x] BreadcrumbList + Article JSON-LD in place
+- [x] PostHog events + localStorage flags wired (verified backend persistence)
+- [x] Meta descriptions + titles em-dash-free
+- [x] "Further reading" blocks on /memo and /catch-22
+- [x] Cookie-consent EDPB gating already in place (no change needed)
+- [ ] PDF download for essays — SKIPPED per spec ("else skip PDF for the trilogy")
+- [ ] Part One personal Badlands opening — confirmed verbatim against the canonical .md
+
+### Deploy sequence (per spec)
+- Part One alone is publishable now if desired (held pending Drew's read).
+- Parts Two and Three are built and ready; release on ~1-week cadence after Part One is live. All three pages are live in preview today and will be live in prod the moment you redeploy.
+
+### Verification
+- All 17 backend tests pass.
+- Smoke-checked all 4 URLs (3 canonical + 1 alias) — 200, correct title/H1/canonical, 5 JSON-LD blocks each (3 page-level + 2 site-level from index.html).
+- Live POST to `/api/pilot-requests` with all 5 read-flags returned them all in the response payload.
+

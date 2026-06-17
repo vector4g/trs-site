@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Eyebrow, ROLE_OPTIONS, MEMO_READ_STORAGE_KEY, CATCH22_READ_STORAGE_KEY } from "./shared";
+import { Eyebrow, ROLE_OPTIONS, MEMO_READ_STORAGE_KEY, CATCH22_READ_STORAGE_KEY, EXPOSURE1_READ_STORAGE_KEY, EXPOSURE2_READ_STORAGE_KEY, EXPOSURE3_READ_STORAGE_KEY } from "./shared";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -84,10 +84,16 @@ export default function ContactSection() {
         ROLE_OPTIONS.find((r) => r.value === form.role)?.label || form.role;
       let memoRead = false;
       let catch22Read = false;
+      let exposure1Read = false;
+      let exposure2Read = false;
+      let exposure3Read = false;
       let consent = "";
       try {
         memoRead = localStorage.getItem(MEMO_READ_STORAGE_KEY) === "1";
         catch22Read = localStorage.getItem(CATCH22_READ_STORAGE_KEY) === "1";
+        exposure1Read = localStorage.getItem(EXPOSURE1_READ_STORAGE_KEY) === "1";
+        exposure2Read = localStorage.getItem(EXPOSURE2_READ_STORAGE_KEY) === "1";
+        exposure3Read = localStorage.getItem(EXPOSURE3_READ_STORAGE_KEY) === "1";
         consent = localStorage.getItem(CONSENT_STORAGE_KEY) || "";
       } catch (_) {
         memoRead = false;
@@ -102,6 +108,9 @@ export default function ContactSection() {
         submission_ms: Date.now() - mountedAt.current,
         memo_read: memoRead,
         catch22_read: catch22Read,
+        exposure1_read: exposure1Read,
+        exposure2_read: exposure2Read,
+        exposure3_read: exposure3Read,
       });
       // Only identify in PostHog if the visitor explicitly accepted analytics.
       // EDPB Guidelines 03/2022 — no enriched profiles pre-consent.
@@ -111,6 +120,9 @@ export default function ContactSection() {
             role: roleLabel,
             memo_read: memoRead,
             catch22_read: catch22Read,
+            exposure1_read: exposure1Read,
+            exposure2_read: exposure2Read,
+            exposure3_read: exposure3Read,
           });
         } catch (_) {
           // analytics must never break submission UX
@@ -121,6 +133,9 @@ export default function ContactSection() {
           role: roleLabel,
           memo_read: memoRead,
           catch22_read: catch22Read,
+          exposure1_read: exposure1Read,
+          exposure2_read: exposure2Read,
+          exposure3_read: exposure3Read,
         });
       }
       toast.success("Pilot assessment request received.", {
