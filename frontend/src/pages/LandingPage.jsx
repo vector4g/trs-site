@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
 
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
@@ -10,10 +11,20 @@ import ComplianceSection from "@/components/landing/ComplianceSection";
 import ValidationSection from "@/components/landing/ValidationSection";
 import AboutSection from "@/components/landing/AboutSection";
 import AdvisoryBoard from "@/components/landing/AdvisoryBoard";
-import ContactSection from "@/components/landing/ContactSection";
 import Footer from "@/components/landing/Footer";
 import { useReveal, scrollToId } from "@/components/landing/shared";
 import { useSEO } from "@/lib/useSEO";
+
+// ContactSection sits at the bottom of the page and pulls in Radix Select +
+// Floating UI + Sonner. Lazy-load it so those deps land in a separate chunk
+// instead of inflating the main bundle (Lighthouse "Reduce unused JavaScript"
+// June 2026 audit). `webpackPrefetch: true` schedules the chunk to download
+// during browser idle time after first paint — so by the time the user
+// scrolls to the contact form, the chunk is already warm and the fallback
+// placeholder never has to flash.
+const ContactSection = lazy(() =>
+  import(/* webpackPrefetch: true */ "@/components/landing/ContactSection")
+);
 
 export default function LandingPage() {
   useReveal();
@@ -45,7 +56,18 @@ export default function LandingPage() {
         <ValidationSection />
         <AboutSection />
         <AdvisoryBoard />
-        <ContactSection />
+        <Suspense
+          fallback={
+            <div
+              id="contact"
+              aria-hidden="true"
+              data-testid="contact-section-placeholder"
+              style={{ minHeight: "640px" }}
+            />
+          }
+        >
+          <ContactSection />
+        </Suspense>
       </main>
       <Footer />
     </div>

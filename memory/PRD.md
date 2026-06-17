@@ -400,3 +400,42 @@ User request: complete the 4 Lighthouse-driven fixes from the 17 June 2026 audit
 ### Guardrails preserved
 - Exposure trilogy still held: `published: false` on all three essays. Discoverability surfaces (navbar/teaser/footer) still hidden via `SERIES_LIVE` flag in `exposureSeries.js`.
 - Zero marketing copy changes.
+
+
+## Iteration 16 — 2026-06-17 (Lighthouse perf round 2 — bundle slim + composited animation)
+
+User shared a production Lighthouse report (https://thirdrailsystems.ee). Iter15 took it to **Best Practices 100, SEO 100, Accessibility 100, Agentic Browsing 3/3**. Performance was 87 (LCP 3.4s). User picked option **c**: bundle slim + animation hunt.
+
+### 1. Bundle slim (Reduce unused JavaScript 67 KiB target)
+- `App.js` — `Toaster` (Sonner) and `CookieConsent` moved out of the main bundle via `React.lazy()` with `/* webpackPrefetch: true */`. Both wrapped in `<Suspense fallback={null}>` so they never block first paint.
+- `LandingPage.jsx` — `ContactSection` (which pulls Radix Select + Floating UI + Sonner + Axios + Lucide subset) moved to `React.lazy()` with `/* webpackPrefetch: true */`. Suspense fallback is a `640px` min-height placeholder with `id="contact"` so the in-page anchor still works while the chunk loads.
+- Result: 7 separate prefetched chunks now ship instead of bundling everything into `main.<hash>.js`. The chunks are downloaded during browser idle time after first paint, so the contact form / toaster / cookie banner are warm by the time the user reaches them. Verified via `document.querySelectorAll('link[rel="prefetch"]')` returning 7 entries.
+
+### 2. useReveal MutationObserver fix
+- Lazy-loading ContactSection surfaced a regression: `useReveal()` in `shared.jsx` was a one-shot `querySelectorAll(".reveal")` at mount time. Anything mounted later by Suspense (i.e., ContactSection's `.reveal` wrapper) was never observed and stayed at `opacity: 0`.
+- Fixed by extending `useReveal()` with a `MutationObserver` on `document.body` that registers any newly added `.reveal` nodes with the same IntersectionObserver. Cheap — only fires when subtree mutates. Cleaned up on unmount alongside the IO disconnect.
+
+### 3. Non-composited animation
+- Lighthouse flagged "1 animated element". Audit of `/app/frontend/src/index.css` traced it to `.trs-svg-core` (LogoMark cyan line) animating `stroke-dashoffset` — SVG stroke changes trigger paint on every frame, never composited.
+- Swapped `trs-svg-core-draw` (stroke-draw) for a simple opacity fade-in using the existing `trs-svg-fade-in` keyframe. Same brand impression, zero main-thread cost. Removed the now-unused `trs-svg-core-draw` keyframe + the `stroke-dashoffset: 0 !important` rule from the prefers-reduced-motion block.
+
+### 4. Cache lifetimes — DEFERRED (not code-level)
+- Lighthouse still reports ~177 KiB savings from cache lifetimes on `thirdrailsystems.ee`. Our `public/_headers` file is in the repo but the production ingress (Cloudflare-fronted by Emergent) is overriding with short TTLs. Needs an Emergent Support ticket to honour the `_headers` file or set a long-cache rule on `/static/*` at the edge.
+
+### Testing
+- Testing agent iter16: **7/7 green**, zero bugs.
+- All 30 `.reveal` elements on landing fade in correctly (MutationObserver fix verified).
+- ContactSection submit E2E works (POST `/api/pilot-requests` → 201, Sonner Toaster mounts on demand and renders the success toast).
+- All 21 lazy routes regression-free.
+- CSP/console clean.
+
+### Files touched (iter16)
+- `/app/frontend/src/App.js` — lazy Toaster + CookieConsent
+- `/app/frontend/src/pages/LandingPage.jsx` — lazy ContactSection with placeholder
+- `/app/frontend/src/components/landing/shared.jsx` — `useReveal` + MutationObserver
+- `/app/frontend/src/index.css` — composited LogoMark fade-in (dropped stroke-dashoffset)
+- `/app/test_reports/iteration_16.json` — test report
+
+### Carried forward
+- Exposure trilogy still held (`published: false`). Marketing copy untouched.
+- Cache-lifetimes Lighthouse insight is platform-level — to be resolved via an Emergent Support request (~177 KiB savings, repeat-visit only).

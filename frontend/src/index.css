@@ -144,13 +144,15 @@ code {
 }
 
 /* ---- SVG LogoMark animation ----
- * Core line stroke-draws (real SVG dasharray), then plinths + crossbar fade in.
- * `pathLength="1"` on the cyan line normalises the dasharray math.
+ * Originally used `stroke-dashoffset` to "draw" the cyan core line. That
+ * animation was flagged by Lighthouse (June 2026) as non-composited because
+ * stroke-dashoffset triggers paint on every frame. Swapped to a composited
+ * opacity fade-in — same visual intent (line resolving into view), zero
+ * main-thread cost.
  */
 .trs-svg-animate .trs-svg-core {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: trs-svg-core-draw 750ms cubic-bezier(0.65, 0, 0.35, 1) 80ms forwards;
+    opacity: 0;
+    animation: trs-svg-fade-in 750ms cubic-bezier(0.65, 0, 0.35, 1) 80ms forwards;
 }
 .trs-svg-animate .trs-svg-core-glow {
     opacity: 0;
@@ -182,10 +184,6 @@ code {
     animation: trs-svg-fade-in 800ms ease-out 800ms forwards;
 }
 
-@keyframes trs-svg-core-draw {
-    0%   { stroke-dashoffset: 1; opacity: 0.85; }
-    100% { stroke-dashoffset: 0; opacity: 1; }
-}
 @keyframes trs-svg-fade-in {
     0%   { opacity: 0; }
     100% { opacity: 1; }
@@ -205,7 +203,6 @@ code {
     .trs-svg-animate .trs-svg-halo {
         animation: none !important;
         transform: none !important;
-        stroke-dashoffset: 0 !important;
     }
     .trs-svg-animate .trs-svg-core,
     .trs-svg-animate .trs-svg-core-highlight,

@@ -6,8 +6,15 @@ import "@/App.css";
 // small (Lighthouse "Reduce unused JavaScript" / LCP optimisation, June 2026
 // audit).
 import LandingPage from "@/pages/LandingPage";
-import CookieConsent from "@/components/consent/CookieConsent";
-import { Toaster } from "@/components/ui/sonner";
+
+const Toaster = lazy(() =>
+  import(/* webpackPrefetch: true */ "@/components/ui/sonner").then((m) => ({
+    default: m.Toaster,
+  }))
+);
+const CookieConsent = lazy(() =>
+  import(/* webpackPrefetch: true */ "@/components/consent/CookieConsent")
+);
 
 const StrategicMemo = lazy(() => import("@/pages/StrategicMemo"));
 const CatchTwentyTwo = lazy(() => import("@/pages/CatchTwentyTwo"));
@@ -113,13 +120,17 @@ function App() {
             <Route path="/exposure/not-democratic" element={<NotDemocratic />} />
           </Routes>
         </Suspense>
-        <CookieConsent />
+        <Suspense fallback={null}>
+          <CookieConsent />
+        </Suspense>
       </BrowserRouter>
-      <Toaster
-        theme="dark"
-        position="bottom-right"
-        toastOptions={TOASTER_OPTIONS}
-      />
+      <Suspense fallback={null}>
+        <Toaster
+          theme="dark"
+          position="bottom-right"
+          toastOptions={TOASTER_OPTIONS}
+        />
+      </Suspense>
     </div>
   );
 }

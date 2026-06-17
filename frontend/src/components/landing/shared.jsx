@@ -99,12 +99,21 @@ export const ROLE_OPTIONS = [
   { value: "other", label: "Other" },
 ];
 
-/** IntersectionObserver-based fade-up for elements marked `.reveal`. */
+/** IntersectionObserver-based fade-up for elements marked `.reveal`.
+ *
+ * Also watches the DOM with a MutationObserver so elements that mount AFTER
+ * the initial render (e.g., lazy-loaded React components behind Suspense)
+ * are picked up and faded in correctly. Without that, a Suspense-mounted
+ * section with `className="reveal …"` would stay at opacity:0 forever
+ * because the IntersectionObserver only saw the DOM at mount time.
+ */
 export function useReveal() {
   useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
-    if (!("IntersectionObserver" in window)) {
-      els.forEach((el) => el.classList.add("is-visible"));
+    const supportsIO = "IntersectionObserver" in window;
+    if (!supportsIO) {
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => el.classList.add("is-visible"));
       return;
     }
     const io = new IntersectionObserver(
@@ -118,8 +127,35 @@ export function useReveal() {
       },
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
     );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const observe = (root) => {
+      root
+        .querySelectorAll(".reveal:not(.is-visible)")
+        .forEach((el) => io.observe(el));
+    };
+    observe(document);
+
+    // Pick up `.reveal` elements added by Suspense-resolved lazy chunks or
+    // any other late mount. Cheap — only fires when the body subtree changes.
+    const mo =
+      "MutationObserver" in window
+        ? new MutationObserver((mutations) => {
+            for (const m of mutations) {
+              m.addedNodes.forEach((node) => {
+                if (node.nodeType !== 1) return;
+                if (node.classList && node.classList.contains("reveal")) {
+                  io.observe(node);
+                }
+                if (node.querySelectorAll) observe(node);
+              });
+            }
+          })
+        : null;
+    mo?.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      io.disconnect();
+      mo?.disconnect();
+    };
   }, []);
 }
 
