@@ -351,3 +351,52 @@ After flipping just Part One's `published: true` (then reverted):
 ### Verification
 - Live smoke against the preview env confirmed both held-state and live-state behaviours. Flip ↔ revert tested in-session. No backend changes this iteration.
 
+
+
+## Iteration 15 — 2026-06-17 (Lighthouse perf/security pass — all 4 items)
+
+User request: complete the 4 Lighthouse-driven fixes from the 17 June 2026 audit. All held-state guardrails (Exposure trilogy `published: false`, no marketing-copy edits) respected.
+
+### 1. `llms.txt` ✓ (carried in from pre-fork)
+- `/app/frontend/public/llms.txt` present at the public root for LLM crawlers.
+
+### 2. Cache lifetimes ✓
+- `craco.config.js` devServer `setupMiddlewares`: hashed `/static/*` assets get `Cache-Control: public, max-age=31536000, immutable`; unhashed `*.png/jpg/svg/woff2/ico` get `max-age=86400`.
+- New `/app/frontend/public/_headers` documents the production cache policy in the Netlify/Cloudflare-Pages convention — the static host of record reads it. Hashed assets immutable; HTML shell short-cached.
+- Note: the preview ingress (Cloudflare) overrides `Cache-Control: no-store` on dev responses — that is platform-level and only applies to the preview env, not the production deploy.
+
+### 3. Reduce unused JS / CSS ✓
+- `App.js` migrated to `React.lazy()` + `<Suspense>` for **every route except `/` (LandingPage)**. LandingPage stays eager because it is the LCP target for the most-hit route.
+- 13 lazy boundaries created: `StrategicMemo`, `CatchTwentyTwo`, `DiagnosticIntake`, `AdminLogin`, `AdminDashboard`, `Privacy`, `Terms`, `Cookies`, `Imprint`, `WritingIndex`, `NothingHappened`, `TheSwitch`, `NotDemocratic`.
+- Branded Suspense fallback with `data-testid="route-suspense-fallback"` — single dark frame, no white flash.
+- All 21 routes (incl. aliases) verified rendering by testing agent iter15. Zero console errors. Deep-link navigation works for every route.
+
+### 4. Security headers ✓
+- **Backend** — new `SecurityHeadersMiddleware` in `/app/backend/server.py`. Applied via `headers.setdefault()` so per-route headers (e.g., PDF Cache-Control) take precedence. Set on every API response:
+  - `X-Content-Type-Options: nosniff`
+  - `X-Frame-Options: DENY`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()`
+  - `Cross-Origin-Opener-Policy: same-origin`
+  - `Strict-Transport-Security: max-age=31536000; includeSubDomains`
+  - `Content-Security-Policy: frame-ancestors 'none'` (locks the JSON/PDF API surface)
+- **Frontend** — CSP via meta tag in `/app/frontend/public/index.html` (line 23). Allowlists are scoped to what the runtime actually uses: PostHog (`us.i.posthog.com`, `us-assets.i.posthog.com`), Google Fonts (`fonts.googleapis.com`, `fonts.gstatic.com`), Emergent main script (`assets.emergent.sh`), Cloudflare Insights (`static.cloudflareinsights.com`), Brandfetch + generic `https:` imgs. `worker-src 'self' blob:` added so PostHog session-recorder can boot its replay Worker.
+- Playwright PDF render still produces a valid 421KB `%PDF-1.4` payload — CSP doesn't break the print-mode brief render at `/catch-22?print=1`.
+- Backend pytest suite: 5/5 new iter15 tests pass (`/app/backend/tests/test_iter15_security_headers.py`).
+
+### Testing agent iter15
+- Backend: 100% (5/5).
+- Frontend: 95% on first pass (21/21 routes render; one missing `worker-src blob:` for PostHog session-recorder). Fixed in-session, re-verified: 0 CSP violations, PostHog initialises after consent accept, `window.posthog.__loaded === true`.
+
+### Files touched
+- `/app/frontend/src/App.js` — lazy/Suspense conversion
+- `/app/frontend/craco.config.js` — devServer cache-header middleware
+- `/app/frontend/public/index.html` — CSP + X-Content-Type-Options + referrer meta tags
+- `/app/frontend/public/_headers` — new (forward-compat static-host cache policy)
+- `/app/backend/server.py` — `SecurityHeadersMiddleware`
+- `/app/backend/tests/test_iter15_security_headers.py` — new (added by testing agent)
+- `/app/test_reports/iteration_15.json` — test report
+
+### Guardrails preserved
+- Exposure trilogy still held: `published: false` on all three essays. Discoverability surfaces (navbar/teaser/footer) still hidden via `SERIES_LIVE` flag in `exposureSeries.js`.
+- Zero marketing copy changes.
