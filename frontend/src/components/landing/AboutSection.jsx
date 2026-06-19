@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { MapPin, Globe, ArrowUpRight } from "lucide-react";
-import { Link } from "react-router-dom";
 import {
   SectionHeader,
   LEVI_LINKEDIN_URL,
@@ -41,16 +40,6 @@ const TEAM = [
     ],
     testid: "founder-cto",
   },
-  {
-    role: "Head of Algorithmic Validation",
-    name: "Dr. Sidra Azmat Butt",
-    bio: [
-      "PhD, Information Technology · TalTech. Researcher, Next Gen Digital State Research Group. Independent oversight on EU AI Act conformity and GDPR privacy-by-design.",
-    ],
-    testid: "core-team-sidra",
-    badge: "TalTech · Tallinn",
-    advisoryHref: "#advisory",
-  },
 ];
 
 export default function AboutSection() {
@@ -89,7 +78,7 @@ export default function AboutSection() {
           </div>
 
           <div className="reveal lg:col-span-8">
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2">
               {TEAM.map((member) => (
                 <div
                   key={member.name}
@@ -129,25 +118,11 @@ export default function AboutSection() {
                       ),
                     )}
                   </div>
-                  {member.badge && (
-                    <div className="mt-4 inline-flex w-fit items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-0.5 mono text-[10px] uppercase tracking-[0.18em] text-cyan-300">
-                      {member.badge}
-                    </div>
-                  )}
-                  {member.advisoryHref && (
-                    <Link
-                      to={member.advisoryHref}
-                      className="mt-4 mono text-[10px] uppercase tracking-[0.22em] text-slate-500 hover:text-cyan-400"
-                      data-testid="core-team-sidra-advisory-link"
-                    >
-                      See full advisory profile →
-                    </Link>
-                  )}
                 </div>
               ))}
 
               <div
-                className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 sm:col-span-2 lg:col-span-3"
+                className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 sm:col-span-2"
                 data-testid="estonia-advantage"
               >
                 <div className="flex items-center gap-3">

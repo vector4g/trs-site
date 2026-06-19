@@ -874,11 +874,7 @@ export default function CatchTwentyTwo() {
                 Royal Institute of Technology in Stockholm has independently
                 validated the architecture at{" "}
                 <span className="text-white">IRL 5</span> (Technology
-                Readiness Level). Independent academic oversight on EU AI
-                Act conformity is provided by{" "}
-                <span className="text-white">Dr. Sidra Azmat Butt</span>,
-                researcher at the Next Gen Digital State Research Group at
-                Tallinn University of Technology.
+                Readiness Level).
               </Callout>
 
               <SubHeading>Why this is the only pattern that survives</SubHeading>

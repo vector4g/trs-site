@@ -10,7 +10,6 @@ import PersonasSection from "@/components/landing/PersonasSection";
 import ComplianceSection from "@/components/landing/ComplianceSection";
 import ValidationSection from "@/components/landing/ValidationSection";
 import AboutSection from "@/components/landing/AboutSection";
-import AdvisoryBoard from "@/components/landing/AdvisoryBoard";
 import Footer from "@/components/landing/Footer";
 import { useReveal, scrollToId } from "@/components/landing/shared";
 import { useSEO } from "@/lib/useSEO";
@@ -55,7 +54,6 @@ export default function LandingPage() {
         <ComplianceSection />
         <ValidationSection />
         <AboutSection />
-        <AdvisoryBoard />
         <Suspense
           fallback={
             <div
