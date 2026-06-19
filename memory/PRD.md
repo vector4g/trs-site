@@ -439,3 +439,35 @@ User shared a production Lighthouse report (https://thirdrailsystems.ee). Iter15
 ### Carried forward
 - Exposure trilogy still held (`published: false`). Marketing copy untouched.
 - Cache-lifetimes Lighthouse insight is platform-level — to be resolved via an Emergent Support request (~177 KiB savings, repeat-visit only).
+
+## Iteration 21 — 2026-06-19 (Advisor consent withdrawal — compliance removal)
+
+Compliance request from founder: Dr. Sidra Azmat Butt formally withdrew consent for the use of her name, image, and TalTech affiliation in connection with Third Rail Systems OÜ. All references — and any TalTech / Tallinn University of Technology citation that was tied to her or to the (now-defunct) Scientific Advisor role — were removed across the live codebase. Historical references in this PRD (iterations 6, 7, 9) are intentionally **left intact** as a compliance audit trail of what was published and when.
+
+**Iteration 6 + 7 + 9 entries above remain unchanged on purpose. Do not edit them retroactively.**
+
+### Scope of removal
+- All product-surface mentions of "Sidra", "Azmat", "Butt", "Dr. Sidra", "Dr. Butt".
+- All TalTech / "Tallinn University of Technology" citations that were tied to her or to the Scientific Advisor role.
+- The "Scientific Advisor" role and the entire Advisory Board surface (only she was on it).
+- A stray reference to "Dr. Mubashar Iqbal Butt" in `llms.txt` that carried the same TalTech-tied advisory framing — almost certainly a residual artefact of an earlier substitution attempt. Removed.
+
+### Files changed (live product)
+1. **Deleted** `/app/frontend/src/components/landing/AdvisoryBoard.jsx` — the entire component existed only to render her profile.
+2. `/app/frontend/src/pages/LandingPage.jsx` — dropped the `AdvisoryBoard` import + render. Section count goes from 9 → 8.
+3. `/app/frontend/src/components/landing/AboutSection.jsx` — removed the third `TEAM` card (her), removed the now-dead `advisoryHref` render block + the `Link` import, switched the team grid from `sm:grid-cols-2 lg:grid-cols-3` → `sm:grid-cols-2` so the two remaining founder cards (Levi, Jeremy) balance, and the Estonia Advantage row spans full width below.
+4. `/app/frontend/src/components/landing/shared.jsx` — dropped `{ id: "advisory", label: "Advisory" }` from `NAV_LINKS`. The eyebrow numbering on AboutSection stays at `07`; no other section was renumbered (Section 08 / Advisory simply no longer exists). If a future audit notices the gap, that is intentional — preserves the index of every surviving section.
+5. `/app/frontend/src/pages/StrategicMemo.jsx` Section III ("Earned Secrets") — removed the paragraph attributing "scientific posture" to her and rewrote the "Why this matters commercially" Callout to drop the unsupportable "independent academic" + "published peer review" claims. Approved rewrite, **Option 2** (founder + engineering depth): _"Enterprises buy from founders who have stood on the other side of the problem, and from architectures designed by engineers who have watched the legacy pattern fail from the inside. Our thesis is not borrowed from a pitch deck. It was paid for in career risk and in years of enterprise GRC delivery."_
+6. `/app/frontend/src/pages/CatchTwentyTwo.jsx` — truncated the "Implementation status" Callout at "...validated the architecture at IRL 5 (Technology Readiness Level)." Dropped the two trailing sentences about her academic oversight.
+7. `/app/frontend/public/llms.txt` — line 5 reworded to end with the KTH IRL 5 validation instead of the (removed) Dr. Mubashar Iqbal Butt sentence. Line 9 ("Core pages → Homepage") dropped "advisory board" from the homepage description.
+
+### Verification
+- `grep -rIn -E "Sidra|Azmat|\bButt\b|Mubashar|TalTech|Tallinn University|Scientific Advisor"` across `/app/frontend` + `/app/backend` source: **0 matches**.
+- ESLint on all touched files: clean.
+- Live smoke against preview: Advisory section absent from DOM, Sidra About card absent, Navbar has no "Advisory" link, `/memo` body keyword count 0, `/catch-22` body keyword count 0. About section renders cleanly with 2 founder cards (Levi, Jeremy) + full-width Estonia Advantage.
+- No backend changes; backend "Tallinn" references are all the company's registered Estonian address (`Sepapaja tn 6, 15551`) and are intentionally untouched.
+- Exposure trilogy `published: false` flags untouched. Deploy gating intact.
+
+### Hold
+Deploy held pending founder review of the diff. No production change until explicit go-ahead.
+

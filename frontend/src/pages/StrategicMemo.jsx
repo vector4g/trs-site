@@ -433,11 +433,12 @@ export default function StrategicMemo() {
                 data they should never have centralized in the first place.
               </p>
               <Callout icon={Users} label="Why this matters commercially">
-                Enterprises buy from founders who have stood on the other side
-                of the problem, and from architectures an independent
-                academic is willing to put their name on. Our thesis is not
-                borrowed from a pitch deck. It was paid for in career risk
-                and in published peer review.
+                Enterprises buy from founders who have stood on the other
+                side of the problem, and from architectures designed by
+                engineers who have watched the legacy pattern fail from the
+                inside. Our thesis is not borrowed from a pitch deck. It was
+                paid for in career risk and in years of enterprise GRC
+                delivery.
               </Callout>
             </MemoSection>
 
