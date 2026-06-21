@@ -16,7 +16,7 @@ const PERSONAS = [
     Icon: Lock,
     points: [
       "Enforce absolute data decentralization for special-category traits.",
-      "Utilize pre-audited, Limited-Risk AI architecture.",
+      "Utilize a pre-audited AI architecture built to EU AI Act high-risk obligations.",
       "Maintain full EU-sovereign data flows.",
     ],
   },

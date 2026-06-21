@@ -48,7 +48,7 @@ const COMPLIANCE_TAGS = [
   },
   {
     tag: "EU AI Act · Annex IV",
-    note: "Human-In-The-Loop design with logged data provenance.",
+    note: "Human-in-the-loop oversight with logged data provenance.",
   },
   {
     tag: "ISO 31030",
@@ -68,7 +68,7 @@ export default function ArchitectureDiagram() {
           index="03"
           eyebrow="ISI Architecture"
           title="Three layers. One zero-retention boundary."
-          description="The Inclusion & Accessibility Intelligence (ISI) flow: context grounded, statelessly analysed, and synthesised into a sanitized dossier. Special-category inputs are purged from transient memory before output."
+          description="The Intersectional Safety Intelligence (ISI) flow: context grounded, statelessly analysed, and synthesised into a sanitized dossier. Special-category inputs are purged from transient memory before output."
         />
 
         {/* The diagram */}

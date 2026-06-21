@@ -69,7 +69,7 @@ export default function Hero({ onPrimary, onSecondary }) {
             className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg"
             data-testid="hero-subheadline"
           >
-            Third Rail Systems enables Fortune 500 security teams to fulfill ISO
+            Third Rail Systems enables enterprise security teams to fulfill ISO
             31030 travel risk mandates for marginalized employees, without
             triggering GDPR special-category data liabilities.
           </p>

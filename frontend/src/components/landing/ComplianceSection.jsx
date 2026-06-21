@@ -12,7 +12,7 @@ const ROWS = [
     tag: "EU AI Act",
     Icon: Cpu,
     body:
-      "Documented as an assistive decision-support tool with mandatory Human-In-The-Loop (HITL) oversight and immutable vector logging.",
+      "Built to meet EU AI Act high-risk obligations, with mandatory human-in-the-loop oversight and immutable vector logging. Final classification under review with counsel.",
   },
   {
     tag: "ISO 31030",

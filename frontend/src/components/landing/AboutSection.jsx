@@ -25,7 +25,7 @@ const TEAM = [
     role: "CEO",
     name: "Levi Hankins",
     bio: [
-      '20-year US Navy combat veteran with lived experience under "Don\'t Ask, Don\'t Tell." Operational authority on discretion under institutional scrutiny.',
+      '20-year US Navy combat veteran with lived experience under "Don\'t Ask, Don\'t Tell." Operational authority on discretion under institutional scrutiny. Primary architect and builder of the ISI platform, the sovereign data layer, and the multi-agent synthesis engine.',
       "Founded Third Rail Systems to build the infrastructure that did not exist when he served, for enterprises managing duty-of-care obligations, and for civil-society organizations protecting the activists who do the most exposed work.",
     ],
     testid: "founder-ceo",
@@ -36,7 +36,7 @@ const TEAM = [
     role: "CTO",
     name: "Jeremy Stabile",
     bio: [
-      "Cybersecurity analyst with national-security research depth (RAND), HIPAA-grade healthcare GRC experience (Cedars-Sinai, UCLA), and German multinational GDPR experience (Karl Storz). Lead engineer of the stateless synthesis architecture and Human-In-The-Loop oversight controls.",
+      "Cybersecurity analyst with national-security research depth (RAND), HIPAA-grade healthcare GRC experience (Cedars-Sinai, UCLA), and German multinational GDPR experience (Karl Storz). Co-engineer of the stateless synthesis layer, the decoupled audit trail, and the human-in-the-loop oversight design.",
     ],
     testid: "founder-cto",
   },
@@ -133,8 +133,7 @@ export default function AboutSection() {
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-slate-400">
                   Proudly registered in Tallinn, Estonia, ensuring a strict
-                  European corporate footprint immune to US jurisdictional
-                  overreach.
+                  European corporate footprint outside direct US jurisdiction.
                 </p>
               </div>
             </div>
