@@ -529,7 +529,7 @@ export default function StrategicMemo() {
               </Callout>
               <p>
                 Proudly registered in Tallinn, Estonia, ensuring a strict
-                European corporate footprint outside US jurisdictional reach.
+                European corporate footprint outside direct US jurisdiction.
                 The Estonia advantage is not branding; it is part of the
                 defensive posture.
               </p>
