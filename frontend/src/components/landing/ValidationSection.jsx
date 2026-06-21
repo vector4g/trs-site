@@ -110,7 +110,7 @@ export default function ValidationSection() {
                   </div>
                 </div>
                 <span className="hidden mono text-[10px] uppercase tracking-[0.22em] text-slate-500 sm:inline">
-                  6 / 6 dimensions
+                  Six dimensions assessed
                 </span>
               </div>
 
