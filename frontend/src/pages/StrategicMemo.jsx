@@ -428,9 +428,10 @@ export default function StrategicMemo() {
               </p>
               <p>
                 Our CTO, <span className="text-white">Jeremy Stabile</span>, is
-                a Fortune 500 SecOps and GRC architecture expert. He has spent
-                years watching enterprise programs buckle under the weight of
-                data they should never have centralized in the first place.
+                a SecOps and GRC architecture expert with multinational
+                enterprise experience. He has spent years watching enterprise
+                programs buckle under the weight of data they should never
+                have centralized in the first place.
               </p>
               <Callout icon={Users} label="Why this matters commercially">
                 Enterprises buy from founders who have stood on the other
@@ -518,9 +519,9 @@ export default function StrategicMemo() {
                 acts as a Processor.
               </Callout>
               <Callout icon={Server} label="EU AI Act">
-                Documented as an assistive decision-support tool with
-                mandatory Human-In-The-Loop (HITL) oversight and immutable
-                vector logging.
+                Built to meet EU AI Act high-risk obligations, with mandatory
+                human-in-the-loop oversight and immutable vector logging.
+                Final classification under review with counsel.
               </Callout>
               <Callout icon={FileText} label="ISO 31030">
                 Verifiable, date-stamped evidence that the organization

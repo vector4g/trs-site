@@ -194,7 +194,7 @@ def _build_full_html(
   <h2>Earned Secrets</h2>
   <p>Third Rail Systems was founded on earned, not inherited, operational truths.</p>
   <p>Our CEO, <strong>Levi Hankins</strong>, served 20 years as a US Navy combat veteran and spent a meaningful portion of that career under "Don't Ask, Don't Tell." He has first-hand, deployed experience of what happens when institutional safety systems cannot safely see the people they are meant to protect.</p>
-  <p>Our CTO, <strong>Jeremy Stabile</strong>, is a Fortune 500 SecOps and GRC architecture expert. He has spent years watching enterprise programs buckle under the weight of data they should never have centralized in the first place.</p>
+  <p>Our CTO, <strong>Jeremy Stabile</strong>, is a SecOps and GRC architecture expert with multinational enterprise experience. He has spent years watching enterprise programs buckle under the weight of data they should never have centralized in the first place.</p>
   <div class="callout"><span class="callout-label">Why this matters commercially</span><p>Enterprises buy from founders who have stood on the other side of the problem. Our thesis is not borrowed from a pitch deck — it was paid for in career risk.</p></div>
 </section>
 
@@ -219,9 +219,9 @@ def _build_full_html(
   <h2>Governance Posture</h2>
   <p>Every architectural decision maps cleanly to a defensible compliance artefact.</p>
   <div class="gov-row"><span class="gov-tag">GDPR</span><p>We do not centralize "special-category data." The enterprise remains the Controller of standard itineraries; Third Rail acts as a Processor.</p></div>
-  <div class="gov-row"><span class="gov-tag">EU AI Act</span><p>Documented as an assistive decision-support tool with mandatory Human-In-The-Loop (HITL) oversight and immutable vector logging.</p></div>
+  <div class="gov-row"><span class="gov-tag">EU AI Act</span><p>Built to meet EU AI Act high-risk obligations, with mandatory human-in-the-loop oversight and immutable vector logging. Final classification under review with counsel.</p></div>
   <div class="gov-row"><span class="gov-tag">ISO 31030</span><p>Verifiable, date-stamped evidence that the organization assessed intersectional threats prior to deployment.</p></div>
-  <p>Proudly registered in Tallinn, Estonia — ensuring a strict European corporate footprint immune to US jurisdictional overreach.</p>
+  <p>Proudly registered in Tallinn, Estonia — ensuring a strict European corporate footprint outside direct US jurisdiction.</p>
 </section>
 
 <!-- VI. PILOT -->
