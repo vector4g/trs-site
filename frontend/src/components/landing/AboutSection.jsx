@@ -26,7 +26,7 @@ const TEAM = [
     name: "Levi Hankins",
     bio: [
       '20-year US Navy combat veteran with lived experience under "Don\'t Ask, Don\'t Tell." Operational authority on discretion under institutional scrutiny. Primary architect and builder of the ISI platform, the sovereign data layer, and the multi-agent synthesis engine.',
-      "Founded Third Rail Systems to build the infrastructure that did not exist when he served, for enterprises managing duty-of-care obligations, and for civil-society organizations protecting the activists who do the most exposed work.",
+      "Founded Third Rail Systems to build the infrastructure that did not exist when he served, for enterprises managing duty-of-care obligations, and for civil-society organisations protecting the activists who do the most exposed work.",
     ],
     testid: "founder-ceo",
     linkedinUrl: LEVI_LINKEDIN_URL,

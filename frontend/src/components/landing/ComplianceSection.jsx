@@ -6,7 +6,7 @@ const ROWS = [
     tag: "GDPR",
     Icon: Scale,
     body:
-      'We do not centralize "special-category data." The enterprise remains the Controller of standard itineraries; Third Rail acts as a Processor.',
+      'We do not centralise "special-category data." The enterprise remains the Controller of standard itineraries; Third Rail acts as a Processor.',
   },
   {
     tag: "EU AI Act",
@@ -18,7 +18,7 @@ const ROWS = [
     tag: "ISO 31030",
     Icon: FileText,
     body:
-      "Verifiable, date-stamped evidence that the organization assessed intersectional threats prior to deployment.",
+      "Verifiable, date-stamped evidence that the organisation assessed intersectional threats prior to deployment.",
   },
 ];
 

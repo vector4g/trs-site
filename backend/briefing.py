@@ -171,8 +171,8 @@ def _build_full_html(
   {_running_header(prospect_company)}
   <div class="section-num">I</div>
   <h2>The Thesis</h2>
-  <p>Institutional safety requires deep visibility. Human privacy requires absolute discretion. For two decades, enterprise security programs have treated these mandates as a trade-off to negotiate. We treat them as a system to engineer.</p>
-  <p>Third Rail Systems OÜ is the minimum-disclosure compliance layer for enterprise travel risk. We materially decouple risk intelligence from human identity — so that fulfilling your duty-of-care obligation toward marginalized employees stops being the thing that creates your worst GDPR liability.</p>
+  <p>Institutional safety requires deep visibility. Human privacy requires absolute discretion. For two decades, enterprise security programmes have treated these mandates as a trade-off to negotiate. We treat them as a system to engineer.</p>
+  <p>Third Rail Systems OÜ is the minimum-disclosure compliance layer for enterprise travel risk. We materially decouple risk intelligence from human identity — so that fulfilling your duty-of-care obligation toward marginalised employees stops being the thing that creates your worst GDPR liability.</p>
   <div class="callout"><span class="callout-label">Thesis in one line</span><p>Institutional safety and human privacy are not in tension — they are in the wrong place on the stack. Move identity off-device and the tension dissolves.</p></div>
 </section>
 
@@ -181,10 +181,10 @@ def _build_full_html(
   {_running_header(prospect_company)}
   <div class="section-num">II</div>
   <h2>The Catch-22</h2>
-  <p><strong>ISO 31030</strong> made it unambiguous: organizations must take reasonable steps to provide localized mitigations for marginalized travelers — LGBTQ+, disabled, neurodivergent, and other cohorts whose risk profile diverges sharply from the generic average. That is the duty-of-care mandate.</p>
+  <p><strong>ISO 31030</strong> made it unambiguous: organisations must take reasonable steps to provide localised mitigations for marginalised travellers — LGBTQ+, disabled, neurodivergent, and other cohorts whose risk profile diverges sharply from the generic average. That is the duty-of-care mandate.</p>
   <p><strong>GDPR Article 9</strong> made the opposite unambiguous: centrally collecting, processing, or inferring demographic identity is a special-category data operation that most enterprises are structurally unequipped to justify on lawful-basis grounds. That is the privacy liability.</p>
-  <p>The result is a compliance catch-22. Programs that honour ISO 31030 tend to accumulate a toxic, regulated data lake. Programs that respect GDPR tend to issue generic-average risk dossiers that fail the very people ISO 31030 was written for.</p>
-  <div class="callout"><span class="callout-label">The "Shadow HR" failure mode</span><p>Well-intentioned teams, blocked by the official stack, end up tracking vulnerable travelers on informal spreadsheets. The enterprise now carries every risk of the toxic data lake and none of its audit-grade protections.</p></div>
+  <p>The result is a compliance catch-22. Programmes that honour ISO 31030 tend to accumulate a toxic, regulated data lake. Programmes that respect GDPR tend to issue generic-average risk dossiers that fail the very people ISO 31030 was written for.</p>
+  <div class="callout"><span class="callout-label">The "Shadow HR" failure mode</span><p>Well-intentioned teams, blocked by the official stack, end up tracking vulnerable travellers on informal spreadsheets. The enterprise now carries every risk of the toxic data lake and none of its audit-grade protections.</p></div>
 </section>
 
 <!-- III. EARNED SECRETS -->
@@ -194,7 +194,7 @@ def _build_full_html(
   <h2>Earned Secrets</h2>
   <p>Third Rail Systems was founded on earned, not inherited, operational truths.</p>
   <p>Our CEO, <strong>Levi Hankins</strong>, served 20 years as a US Navy combat veteran and spent a meaningful portion of that career under "Don't Ask, Don't Tell." He has first-hand, deployed experience of what happens when institutional safety systems cannot safely see the people they are meant to protect.</p>
-  <p>Our CTO, <strong>Jeremy Stabile</strong>, is a SecOps and GRC architecture expert with multinational enterprise experience. He has spent years watching enterprise programs buckle under the weight of data they should never have centralized in the first place.</p>
+  <p>Our CTO, <strong>Jeremy Stabile</strong>, is a SecOps and GRC architecture expert with multinational enterprise experience. He has spent years watching enterprise programmes buckle under the weight of data they should never have centralised in the first place.</p>
   <div class="callout"><span class="callout-label">Why this matters commercially</span><p>Enterprises buy from founders who have stood on the other side of the problem. Our thesis is not borrowed from a pitch deck — it was paid for in career risk.</p></div>
 </section>
 
@@ -203,11 +203,11 @@ def _build_full_html(
   {_running_header(prospect_company)}
   <div class="section-num">IV</div>
   <h2>The Architecture</h2>
-  <p>Our architecture is built on a single contract: <strong>identity-bearing inputs never leave the traveler's device.</strong> Everything else follows from that one constraint.</p>
+  <p>Our architecture is built on a single contract: <strong>identity-bearing inputs never leave the traveller's device.</strong> Everything else follows from that one constraint.</p>
   <div class="grid-3">
-    <div class="feature"><div class="feature-num">01</div><div class="feature-title">On-Device Processing</div><p>The traveler's profile is encrypted locally. Special-category data never enters your HRIS.</p></div>
+    <div class="feature"><div class="feature-num">01</div><div class="feature-title">On-Device Processing</div><p>The traveller's profile is encrypted locally. Special-category data never enters your HRIS.</p></div>
     <div class="feature"><div class="feature-num">02</div><div class="feature-title">Stateless Threat Synthesis</div><p>The system cross-references destinations against local penal codes without centrally logging demographic inputs.</p></div>
-    <div class="feature"><div class="feature-num">03</div><div class="feature-title">Inclusion Safety Dossier</div><p>Your Global Travel Risk team receives a sanitized, actionable mitigation plan. You get the audit trail; your DPO avoids the data.</p></div>
+    <div class="feature"><div class="feature-num">03</div><div class="feature-title">Safety Dossier</div><p>Your Global Travel Risk team receives a sanitised, actionable mitigation plan. You get the audit trail; your DPO avoids the data.</p></div>
   </div>
   <p class="muted">This is a deliberate inversion of the industry default. Most travel-risk platforms collect more identity data to produce more specific output. We produce more specific output by collecting less identity data — and by refusing to retain any of it at the synthesis layer.</p>
 </section>
@@ -218,9 +218,9 @@ def _build_full_html(
   <div class="section-num">V</div>
   <h2>Governance Posture</h2>
   <p>Every architectural decision maps cleanly to a defensible compliance artefact.</p>
-  <div class="gov-row"><span class="gov-tag">GDPR</span><p>We do not centralize "special-category data." The enterprise remains the Controller of standard itineraries; Third Rail acts as a Processor.</p></div>
+  <div class="gov-row"><span class="gov-tag">GDPR</span><p>We do not centralise "special-category data." The enterprise remains the Controller of standard itineraries; Third Rail acts as a Processor.</p></div>
   <div class="gov-row"><span class="gov-tag">EU AI Act</span><p>Built to meet EU AI Act high-risk obligations, with mandatory human-in-the-loop oversight and immutable vector logging. Final classification under review with counsel.</p></div>
-  <div class="gov-row"><span class="gov-tag">ISO 31030</span><p>Verifiable, date-stamped evidence that the organization assessed intersectional threats prior to deployment.</p></div>
+  <div class="gov-row"><span class="gov-tag">ISO 31030</span><p>Verifiable, date-stamped evidence that the organisation assessed intersectional threats prior to deployment.</p></div>
   <p>Proudly registered in Tallinn, Estonia — ensuring a strict European corporate footprint outside direct US jurisdiction.</p>
 </section>
 
@@ -230,7 +230,7 @@ def _build_full_html(
   <div class="section-num">VI</div>
   <h2>The Pilot</h2>
   <p>We run paid, time-boxed enterprise pilots — typically 4 to 6 weeks — that require <strong>zero API integration with your HRIS</strong>. That is not a convenience feature; it is a statement about the architecture.</p>
-  <p>The pilot produces three artefacts: a signed architecture fit-assessment, a sample Inclusion Safety Dossier for a live destination, and a compliance binder your DPO can actually file.</p>
+  <p>The pilot produces three artefacts: a signed architecture fit-assessment, a sample Safety Dossier for a live destination, and a compliance binder your DPO can actually file.</p>
   <div class="cta">
     <div class="cta-label">Next step</div>
     <div class="cta-body">A 20-minute architecture fit-call with Levi Hankins. Reply to levi@thirdrailsystems.ee or visit thirdrailsystems.ee.</div>
@@ -288,7 +288,7 @@ def _build_exec_html(
   <div class="cover-body">
     <div class="eyebrow">Executive Summary · Confidential</div>
     <h1 class="cover-title">Minimum-disclosure compliance for <span class="accent">enterprise travel risk</span>.</h1>
-    <p class="cover-lede">Fulfill ISO 31030 duty-of-care for marginalized travelers without creating a GDPR Article 9 liability.</p>
+    <p class="cover-lede">Fulfil ISO 31030 duty-of-care for marginalised travellers without creating a GDPR Article 9 liability.</p>
   </div>
   <div class="cover-footer">
     <div class="meta-row"><span class="meta-label">Generated</span><span>{_escape(generated_at)}</span></div>
@@ -299,17 +299,17 @@ def _build_exec_html(
 <section class="page">
   {_running_header(prospect_company)}
   <h2>The Conflict</h2>
-  <p><strong>ISO 31030</strong> requires reasonable steps to protect marginalized travelers. <strong>GDPR Article 9</strong> prohibits centralizing the demographic data that naïve implementations would need to do that. Most enterprise programs pick one risk and inherit the other — or worse, accumulate "Shadow HR" spreadsheets of vulnerable travelers.</p>
+  <p><strong>ISO 31030</strong> requires reasonable steps to protect marginalised travellers. <strong>GDPR Article 9</strong> prohibits centralising the demographic data that naïve implementations would need to do that. Most enterprise programmes pick one risk and inherit the other — or worse, accumulate "Shadow HR" spreadsheets of vulnerable travellers.</p>
 
   <h2>The Architecture</h2>
   <div class="grid-3">
-    <div class="feature"><div class="feature-num">01</div><div class="feature-title">On-Device</div><p>Special-category data stays encrypted on the traveler's device. It never enters your HRIS.</p></div>
+    <div class="feature"><div class="feature-num">01</div><div class="feature-title">On-Device</div><p>Special-category data stays encrypted on the traveller's device. It never enters your HRIS.</p></div>
     <div class="feature"><div class="feature-num">02</div><div class="feature-title">Stateless Synthesis</div><p>Threat intelligence is cross-referenced against local penal codes without logging demographic inputs centrally.</p></div>
-    <div class="feature"><div class="feature-num">03</div><div class="feature-title">Sanitized Dossier</div><p>Your Global Travel Risk team gets an actionable mitigation plan plus a defensible audit trail; your DPO avoids the data.</p></div>
+    <div class="feature"><div class="feature-num">03</div><div class="feature-title">Safety Dossier</div><p>Your Global Travel Risk team gets an actionable mitigation plan plus a defensible audit trail; your DPO avoids the data.</p></div>
   </div>
 
   <h2>The Pilot</h2>
-  <p>Paid 4–6 week enterprise pilot with <strong>zero HRIS API integration</strong>. Deliverables: architecture fit-assessment, live sample Inclusion Safety Dossier, DPO-ready compliance binder.</p>
+  <p>Paid 4–6 week enterprise pilot with <strong>zero HRIS API integration</strong>. Deliverables: architecture fit-assessment, live sample Safety Dossier, DPO-ready compliance binder.</p>
 
   <div class="cta">
     <div class="cta-label">Next step</div>

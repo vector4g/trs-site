@@ -7,7 +7,7 @@ const FEATURES = [
     label: "Feature 01",
     title: "On-Device Processing",
     body:
-      "The traveler's profile is encrypted locally. Special-category data never enters your HRIS.",
+      "The traveller's profile is encrypted locally. Special-category data never enters your HRIS.",
   },
   {
     Icon: Server,
@@ -19,9 +19,9 @@ const FEATURES = [
   {
     Icon: FileText,
     label: "Feature 03",
-    title: "The Inclusion Safety Dossier",
+    title: "The Safety Dossier",
     body:
-      "Your Global Travel Risk team receives a sanitized, actionable mitigation plan. You get the audit trail; your DPO avoids the data.",
+      "Your Global Travel Risk team receives a sanitised, actionable mitigation plan. You get the audit trail; your DPO avoids the data.",
   },
 ];
 
@@ -59,7 +59,7 @@ export default function PlatformSection() {
                 <div className="h-px bg-slate-800" />
                 <div className="flex items-center justify-between">
                   <span>Output to enterprise</span>
-                  <span className="mono text-cyan-400">sanitized dossier</span>
+                  <span className="mono text-cyan-400">sanitised dossier</span>
                 </div>
               </div>
             </div>

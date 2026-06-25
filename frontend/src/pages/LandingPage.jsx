@@ -34,7 +34,7 @@ export default function LandingPage() {
     title:
       "Third Rail Systems OÜ · Minimum-Disclosure Travel Risk Compliance",
     description:
-      "EU-native compliance platform that resolves the ISO 31030 vs. GDPR catch-22 for marginalized employee travel risk. Built in Tallinn, Estonia.",
+      "EU-native compliance platform that resolves the ISO 31030 vs. GDPR catch-22 for marginalised employee travel risk. Built in Tallinn, Estonia.",
     canonical: "https://thirdrailsystems.ee/",
   });
   const navigate = useNavigate();

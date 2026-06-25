@@ -69,8 +69,8 @@ export default function Hero({ onPrimary, onSecondary }) {
             className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg"
             data-testid="hero-subheadline"
           >
-            Third Rail Systems enables enterprise security teams to fulfill ISO
-            31030 travel risk mandates for marginalized employees, without
+            Third Rail Systems enables enterprise security teams to fulfil ISO
+            31030 travel risk mandates for marginalised employees, without
             triggering GDPR special-category data liabilities.
           </p>
 
@@ -79,7 +79,7 @@ export default function Hero({ onPrimary, onSecondary }) {
             data-testid="hero-subheadline-civil"
           >
             The same minimum-disclosure architecture serves civil-society
-            organizations, IGOs, and human rights institutions that protect
+            organisations, IGOs, and human rights institutions that protect
             activists, defenders, and field staff in higher-risk environments.
             Different scale, identical operational tension between duty-of-care
             and identity protection.
@@ -202,7 +202,7 @@ export default function Hero({ onPrimary, onSecondary }) {
             </div>
           </div>
           <p className="mt-3 mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-            Illustrative operator view · sanitized dossier
+            Illustrative operator view · sanitised dossier
           </p>
         </div>
       </div>

@@ -472,12 +472,12 @@ export default function CatchTwentyTwo() {
                 This document argues that the H&amp;M case is not an outlier.
                 It is the visible instance of a structural pattern that is
                 present in virtually every multinational employer with a
-                marginalized-cohort workforce, that has grown larger and more
+                marginalised-cohort workforce, that has grown larger and more
                 concentrated since 2020, and that is now operating inside a
                 regulatory environment actively configured to find and
-                penalize it. The pattern is called{" "}
+                penalise it. The pattern is called{" "}
                 <span className="text-white">Shadow HR</span>. The exposure
-                is calculated against the full marginalized population, not
+                is calculated against the full marginalised population, not
                 the disclosed subset.
               </p>
               <p>
@@ -535,7 +535,7 @@ export default function CatchTwentyTwo() {
               <SubHeading>Hamburg's characterization</SubHeading>
               <p>
                 Prof. Dr. Johannes Caspar, the Hamburg Commissioner at the
-                time, characterized the H&amp;M conduct as constituting:
+                time, characterised the H&amp;M conduct as constituting:
               </p>
               <PullQuote source="Hamburg Commissioner for Data Protection, 1 October 2020">
                 A particularly intensive encroachment on employees' civil
@@ -570,7 +570,7 @@ export default function CatchTwentyTwo() {
             >
               <p>
                 The H&amp;M case names a pattern that exists in most
-                multinational organizations. Once identified, the pattern
+                multinational organisations. Once identified, the pattern
                 becomes visible everywhere. Once made visible, it cannot be
                 unseen by a sophisticated General Counsel.
               </p>
@@ -584,7 +584,7 @@ export default function CatchTwentyTwo() {
                 Worker Protection Act 2024 in the United Kingdom, the
                 Equality Act jurisprudence on reasonable adjustments, and
                 parallel European employer-liability evolution, all demand
-                that employers protect specific marginalized employees from
+                that employers protect specific marginalised employees from
                 specific identity-aware harms. Generic protection is
                 inadequate. Tailored protection is required.
               </p>
@@ -600,7 +600,7 @@ export default function CatchTwentyTwo() {
               </p>
               <p>
                 These two regimes were authored by different legislators,
-                operating on different timescales, optimizing for different
+                operating on different timescales, optimising for different
                 harms. They are both correct, individually. They are{" "}
                 <span className="text-white">
                   catastrophically incompatible, together
@@ -610,7 +610,7 @@ export default function CatchTwentyTwo() {
 
               <SubHeading>How the pattern manifests</SubHeading>
               <p>
-                Managers in multinational organizations live inside the
+                Managers in multinational organisations live inside the
                 resulting incompatibility every day. They know they have a
                 duty-of-care obligation. They know the official systems
                 cannot legally hold the data that would let them discharge
@@ -624,7 +624,7 @@ export default function CatchTwentyTwo() {
                   "HRIS custom fields that someone in middle management began populating without explicit corporate authorization, capturing accommodation needs, medical restrictions, or identity factors in free-text or structured form.",
                   "Email threads and chat archives where managers and HR staff have discussed individual employees' personal circumstances in detail, with the threads retained indefinitely under default corporate retention policies.",
                   "OHS (Occupational Health and Safety) files containing medical disclosure information that is then referenced informally by line managers for non-OHS purposes.",
-                  "Travel-risk vendor platforms that have accumulated traveler profile data including health conditions, dietary restrictions, and emergency contact relationships, all of which constitute special-category data under Article 9.",
+                  "Travel-risk vendor platforms that have accumulated traveller profile data including health conditions, dietary restrictions, and emergency contact relationships, all of which constitute special-category data under Article 9.",
                 ]}
               />
               <p>
@@ -648,7 +648,7 @@ export default function CatchTwentyTwo() {
               <p>
                 Shadow HR would be a static problem if voluntary employee
                 disclosure rates were stable. They are not. Disclosure rates
-                across every marginalized cohort with available data are
+                across every marginalised cohort with available data are
                 collapsing, and the collapse changes the risk math
                 materially.
               </p>
@@ -659,7 +659,7 @@ export default function CatchTwentyTwo() {
                 <span className="text-white">2026 Corporate Equality Index</span>{" "}
                 documented that <span className="text-white">47.5%</span> of
                 LGBTQ+ adults are less out in at least one area of their
-                lives than they were 12 months ago. The HRC characterized
+                lives than they were 12 months ago. The HRC characterised
                 this as a measurable retreat from workplace identity
                 disclosure under the current political and regulatory
                 environment.
@@ -682,7 +682,7 @@ export default function CatchTwentyTwo() {
               </p>
               <p>
                 Across LGBTQ+, neurodivergent, disability, and other
-                marginalized cohorts, the direction of travel is consistent:
+                marginalised cohorts, the direction of travel is consistent:
                 fewer employees are telling their employers what they are.
                 The regulatory rollback of DEI infrastructure in the United
                 States, accelerating since early 2025, has made disclosure
@@ -779,7 +779,7 @@ export default function CatchTwentyTwo() {
               </p>
               <BulletList
                 items={[
-                  "DPAs have improved their investigatory technique for finding informal data accumulation. The H&M case taught the regulatory community how to recognize the Shadow HR pattern. Subsequent cases have refined that recognition.",
+                  "DPAs have improved their investigatory technique for finding informal data accumulation. The H&M case taught the regulatory community how to recognise the Shadow HR pattern. Subsequent cases have refined that recognition.",
                   "Employee complaints have become more common as workforce awareness of GDPR rights has matured. The complaint pathway from employee to DPA is now well-established across most member states.",
                   "DPAs have aligned on the principle that penalty severity should be calibrated to the failure to design for compliance, not just to the harm caused. This means well-intentioned violations receive penalties commensurate with their structural scope, not with their motive.",
                 ]}
@@ -793,7 +793,7 @@ export default function CatchTwentyTwo() {
                 Management) and demonstrable GDPR Article 35 DPIA coverage on
                 employee-data processing as conditions for competitive
                 renewal pricing. The insurance market is establishing what
-                the regulatory market is enforcing. Organizations that cannot
+                the regulatory market is enforcing. Organisations that cannot
                 document their employee-data architecture against both
                 frameworks are facing premium increases and coverage
                 exclusions that compound the direct regulatory exposure.
@@ -814,7 +814,7 @@ export default function CatchTwentyTwo() {
                 infrastructure, and they will continue to build informal
                 alternatives in response. The problem is solvable only by{" "}
                 <span className="text-white">architectural change</span>.
-                Specifically, by removing the underlying need for centralized
+                Specifically, by removing the underlying need for centralised
                 special-category data accumulation in the first place.
               </p>
 
@@ -879,7 +879,7 @@ export default function CatchTwentyTwo() {
 
               <SubHeading>Why this is the only pattern that survives</SubHeading>
               <p>
-                Centralized data brokerage, the architectural pattern that
+                Centralised data brokerage, the architectural pattern that
                 defines the legacy travel-risk-management industry, cannot
                 survive the current regulatory environment. The enforcement
                 trajectory is too steep, the disclosure-collapse multiplier
@@ -906,13 +906,13 @@ export default function CatchTwentyTwo() {
                 liability can begin with five operational diagnostic
                 questions. The questions are not exhaustive. They are
                 calibrated to surface the categories of exposure most
-                consistently present in multinational organizations.{" "}
+                consistently present in multinational organisations.{" "}
                 <span className="text-white">
-                  An organization that can answer all five questions with
+                  An organisation that can answer all five questions with
                   documented evidence is likely in compliant operating
                   territory.
                 </span>{" "}
-                An organization that cannot answer one or more is likely
+                An organisation that cannot answer one or more is likely
                 sitting on undocumented exposure of the type the Hamburg DPA
                 found at H&amp;M in 2020.
               </p>
@@ -923,7 +923,7 @@ export default function CatchTwentyTwo() {
                   basis under GDPR Article 6 and Article 9 for every employee
                   accommodation, ERG membership, or identity-related data
                   field currently held in any system, official or informal,
-                  within your organization? If the answer requires
+                  within your organisation? If the answer requires
                   consultation with multiple HR business partners, ERG
                   coordinators, or line managers to compile, the
                   documentation does not exist in the form GDPR requires.
@@ -935,7 +935,7 @@ export default function CatchTwentyTwo() {
                   When was the last time your DPO or Privacy Office conducted
                   a systematic discovery exercise to identify Shadow HR
                   accumulation in spreadsheets, network drives, chat
-                  archives, and email threads across the organization? If the
+                  archives, and email threads across the organisation? If the
                   answer is never, or if the answer is more than 18 months
                   ago, the accumulation is likely present and growing.
                 </DiagnosticQuestion>
@@ -952,7 +952,7 @@ export default function CatchTwentyTwo() {
                   When was the last DPIA (Data Protection Impact Assessment)
                   conducted on the data processing performed by your ERG
                   coordinators in the course of maintaining membership lists,
-                  organizing events, and supporting members in their
+                  organising events, and supporting members in their
                   professional development? If the answer is never, your ERG
                   coordinators are likely processing Article 9 data without
                   the legal infrastructure GDPR requires.
@@ -982,19 +982,19 @@ export default function CatchTwentyTwo() {
             <BriefSection
               id="diagnostic"
               number="—"
-              title="If This Brief Maps to Your Organization"
+              title="If This Brief Maps to Your Organisation"
             >
               <p>
                 The Shadow HR pattern is recognizable once named. Most
-                General Counsels who read this brief in full will recognize
+                General Counsels who read this brief in full will recognise
                 at least two of the five diagnostic questions as ones they
-                cannot answer with documented evidence. Some will recognize
+                cannot answer with documented evidence. Some will recognise
                 all five.
               </p>
               <p>
                 Third Rail Systems OÜ is conducting confidential architectural
                 diagnostics with a limited number of multinational
-                organizations through Q3 2026. The diagnostic is not a sales
+                organisations through Q3 2026. The diagnostic is not a sales
                 engagement. It is a{" "}
                 <span className="text-white">60-minute structured
                 conversation</span> between your Privacy, Security, and HR
@@ -1002,11 +1002,11 @@ export default function CatchTwentyTwo() {
                 your current employee-data architecture can survive a Hamburg
                 DPA inspection. The diagnostic produces a written assessment
                 of exposure points and architectural alternatives. There is
-                no obligation to engage further. Organizations that
+                no obligation to engage further. Organisations that
                 determine, after the diagnostic, that their current
                 architecture is sound have received a documented validation
                 that may be useful for D&amp;O insurance underwriting
-                conversations. Organizations that determine, after the
+                conversations. Organisations that determine, after the
                 diagnostic, that architectural change is warranted have a
                 reference framework for the change.
               </p>
@@ -1018,8 +1018,8 @@ export default function CatchTwentyTwo() {
               <BulletList
                 items={[
                   "Organizational scale: multinational with 5,000+ employees.",
-                  "Workforce composition: substantive marginalized-cohort population, including but not limited to LGBTQ+, neurodivergent, and disability cohorts.",
-                  "Current exposure: organization is processing employee data through travel-risk vendors, ERG infrastructure, or accommodation-tracking systems.",
+                  "Workforce composition: substantive marginalised-cohort population, including but not limited to LGBTQ+, neurodivergent, and disability cohorts.",
+                  "Current exposure: organisation is processing employee data through travel-risk vendors, ERG infrastructure, or accommodation-tracking systems.",
                 ]}
               />
 
@@ -1247,7 +1247,7 @@ export default function CatchTwentyTwo() {
               <div className="mt-10 rounded-lg border border-slate-800 bg-slate-900/60 p-5 text-xs leading-relaxed text-slate-500">
                 This document is published by Third Rail Systems OÜ. The
                 analysis is provided for informational purposes and does not
-                constitute legal advice. Organizations evaluating their
+                constitute legal advice. Organisations evaluating their
                 exposure under GDPR, ISO 31030, the EU AI Act, or related
                 frameworks should consult qualified legal counsel.
               </div>

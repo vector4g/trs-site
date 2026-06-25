@@ -9,7 +9,7 @@ const ITEMS = [
     Icon: ShieldAlert,
     title: "The Duty-of-Care Mandate",
     body:
-      "Enterprises must demonstrate reasonable steps to provide localized mitigations for marginalized employees (LGBTQ+, disabled, neurodivergent).",
+      "Enterprises must demonstrate reasonable steps to provide localised mitigations for marginalised employees (LGBTQ+, disabled, neurodivergent).",
   },
   {
     Icon: Lock,
@@ -21,7 +21,7 @@ const ITEMS = [
     Icon: Users,
     title: 'The "Shadow HR" Risk',
     body:
-      "Well-intentioned teams track vulnerable travelers on informal spreadsheets, creating an un-audited legal nightmare for Data Protection Officers.",
+      "Well-intentioned teams track vulnerable travellers on informal spreadsheets, creating an un-audited legal nightmare for Data Protection Officers.",
   },
 ];
 
@@ -37,7 +37,7 @@ export default function ProblemSection() {
           index="01"
           eyebrow="The Core Conflict"
           title="The ISO 31030 vs. GDPR Catch-22"
-          description="Two compliance regimes pulling in opposite directions. Most programs pick one risk and inherit the other."
+          description="Two compliance regimes pulling in opposite directions. Most programmes pick one risk and inherit the other."
         />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-3">
@@ -83,7 +83,7 @@ export default function ProblemSection() {
               </div>
               <div className="mt-1 text-base font-semibold text-white sm:text-lg">
                 What H&amp;M's €35.3 million fine looks like when it happens
-                to your organization.
+                to your organisation.
               </div>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
                 Why every multinational with a diverse workforce is exposed

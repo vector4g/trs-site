@@ -7,7 +7,7 @@ const PERSONAS = [
     Icon: Shield,
     points: [
       'Eliminate "Shadow HR" tracking.',
-      "Generate auditable Inclusion Safety Dossiers.",
+      "Generate auditable Safety Dossiers.",
       "Procure securely with flat Total Travel Volume (TTV) pricing.",
     ],
   },
@@ -16,7 +16,7 @@ const PERSONAS = [
     Icon: Lock,
     points: [
       "Enforce absolute data decentralization for special-category traits.",
-      "Utilize a pre-audited AI architecture built to EU AI Act high-risk obligations.",
+      "Utilise a pre-audited AI architecture built to EU AI Act high-risk obligations.",
       "Maintain full EU-sovereign data flows.",
     ],
   },
@@ -34,7 +34,7 @@ const PERSONAS = [
     points: [
       "Protect human rights defenders, activists, and field staff without creating internal demographic registers.",
       "Deploy intersectional safety assessments aligned with donor compliance frameworks (USAID 2 CFR 200, EU AI Act, GDPR).",
-      "Pilot pricing for design partners; pro-bono deployment available for qualifying mission-aligned organizations.",
+      "Pilot pricing for design partners; pro-bono deployment available for qualifying mission-aligned organisations.",
     ],
     outcome:
       "Mission-aligned safety infrastructure that withstands donor audit and protects the people you serve.",

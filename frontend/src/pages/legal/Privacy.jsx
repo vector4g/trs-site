@@ -23,7 +23,7 @@ export default function Privacy() {
         Third Rail Systems OÜ ("Third Rail", "we", "us") builds a
         minimum-disclosure compliance layer for enterprise travel risk. Our
         commercial thesis is that identity-bearing data should remain on the
-        traveler's device and never enter our systems or our customer's HRIS.
+        traveller's device and never enter our systems or our customer's HRIS.
         This notice explains the narrow set of personal data we do process —
         primarily for our public website and pilot-intake flow — and your
         rights under the EU General Data Protection Regulation (GDPR).
@@ -98,7 +98,7 @@ export default function Privacy() {
         only: first name, last name, corporate email address, and your role
         (e.g. CSO, DPO, ERG lead). We use this information exclusively to
         respond to your enquiry, assess pilot fit, and (if relevant) enter
-        pre-contract negotiations with your organization.
+        pre-contract negotiations with your organisation.
       </P>
       <UL>
         <LI>
@@ -150,10 +150,10 @@ export default function Privacy() {
       <P>
         Third Rail's production platform — the minimum-disclosure compliance
         layer sold to enterprise customers — is deliberately designed so
-        that we never act as a Controller of a traveler's special-category
+        that we never act as a Controller of a traveller's special-category
         personal data. When a customer deploys the platform, identity inputs
         (e.g. protected-trait signals relevant to travel risk) remain
-        encrypted on the traveler's device; our stateless synthesis layer
+        encrypted on the traveller's device; our stateless synthesis layer
         cross-references destinations against local penal codes without
         logging those inputs centrally. The enterprise remains the
         Controller of standard itineraries, and Third Rail operates as a

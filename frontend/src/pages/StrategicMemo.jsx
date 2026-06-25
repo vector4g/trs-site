@@ -340,7 +340,7 @@ export default function StrategicMemo() {
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-slate-400">
                   The enterprise keeps the audit trail. The DPO avoids the
-                  data. The traveler keeps their identity.
+                  data. The traveller keeps their identity.
                 </p>
               </div>
             </div>
@@ -355,14 +355,14 @@ export default function StrategicMemo() {
               <p>
                 Institutional safety requires deep visibility. Human privacy
                 requires absolute discretion. For two decades, enterprise
-                security programs have treated these mandates as a trade-off to
+                security programmes have treated these mandates as a trade-off to
                 negotiate. We treat them as a system to engineer.
               </p>
               <p>
                 Third Rail Systems OÜ is the minimum-disclosure compliance
                 layer for enterprise travel risk. We materially decouple risk
                 intelligence from human identity, so that fulfilling your
-                duty-of-care obligation toward marginalized employees stops
+                duty-of-care obligation toward marginalised employees stops
                 being the thing that creates your worst GDPR liability.
               </p>
               <Callout icon={Scale} label="Thesis in one line">
@@ -374,9 +374,9 @@ export default function StrategicMemo() {
 
             <MemoSection id="catch22" number="II" title="The Catch-22">
               <p>
-                ISO 31030 made it unambiguous: organizations must take
-                reasonable steps to provide localized mitigations for
-                marginalized travelers, including LGBTQ+, disabled, and
+                ISO 31030 made it unambiguous: organisations must take
+                reasonable steps to provide localised mitigations for
+                marginalised travellers, including LGBTQ+, disabled, and
                 neurodivergent cohorts, whose risk profile diverges sharply
                 from the generic average. That is the duty-of-care mandate.
               </p>
@@ -388,14 +388,14 @@ export default function StrategicMemo() {
                 That is the privacy liability.
               </p>
               <p>
-                The result is a compliance catch-22. Programs that honour ISO
+                The result is a compliance catch-22. Programmes that honour ISO
                 31030 tend to accumulate a toxic, regulated data lake.
-                Programs that respect GDPR tend to issue generic-average risk
+                Programmes that respect GDPR tend to issue generic-average risk
                 dossiers that fail the very people ISO 31030 was written for.
               </p>
               <Callout icon={ShieldAlert} label='The "Shadow HR" failure mode'>
                 Well-intentioned teams, blocked by the official stack, end up
-                tracking vulnerable travelers on informal spreadsheets. The
+                tracking vulnerable travellers on informal spreadsheets. The
                 enterprise now carries every risk of the toxic data lake and
                 none of its audit-grade protections.
               </Callout>
@@ -430,8 +430,8 @@ export default function StrategicMemo() {
                 Our CTO, <span className="text-white">Jeremy Stabile</span>, is
                 a SecOps and GRC architecture expert with multinational
                 enterprise experience. He has spent years watching enterprise
-                programs buckle under the weight of data they should never
-                have centralized in the first place.
+                programmes buckle under the weight of data they should never
+                have centralised in the first place.
               </p>
               <Callout icon={Users} label="Why this matters commercially">
                 Enterprises buy from founders who have stood on the other
@@ -447,10 +447,10 @@ export default function StrategicMemo() {
               <p>
                 Our architecture is built on a single contract:{" "}
                 <span className="text-white">
-                  identity-bearing inputs never leave the traveler's device.
+                  identity-bearing inputs never leave the traveller's device.
                 </span>{" "}
                 Everything else follows from that one constraint. A stateless,
-                multi-agent deliberation engine processes a traveler's traits
+                multi-agent deliberation engine processes a traveller's traits
                 in transient memory and writes none of them to a database.
               </p>
 
@@ -461,7 +461,7 @@ export default function StrategicMemo() {
                     On-Device Processing
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    The traveler's profile is encrypted locally.
+                    The traveller's profile is encrypted locally.
                     Special-category data never enters your HRIS.
                   </p>
                 </div>
@@ -478,10 +478,10 @@ export default function StrategicMemo() {
                 <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-5">
                   <FileText className="h-4 w-4 text-cyan-400" />
                   <div className="mt-3 text-sm font-semibold text-white">
-                    Inclusion Safety Dossier
+                    Safety Dossier
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                    Your Global Travel Risk team receives a sanitized,
+                    Your Global Travel Risk team receives a sanitised,
                     actionable mitigation plan. You get the audit trail; your
                     DPO avoids the data.
                   </p>
@@ -514,7 +514,7 @@ export default function StrategicMemo() {
                 compliance artefact.
               </p>
               <Callout icon={Scale} label="GDPR">
-                We do not centralize "special-category data." The enterprise
+                We do not centralise "special-category data." The enterprise
                 remains the Controller of standard itineraries; Third Rail
                 acts as a Processor.
               </Callout>
@@ -524,7 +524,7 @@ export default function StrategicMemo() {
                 Final classification under review with counsel.
               </Callout>
               <Callout icon={FileText} label="ISO 31030">
-                Verifiable, date-stamped evidence that the organization
+                Verifiable, date-stamped evidence that the organisation
                 assessed intersectional threats prior to deployment.
               </Callout>
               <p>
@@ -546,7 +546,7 @@ export default function StrategicMemo() {
               </p>
               <p>
                 The pilot produces three artefacts: a signed architecture
-                fit-assessment, a sample Inclusion Safety Dossier for a live
+                fit-assessment, a sample Safety Dossier for a live
                 destination, and a compliance binder your DPO can actually
                 file.
               </p>

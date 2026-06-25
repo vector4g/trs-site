@@ -34,8 +34,8 @@ const LAYERS = [
     sub: "Layer 3",
     annotation: "Zero retention · special-category inputs purged",
     components: [
-      "Sanitized dossier · audit trail",
-      "Enterprise and traveler outputs",
+      "Sanitised dossier · audit trail",
+      "Enterprise and traveller outputs",
       "Global compliance mapping",
     ],
   },
@@ -44,7 +44,7 @@ const LAYERS = [
 const COMPLIANCE_TAGS = [
   {
     tag: "GDPR Article 9",
-    note: "Safety intelligence without centralized storage of special-category data.",
+    note: "Safety intelligence without centralised storage of special-category data.",
   },
   {
     tag: "EU AI Act · Annex IV",
@@ -52,7 +52,7 @@ const COMPLIANCE_TAGS = [
   },
   {
     tag: "ISO 31030",
-    note: "Auditable proof of localized intersectional threat assessment prior to travel.",
+    note: "Auditable proof of localised intersectional threat assessment prior to travel.",
   },
 ];
 
@@ -68,7 +68,7 @@ export default function ArchitectureDiagram() {
           index="03"
           eyebrow="ISI Architecture"
           title="Three layers. One zero-retention boundary."
-          description="The Intersectional Safety Intelligence (ISI) flow: context grounded, statelessly analysed, and synthesised into a sanitized dossier. Special-category inputs are purged from transient memory before output."
+          description="The Intersectional Safety Intelligence (ISI) flow: context grounded, statelessly analysed, and synthesised into a sanitised dossier. Special-category inputs are purged from transient memory before output."
         />
 
         {/* The diagram */}

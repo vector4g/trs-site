@@ -45,7 +45,7 @@ export default function Terms() {
         You may access and use the Website for lawful, non-commercial
         informational purposes, and — in the case of enterprise evaluators —
         to assess whether Third Rail's offering is suitable for your
-        organization. You agree not to:
+        organisation. You agree not to:
       </P>
       <UL>
         <LI>
@@ -79,14 +79,14 @@ export default function Terms() {
         contractual obligation on either party. Pilots are scoped and
         governed by a separate written agreement. By submitting the form
         you confirm that (a) you are authorized to provide the contact
-        information on behalf of your organization and (b) the information
+        information on behalf of your organisation and (b) the information
         is accurate.
       </P>
 
       <H2 id="ip">5. Intellectual property</H2>
       <P>
-        The Website, the Third Rail Systems name and logo, the "Inclusion
-        Safety Dossier" concept, the Strategic Memo text, and all other
+        The Website, the Third Rail Systems name and logo, the "Safety
+        Dossier" concept, the Strategic Memo text, and all other
         content on the Website are the intellectual property of Third Rail
         Systems OÜ or its licensors. Nothing on the Website should be
         construed as granting a licence to use any of the foregoing except
@@ -100,7 +100,7 @@ export default function Terms() {
         legal, compliance, security, travel-risk, medical, or other
         professional advice, and they are{" "}
         <span className="text-white">not</span> a substitute for advice
-        from qualified counsel familiar with your organization's specific
+        from qualified counsel familiar with your organisation's specific
         circumstances. The Website is provided "as is" and "as available"
         and, to the maximum extent permitted by Estonian and EU law, Third
         Rail disclaims all warranties, express or implied, in connection
