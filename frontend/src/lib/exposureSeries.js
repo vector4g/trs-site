@@ -32,8 +32,8 @@ export const EXPOSURE_SERIES = [
     readTimeMinutes: 5,
     canonical: "https://thirdrailsystems.ee/writing/nothing-happened",
     route: "/writing/nothing-happened",
-    published: false,
-    publishedAt: null,
+    published: true,
+    publishedAt: "2026-06-26",
   },
   {
     slug: "the-switch",
@@ -46,8 +46,8 @@ export const EXPOSURE_SERIES = [
     readTimeMinutes: 6,
     canonical: "https://thirdrailsystems.ee/writing/the-switch",
     route: "/writing/the-switch",
-    published: false,
-    publishedAt: null,
+    published: true,
+    publishedAt: "2026-06-26",
   },
   {
     slug: "exposure-is-not-democratic",
@@ -61,8 +61,8 @@ export const EXPOSURE_SERIES = [
     canonical:
       "https://thirdrailsystems.ee/writing/exposure-is-not-democratic",
     route: "/writing/exposure-is-not-democratic",
-    published: false,
-    publishedAt: null,
+    published: true,
+    publishedAt: "2026-06-26",
   },
 ];
 

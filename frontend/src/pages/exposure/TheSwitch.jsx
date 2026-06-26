@@ -45,7 +45,7 @@ export default function TheSwitch() {
         url: "https://thirdrailsystems.ee/",
         logo: { "@type": "ImageObject", url: "https://thirdrailsystems.ee/og.png" },
       },
-      datePublished: "2026-06-08",
+      datePublished: "2026-06-26",
       mainEntityOfPage: CANONICAL,
       image: "https://thirdrailsystems.ee/og.png",
       inLanguage: "en",

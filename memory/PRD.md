@@ -471,3 +471,50 @@ Compliance request from founder: Dr. Sidra Azmat Butt formally withdrew consent 
 ### Hold
 Deploy held pending founder review of the diff. No production change until explicit go-ahead.
 
+
+## Iteration 22 — 2026-06-26 (Exposure Trilogy Deploy Day — all three live)
+
+User explicitly cued: "publish the Trio of articles please I will send Traffic to each article via linkedin over the next week." Deviation from the original `/app/DEPLOY_EXPOSURE.md` staggered "one per week" rollout — user opted for "publish all three at once, then drive staggered LinkedIn traffic to each over the week." Both URLs and discoverability surfaces flip in one deploy; the LinkedIn-driven traffic campaign is operational, not architectural.
+
+### What flipped (one source of truth → seven downstream effects)
+Single source: `/app/frontend/src/lib/exposureSeries.js` — set all three `published: true` + `publishedAt: "2026-06-26"`. `SERIES_LIVE` (computed as `.some(e => e.published)`) is now `true`. Downstream automatic effects:
+1. **Navbar** — Memo → Insights → `/writing` (desktop + mobile)
+2. **ProblemSection teaser** — fuchsia "Exposure series" card now rendered, points at `/writing`
+3. **Footer** — Insights link now rendered in the left column
+4. **`/writing` hub** — all three essay cards clickable, zero "Forthcoming" placeholders
+5. **`<meta name="robots">`** — removed from all three essays + `/writing` hub (default `index,follow` restored)
+6. **`/writing` hub JSON-LD** — CollectionPage now lists all three essays
+
+### Files changed
+- `frontend/src/lib/exposureSeries.js` — 3× `published: true` + `publishedAt: "2026-06-26"`
+- `frontend/src/pages/exposure/NothingHappened.jsx` — `datePublished: "2026-06-26"` (was "2026-06-08" placeholder)
+- `frontend/src/pages/exposure/TheSwitch.jsx` — `datePublished: "2026-06-26"`
+- `frontend/src/pages/exposure/NotDemocratic.jsx` — `datePublished: "2026-06-26"`
+- `frontend/public/sitemap.xml` — replaced the OMITTED-comment block with 4 new `<url>` entries (writing hub at priority 0.7, three essays at priority 0.8). Total sitemap URL count: 8 → 12.
+
+### Verification (preview)
+- Sitemap `<loc>` count: 12 ✓
+- All four new URLs present in sitemap ✓
+- Navbar shows "Insights" instead of "Memo" ✓
+- Footer "Insights" link present ✓
+- ProblemSection "Exposure" teaser rendered ✓
+- `/writing` hub: 0 "Forthcoming" placeholders, all 3 essays clickable, Strategic Memo + Shadow HR Liability companion cards present ✓
+- `/writing/{slug}` for all 3 essays: `datePublished: 2026-06-26`, canonical `https://thirdrailsystems.ee/writing/<slug>`, robots meta absent (default index,follow) ✓
+- ESLint clean across `lib/exposureSeries.js` + all 3 exposure pages ✓
+
+### Carried forward into this deploy
+Single redeploy will ship:
+- Trilogy publish (this iteration)
+- Iter 19: KTH "Six dimensions assessed" disambiguation
+- Iter 19: Safety Dossier canonicalisation (10 edits across 6 files)
+- Iter 20: British/European English standardisation (107 edits across 14 files)
+- Iter 22 follow-on copy edits (Fortune 500 → enterprise, EU AI Act high-risk, ISI rename, Estonia jurisdiction phrasing, CEO/CTO bio refinement)
+- Iter 21: Advisor consent withdrawal (Sidra Azmat Butt + TalTech + Scientific Advisor surface removed)
+- Iter 16: Lighthouse perf round 2 (bundle slim + composited animation)
+- Iter 15: Lighthouse perf/security pass (lazy routes + security headers + CSP)
+
+Deploy held until user gives "ship it".
+
+### Notes on the LinkedIn rollout
+User will drive traffic to each essay separately on LinkedIn over the next week. All three URLs are live + indexable from day one; the user controls which one gets attention each day via LinkedIn link selection. The Part One → Part Two → Part Three forward CTAs are wired in essay-page templates (verified visually) so a reader who lands on Part One via LinkedIn can read straight through.
+
