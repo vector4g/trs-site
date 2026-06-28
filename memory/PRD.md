@@ -578,3 +578,45 @@ Awaiting user re-deploy to production. Once live, user should trigger an
 Ahrefs Site Audit re-crawl (Site Audit → Thirdrailsystems → Re-crawl) to
 clear the Critical flag. The current 2026-06-28 crawl will not refresh
 until a new crawl runs.
+
+## Iteration 25 — 2026-02-11 (Flat-file prerender — Emergent platform fix)
+
+**Trigger**: Emergent platform support confirmed that the static-serving
+layer for React/FARM/Shadcn templates does NOT support directory-index
+resolution or Netlify-style `_redirects`. The previous approach
+(`build/writing/<slug>/index.html` + `_redirects`) was therefore never
+going to work on this platform. Support specified the correct convention:
+emit flat `.html` files at the build root that match the URL path
+literally.
+
+### Change
+- `scripts/inject-writing-meta.js` — output path changed from
+  `build/writing/<slug>/index.html` to `build/writing/<slug>.html`.
+- Removed the `_redirects` file generation (platform ignores it).
+- Updated the file header doc-block to reflect the flat-file convention.
+
+### Verification (preview build)
+```
+[inject-writing-meta] wrote writing/nothing-happened.html
+[inject-writing-meta] wrote writing/the-switch.html
+[inject-writing-meta] wrote writing/exposure-is-not-democratic.html
+```
+Each flat file contains the correct per-article `<title>`,
+`<link rel="canonical">`, `<meta property="og:url">`, `og:title`,
+`og:description`, `og:image`, `twitter:*` — verified via post-build grep.
+
+### Deploy + verify
+1. User redeploys to production.
+2. Spot-check post-deploy with non-JS HTTP fetch:
+   ```
+   curl -sL https://thirdrailsystems.ee/writing/nothing-happened \
+     | grep -E '(canonical|og:title|<title>)'
+   ```
+   Should return article-specific tags, not the homepage shell.
+3. Trigger Ahrefs re-crawl. The Critical "Canonical URL has no incoming
+   internal links" flag should clear in the next pass.
+4. LinkedIn / Twitter / Slack will now render per-article social cards when
+   essay URLs are shared.
+
+### Files changed
+- `frontend/scripts/inject-writing-meta.js` — output path + header docs
