@@ -36,6 +36,34 @@ const META_CONFIG = path.resolve(__dirname, "..", "src", "lib", "writingMeta.jso
 const SITE_ORIGIN = "https://thirdrailsystems.ee";
 const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og.png`;
 
+/**
+ * Top-level pages that need prerendered flat HTML shells with their own
+ * meta tags. Same convention as /writing/<slug>: emit build/<path>.html so
+ * the Emergent static-serving layer can hand the right tags to non-JS
+ * scrapers (LinkedIn, Twitter, Ahrefs) on the canonical URL. Title +
+ * description below MUST stay in sync with the page's useSEO() call.
+ *
+ * Sources (as of 2026-02-11):
+ *   /memo     → src/pages/StrategicMemo.jsx useSEO
+ *   /catch-22 → src/pages/CatchTwentyTwo.jsx useSEO
+ */
+const TOP_PAGES = [
+  {
+    path: "/memo",
+    title: "The Strategic Memo · Third Rail Systems",
+    description:
+      "A founding-team paper on why duty-of-care and GDPR Article 9 collide, and how a minimum-disclosure architecture makes that collision obsolete.",
+    ogImage: null,
+  },
+  {
+    path: "/catch-22",
+    title: "The ISO 31030 and GDPR Article 9 Catch-22 · Third Rail Systems",
+    description:
+      "Duty-of-care obligations under ISO 31030 can collide with GDPR Article 9 protection for special-category data. What a minimum-disclosure approach changes.",
+    ogImage: null,
+  },
+];
+
 function escapeHtml(s) {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -69,8 +97,7 @@ function upsertHeadTag(html, regex, replacement) {
   return html.replace("</head>", `        ${replacement}\n    </head>`);
 }
 
-function injectArticleMeta(html, slug, meta) {
-  const url = `${SITE_ORIGIN}/writing/${slug}`;
+function injectRouteMeta(html, url, meta) {
   const ogImage = meta.ogImage || DEFAULT_OG_IMAGE;
   const title = escapeHtml(meta.title);
   const description = escapeHtml(meta.description);
@@ -200,10 +227,25 @@ function main() {
     const writingDir = path.join(BUILD_DIR, "writing");
     fs.mkdirSync(writingDir, { recursive: true });
     const outPath = path.join(writingDir, `${slug}.html`);
-    const html = injectArticleMeta(baseHtml, slug, meta);
+    const url = `${SITE_ORIGIN}/writing/${slug}`;
+    const html = injectRouteMeta(baseHtml, url, meta);
     fs.writeFileSync(outPath, html, "utf-8");
     console.log(`[inject-writing-meta] wrote ${path.relative(BUILD_DIR, outPath)}`);
     slugs.push(slug);
+    count++;
+  }
+
+  // Top-level pages: same flat-file convention. Each writes build<path>.html
+  // at the build root so /memo is served by build/memo.html, /catch-22 by
+  // build/catch-22.html, etc.
+  for (const page of TOP_PAGES) {
+    const relativeFilePath = `${page.path.replace(/^\//, "")}.html`;
+    const outPath = path.join(BUILD_DIR, relativeFilePath);
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    const url = `${SITE_ORIGIN}${page.path}`;
+    const html = injectRouteMeta(baseHtml, url, page);
+    fs.writeFileSync(outPath, html, "utf-8");
+    console.log(`[inject-writing-meta] wrote ${path.relative(BUILD_DIR, outPath)}`);
     count++;
   }
 
@@ -212,7 +254,7 @@ function main() {
   // Netlify-style _redirects rules. Flat .html files above achieve the
   // same effect via the platform's native path-to-file mapping.
 
-  console.log(`[inject-writing-meta] Done. Generated ${count} article HTML files.`);
+  console.log(`[inject-writing-meta] Done. Generated ${count} prerendered HTML files.`);
 }
 
 main();

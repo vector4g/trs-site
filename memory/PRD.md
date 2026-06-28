@@ -620,3 +620,31 @@ Each flat file contains the correct per-article `<title>`,
 
 ### Files changed
 - `frontend/scripts/inject-writing-meta.js` — output path + header docs
+
+## Iteration 26 — 2026-02-11 (Regression repair + /memo + /catch-22 prerendering)
+
+### Regression repair (introduced earlier in this session)
+During the html-minifier debugging in Iter 24, a `git checkout HEAD -- public/index.html` accidentally reverted previous-session uncommitted SEO copy work. Restored:
+- Homepage description, og:title, og:description, twitter:title, twitter:description to match `LandingPage.jsx` useSEO copy exactly: "EU-native platform resolving the ISO 31030 and GDPR Article 9 conflict for employee travel risk, without centralising special-category data. Built in Tallinn."
+- `<title>` synced to "Third Rail Systems · Minimum-Disclosure Travel Risk Compliance" (dropped "OÜ" to match runtime)
+- Removed `SoftwareApplication` JSON-LD from static `public/index.html`. It is now injected exclusively on the homepage via `useJsonLd` in `LandingPage.jsx`, so it no longer leaks onto every SPA-fallback route. No `aggregateRating`/`offers` (no real pilot reviews yet — fabricated ratings violate Google policy).
+
+### Extended prerender to /memo and /catch-22
+- `scripts/inject-writing-meta.js` — refactored `injectArticleMeta` → `injectRouteMeta(html, url, meta)` (URL-agnostic).
+- Added `TOP_PAGES` constant with `/memo` and `/catch-22` entries (title + description sourced verbatim from their respective `useSEO` calls). Script writes `build/memo.html` and `build/catch-22.html` at the build root via the same flat-file convention as `/writing/<slug>`.
+- Build output now: 6 prerendered shells (1 homepage + 2 top pages + 3 writing slugs), each with correct per-route title, description, canonical, og:type=article (or website for /), og:title, og:url, og:image, twitter:*.
+
+### Verification
+```
+build/index.html:                                <title>Third Rail Systems · Minimum-Disclosure Travel Risk Compliance</title>
+build/memo.html:                                 <title>The Strategic Memo · Third Rail Systems</title>
+build/catch-22.html:                             <title>The ISO 31030 and GDPR Article 9 Catch-22 · Third Rail Systems</title>
+build/writing/nothing-happened.html:             <title>Nothing Happened, and That Was the Point · Third Rail Systems</title>
+build/writing/the-switch.html:                   <title>The Switch Someone Else Holds · Third Rail Systems</title>
+build/writing/exposure-is-not-democratic.html:   <title>Exposure Is Not Democratic · Third Rail Systems</title>
+```
+SoftwareApplication JSON-LD: not present in any prerendered shell (good — moved to LandingPage.jsx). ESLint clean.
+
+### Files changed
+- `frontend/public/index.html` — restored SEO copy + removed SoftwareApplication block + synced title
+- `frontend/scripts/inject-writing-meta.js` — generalised inject function + added TOP_PAGES handling

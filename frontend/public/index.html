@@ -24,7 +24,7 @@
         />
         <meta http-equiv="X-Content-Type-Options" content="nosniff" />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
-        <meta name="description" content="EU-native compliance platform that resolves the ISO 31030 vs. GDPR catch-22 for marginalised employee travel risk. Built in Tallinn, Estonia." />
+        <meta name="description" content="EU-native platform resolving the ISO 31030 and GDPR Article 9 conflict for employee travel risk, without centralising special-category data. Built in Tallinn." />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
         <link rel="icon" href="/favicon.ico" />
@@ -33,8 +33,8 @@
         <!-- Open Graph -->
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Third Rail Systems OÜ" />
-        <meta property="og:title" content="Third Rail Systems OÜ · Minimum-Disclosure Travel Risk Compliance" />
-        <meta property="og:description" content="The minimum-disclosure compliance layer for enterprise travel risk. ISO 31030, GDPR Article 9, EU AI Act, resolved." />
+        <meta property="og:title" content="Third Rail Systems · Minimum-Disclosure Travel Risk Compliance" />
+        <meta property="og:description" content="EU-native platform resolving the ISO 31030 and GDPR Article 9 conflict for employee travel risk, without centralising special-category data. Built in Tallinn." />
         <meta property="og:image" content="https://thirdrailsystems.ee/og.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -42,8 +42,8 @@
 
         <!-- Twitter -->
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Third Rail Systems OÜ · Minimum-Disclosure Travel Risk Compliance" />
-        <meta name="twitter:description" content="Travel risk systems that account for real people, not generic averages." />
+        <meta name="twitter:title" content="Third Rail Systems · Minimum-Disclosure Travel Risk Compliance" />
+        <meta name="twitter:description" content="EU-native platform resolving the ISO 31030 and GDPR Article 9 conflict for employee travel risk, without centralising special-category data. Built in Tallinn." />
         <meta name="twitter:image" content="https://thirdrailsystems.ee/og.png" />
 
         <!-- JSON-LD: Organization -->
@@ -87,28 +87,16 @@
           "inLanguage": "en"
         }
         </script>
-        <!-- JSON-LD: SoftwareApplication -->
-        <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          "name": "Third Rail Systems · Safety Dossier",
-          "applicationCategory": "BusinessApplication",
-          "operatingSystem": "Web",
-          "description": "Stateless AI synthesis that produces sanitised travel risk mitigation dossiers without centralising GDPR special-category data.",
-          "offers": {
-            "@type": "Offer",
-            "priceCurrency": "EUR",
-            "price": "0",
-            "availability": "https://schema.org/PreOrder",
-            "description": "4-to-6 week paid enterprise pilot."
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "Third Rail Systems OÜ"
-          }
-        }
-        </script>
+        <!--
+          SoftwareApplication JSON-LD intentionally NOT placed here.
+          Because this is a CSR SPA that serves the same index.html on every
+          route, embedding SoftwareApplication in the static head would emit
+          it on every page (legal, memo, articles), which is invalid schema
+          usage. It is now injected via useJsonLd in LandingPage.jsx so it
+          appears on the homepage only. We deliberately omit aggregateRating
+          and offers because we have no genuine pilot reviews yet to cite,
+          and fabricated ratings violate Google structured-data policy.
+        -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <!--
@@ -153,7 +141,7 @@
         work correctly both with client-side routing and a non-root public URL.
         Learn how to configure a non-root public URL by running `npm run build`.
         -->
-        <title>Third Rail Systems OÜ · Minimum-Disclosure Travel Risk Compliance</title>
+        <title>Third Rail Systems · Minimum-Disclosure Travel Risk Compliance</title>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
         <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
     </head>
