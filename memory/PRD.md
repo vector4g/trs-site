@@ -648,3 +648,18 @@ SoftwareApplication JSON-LD: not present in any prerendered shell (good — move
 ### Files changed
 - `frontend/public/index.html` — restored SEO copy + removed SoftwareApplication block + synced title
 - `frontend/scripts/inject-writing-meta.js` — generalised inject function + added TOP_PAGES handling
+
+## Iteration 27 — 2026-02-11 (Custom OG images for Exposure trilogy)
+
+User provided 3 custom OG images (cyan-on-dark, brand-consistent). Mapped:
+- `nothing-happened.png` — horizontal cyan beam at threshold (Y2K, the quiet event)
+- `the-switch.png` — literal cyan-edged toggle switch
+- `exposure-is-not-democratic.png` — single beam selectively illuminating a path through a dense field
+
+Downloaded from job assets, normalised to canonical OG dimensions (1200×630 RGB) via Pillow center-crop/resize, dropped into `frontend/public/og/`. Updated `frontend/src/lib/writingMeta.json` with per-article `ogImage` URLs. Build output verified: each essay shell now references its own image; homepage/memo/catch-22 keep the default `/og.png`.
+
+### Files changed / added
+- `frontend/public/og/nothing-happened.png` (NEW, 1200×630, ~223KB)
+- `frontend/public/og/the-switch.png` (NEW, 1200×630, ~471KB)
+- `frontend/public/og/exposure-is-not-democratic.png` (NEW, 1200×630, ~482KB)
+- `frontend/src/lib/writingMeta.json` — added absolute `ogImage` URLs per slug

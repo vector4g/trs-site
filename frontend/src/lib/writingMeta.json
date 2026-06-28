@@ -3,16 +3,16 @@
   "nothing-happened": {
     "title": "Nothing Happened, and That Was the Point · Third Rail Systems",
     "description": "Y2K was a fix delivered on time, so the disaster never came. The durable answer to exposure is the same: collect less in the first place.",
-    "ogImage": null
+    "ogImage": "https://thirdrailsystems.ee/og/nothing-happened.png"
   },
   "the-switch": {
     "title": "The Switch Someone Else Holds · Third Rail Systems",
     "description": "Dependency is the vulnerability. Sovereignty is architectural rather than geographic, and relocating control is not the same as removing the need for it.",
-    "ogImage": null
+    "ogImage": "https://thirdrailsystems.ee/og/the-switch.png"
   },
   "exposure-is-not-democratic": {
     "title": "Exposure Is Not Democratic · Third Rail Systems",
     "description": "Collected data lands hardest on the most exposed. The capstone of the Exposure series, on the unequal distribution of disclosure risk.",
-    "ogImage": null
+    "ogImage": "https://thirdrailsystems.ee/og/exposure-is-not-democratic.png"
   }
 }
