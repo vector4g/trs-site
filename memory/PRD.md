@@ -518,3 +518,63 @@ Deploy held until user gives "ship it".
 ### Notes on the LinkedIn rollout
 User will drive traffic to each essay separately on LinkedIn over the next week. All three URLs are live + indexable from day one; the user controls which one gets attention each day via LinkedIn link selection. The Part One → Part Two → Part Three forward CTAs are wired in essay-page templates (verified visually) so a reader who lands on Part One via LinkedIn can read straight through.
 
+
+## Iteration 24 — 2026-02-11 (Ahrefs critical issue fix: home inlinks + per-route canonicals)
+
+**Trigger**: Ahrefs Site Audit (project 10021402) flagged Critical issue
+`c64d3d21-d0f4-11e7-8ed1-001e67ed4656` "Canonical URL has no incoming
+internal links" on `https://thirdrailsystems.ee/` (2026-06-28 crawl).
+Underlying cause was a template bug: every interior page hardcoded
+`<link rel="canonical" href="https://thirdrailsystems.ee/" />`, telling
+crawlers that 10 pages were duplicates of the homepage. Compounded by the
+SPA shell having zero internal `<a>` links (only the build badge to imprint),
+so the homepage had 0 inlinks.
+
+### Fix A — internal home link in static HTML (Ahrefs Critical)
+Added a visually-hidden but crawler-visible `<ul id="trs-static-nav">` to
+`public/index.html` containing 11 real anchors: home, memo, catch-22,
+writing index, three essay slugs, and four legal pages. Positioned
+off-screen via `left:-9999px` so JS-enabled users don't see the duplicated
+nav (React Navbar handles their nav) but Ahrefs / LinkedIn / Twitter
+scrapers parsing raw HTML get a real internal-link surface from every
+SPA-fallback route. The home anchor is `<a href="/" rel="home">Home</a>` —
+the exact form Ahrefs expects.
+
+### Fix B — per-route self-referencing canonicals
+Removed the hardcoded `<link rel="canonical" href="https://thirdrailsystems.ee/" />`
+and `<meta property="og:url" content="https://thirdrailsystems.ee/" />`
+from `public/index.html`. Canonicals are now set in two ways:
+1. **At runtime**, `useSEO()` (already in place on every page) injects the
+   correct per-route canonical for JS-enabled clients.
+2. **At build time**, `scripts/inject-writing-meta.js` inserts the correct
+   article canonical into each `/writing/<slug>/index.html` shell. The
+   script was updated with a new `upsertHeadTag()` helper so it INSERTS
+   canonical/og:url tags if missing (previously relied on `replaceTag`
+   which silently no-op'd when the source tag was absent).
+3. For SPA-fallback routes (`/memo`, `/catch-22`, `/legal/*`, `/admin*`,
+   `/diagnostic`), the absence of an explicit canonical lets crawlers
+   self-canonicalise to the requested URL — which is the correct
+   behaviour.
+
+### Files changed
+- `frontend/public/index.html` — removed canonical + og:url; added static
+  nav `<ul>` with 11 anchor links
+- `frontend/scripts/inject-writing-meta.js` — added `upsertHeadTag()`;
+  switched canonical + og:url injection from replace-only to upsert
+
+### Verification
+- `yarn build` succeeds; postbuild script writes all 3 `/writing/<slug>/index.html`
+  shells with correct article-specific canonical, og:url, title, description
+- `curl` against every preview route (`/`, `/memo`, `/catch-22`,
+  `/legal/privacy`, `/writing`, `/writing/nothing-happened`) shows:
+  - `<a href="/" rel="home">Home</a>` present (Fix A) ✓
+  - No `<link rel="canonical">` in SPA-fallback HTML (Fix B) ✓
+- Production `/writing/<slug>` URLs (after deploy) will serve prerendered
+  shells with explicit per-article canonicals
+- ESLint clean on `inject-writing-meta.js`
+
+### Deploy step
+Awaiting user re-deploy to production. Once live, user should trigger an
+Ahrefs Site Audit re-crawl (Site Audit → Thirdrailsystems → Re-crawl) to
+clear the Critical flag. The current 2026-06-28 crawl will not refresh
+until a new crawl runs.

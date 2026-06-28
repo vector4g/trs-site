@@ -110,10 +110,9 @@ export default function CatchTwentyTwo() {
   // Article JSON-LD adds E-E-A-T signals for Google: author + publish date +
   // publisher. Critical for thought-leadership ranking.
   useSEO({
-    title:
-      "The Shadow HR Liability · Analytical Brief · Third Rail Systems OÜ",
+    title: "The ISO 31030 and GDPR Article 9 Catch-22 · Third Rail Systems",
     description:
-      "Why multinationals with diverse workforces are sitting on the next €35M GDPR fine, and the architectural pattern that resolves it. v1.1, May 2026.",
+      "Duty-of-care obligations under ISO 31030 can collide with GDPR Article 9 protection for special-category data. What a minimum-disclosure approach changes.",
     canonical: "https://thirdrailsystems.ee/catch-22",
   });
   useJsonLd(

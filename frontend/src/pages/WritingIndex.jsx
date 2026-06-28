@@ -22,9 +22,9 @@ const CANONICAL = "https://thirdrailsystems.ee/writing";
  */
 export default function WritingIndex() {
   useSEO({
-    title: "Insights · Third Rail Systems OÜ",
+    title: "Writing · Third Rail Systems",
     description:
-      "Exposure: a three-part series on dependency, accumulation, and who holds the leverage. Long-form essays from Levi Hankins. Read in order.",
+      "Essays on disclosure, identity and travel risk, and why protection built on disclosure can fail the people most at risk.",
     canonical: CANONICAL,
     // Hide the hub from search engines until at least one essay is live.
     // Visitors with the URL can still reach it; this just prevents premature

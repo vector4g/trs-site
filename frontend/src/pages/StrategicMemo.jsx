@@ -113,10 +113,9 @@ export default function StrategicMemo() {
   const [copied, setCopied] = useState(false);
 
   useSEO({
-    title:
-      "The Strategic Memo · Resolving the ISO 31030 Catch-22 · Third Rail Systems OÜ",
+    title: "The Strategic Memo · Third Rail Systems",
     description:
-      "Founder memo on minimum-disclosure compliance architecture, KTH IRL 5 validation, and why the EU's catch-22 is solvable from Tallinn.",
+      "A founding-team paper on why duty-of-care and GDPR Article 9 collide, and how a minimum-disclosure architecture makes that collision obsolete.",
     canonical: "https://thirdrailsystems.ee/memo",
   });
   useJsonLd(

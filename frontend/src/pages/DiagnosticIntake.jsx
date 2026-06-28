@@ -92,10 +92,11 @@ export default function DiagnosticIntake() {
   const mountedAt = useRef(Date.now());
 
   useSEO({
-    title: "Confidential Diagnostic Request · Third Rail Systems OÜ",
+    title: "Confidential Diagnostic · Third Rail Systems",
     description:
-      "60-minute confidential diagnostic for multinational security & GRC teams. Triages Shadow HR exposure under ISO 31030 + GDPR. No HRIS integration.",
+      "Map your Shadow HR exposure in a confidential 60-minute conversation. No HRIS integration, no special-category data requested.",
     canonical: "https://thirdrailsystems.ee/diagnostic",
+    robots: "noindex, follow",
   });
   useJsonLd(
     {

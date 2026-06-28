@@ -1,18 +1,18 @@
 {
-  "_comment": "Per-article meta for /writing/<slug> routes. Read at build time by scripts/inject-writing-meta.js to generate static HTML shells with correct social/SEO tags (since this is a CSR SPA, runtime meta tags from useSEO are invisible to non-JS scrapers). Add a new article by appending an entry below and rebuilding. ogImage is optional — null falls back to /og.png.",
+  "_comment": "Per-article meta for /writing/<slug> routes. Read at build time by scripts/inject-writing-meta.js to generate static HTML shells with correct social/SEO tags (since this is a CSR SPA, runtime meta tags from useSEO are invisible to non-JS scrapers). Add a new article by appending an entry below and rebuilding. ogImage is optional — null falls back to /og.png. Title + description here MUST match the per-route useSEO({...}) call in the corresponding essay component file; the postbuild script writes these into the prerendered HTML shell so SPA fallback and prerender stay in sync.",
   "nothing-happened": {
     "title": "Nothing Happened, and That Was the Point · Third Rail Systems",
-    "description": "Y2K was not a false alarm, it was a fix delivered on time. The same shape of problem now faces encryption. Why the durable move is collecting less.",
+    "description": "Y2K was a fix delivered on time, so the disaster never came. The durable answer to exposure is the same: collect less in the first place.",
     "ogImage": null
   },
   "the-switch": {
     "title": "The Switch Someone Else Holds · Third Rail Systems",
-    "description": "When one government can disable a model worldwide overnight, dependency is the vulnerability. Why digital sovereignty is architectural, not geographic.",
+    "description": "Dependency is the vulnerability. Sovereignty is architectural rather than geographic, and relocating control is not the same as removing the need for it.",
     "ogImage": null
   },
   "exposure-is-not-democratic": {
     "title": "Exposure Is Not Democratic · Third Rail Systems",
-    "description": "Collected data lands hardest on the most exposed. How duty of care under ISO 31030 collides with GDPR Article 9, and why minimum disclosure is the resolution.",
+    "description": "Collected data lands hardest on the most exposed. The capstone of the Exposure series, on the unequal distribution of disclosure risk.",
     "ogImage": null
   }
 }

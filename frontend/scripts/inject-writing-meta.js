@@ -54,6 +54,20 @@ function replaceTag(html, regex, replacement) {
   return html;
 }
 
+/**
+ * Replace a tag if it exists in the head, otherwise INSERT it immediately
+ * before </head>. Used for tags that we intentionally omitted from the
+ * static /public/index.html (canonical, og:url) because they would break
+ * SPA-fallback routes if hardcoded sitewide. For each prerendered article
+ * shell we still want them present and correct, so we insert them here.
+ */
+function upsertHeadTag(html, regex, replacement) {
+  if (regex.test(html)) {
+    return html.replace(regex, replacement);
+  }
+  return html.replace("</head>", `        ${replacement}\n    </head>`);
+}
+
 function injectArticleMeta(html, slug, meta) {
   const url = `${SITE_ORIGIN}/writing/${slug}`;
   const ogImage = meta.ogImage || DEFAULT_OG_IMAGE;
@@ -78,8 +92,11 @@ function injectArticleMeta(html, slug, meta) {
     `<meta name="description" content="${description}" />`,
   );
 
-  // <link rel="canonical">
-  out = replaceTag(
+  // <link rel="canonical"> — INSERT if absent (it is intentionally omitted
+  // from the static /public/index.html to prevent SPA-fallback routes from
+  // erroneously canonicalising to "/"; each prerendered shell needs its
+  // own).
+  out = upsertHeadTag(
     out,
     /<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/,
     `<link rel="canonical" href="${escapedUrl}" />`,
@@ -106,8 +123,9 @@ function injectArticleMeta(html, slug, meta) {
     `<meta property="og:description" content="${description}" />`,
   );
 
-  // og:url
-  out = replaceTag(
+  // og:url — INSERT if absent (also omitted from static /public/index.html
+  // for the same SPA-fallback reason as canonical above).
+  out = upsertHeadTag(
     out,
     /<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/,
     `<meta property="og:url" content="${escapedUrl}" />`,

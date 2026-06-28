@@ -16,7 +16,7 @@ export default function NothingHappened() {
   useSEO({
     title: "Nothing Happened, and That Was the Point · Third Rail Systems",
     description:
-      "Y2K was not a false alarm, it was a fix delivered on time. The same shape of problem now faces encryption. Why the durable move is collecting less.",
+      "Y2K was a fix delivered on time, so the disaster never came. The durable answer to exposure is the same: collect less in the first place.",
     canonical: CANONICAL,
     robots: essayRobots("nothing-happened"),
   });

@@ -22,7 +22,7 @@ export default function TheSwitch() {
   useSEO({
     title: "The Switch Someone Else Holds · Third Rail Systems",
     description:
-      "When one government can disable a model worldwide overnight, dependency is the vulnerability. Why digital sovereignty is architectural, not geographic.",
+      "Dependency is the vulnerability. Sovereignty is architectural rather than geographic, and relocating control is not the same as removing the need for it.",
     canonical: CANONICAL,
     robots: essayRobots("the-switch"),
   });

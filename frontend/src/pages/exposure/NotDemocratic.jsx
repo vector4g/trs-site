@@ -25,7 +25,7 @@ export default function NotDemocratic() {
   useSEO({
     title: "Exposure Is Not Democratic · Third Rail Systems",
     description:
-      "Collected data lands hardest on the most exposed. How duty of care under ISO 31030 collides with GDPR Article 9, and why minimum disclosure is the resolution.",
+      "Collected data lands hardest on the most exposed. The capstone of the Exposure series, on the unequal distribution of disclosure risk.",
     canonical: CANONICAL,
     robots: essayRobots("exposure-is-not-democratic"),
   });

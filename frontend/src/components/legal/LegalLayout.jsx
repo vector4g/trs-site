@@ -14,18 +14,29 @@ const NAV_ITEMS = [
   { to: "/legal/imprint", label: "Legal / Imprint" },
 ];
 
+// Per-route SEO titles. Kept distinct from the `title` prop (which drives
+// the in-page H1 / breadcrumb display) because the user's SEO spec uses
+// shorter canonical titles ("Privacy Policy", "Terms of Service") than the
+// in-page headings ("Privacy Notice", "Website Terms of Use").
+const LEGAL_SEO_TITLES = {
+  "/legal/privacy": "Privacy Policy · Third Rail Systems",
+  "/legal/terms": "Terms of Service · Third Rail Systems",
+  "/legal/cookies": "Cookie Policy · Third Rail Systems",
+  "/legal/imprint": "Imprint · Third Rail Systems",
+};
+
 // Stable descriptions for each legal route so search engines don't see four
-// pages with identical generic blurbs. The legal team's review wording can
-// supersede these later — they're intentionally short and factual.
+// pages with identical generic blurbs. Copy below matches the user's SEO
+// spec exactly (2026-06-26).
 const LEGAL_DESCRIPTIONS = {
   "/legal/privacy":
-    "Third Rail Systems OÜ privacy notice: pilot intake processing, lawful basis, retention, data subject rights under GDPR. Tallinn, Estonia.",
+    "How Third Rail Systems handles personal data, in line with the GDPR.",
   "/legal/terms":
-    "Terms of service for the Third Rail Systems OÜ website and enterprise pilot engagements. Tallinn, Estonia.",
+    "Terms governing use of the Third Rail Systems website and services.",
   "/legal/cookies":
-    "Cookie notice for thirdrailsystems.ee: strictly necessary cookies and EDPB-compliant consent gating for optional PostHog analytics.",
+    "How this site uses cookies. Analytics are disabled by design.",
   "/legal/imprint":
-    "Legal imprint for Third Rail Systems OÜ — Estonian Äriregister code 17488655, Tallinn. ODR contact and supervisory authority disclosures.",
+    "Company details for Third Rail Systems OÜ, registered in Tallinn, Estonia.",
 };
 
 export default function LegalLayout({
@@ -40,13 +51,19 @@ export default function LegalLayout({
   useReveal();
 
   useSEO({
-    title: `${title} · Third Rail Systems OÜ`,
+    title:
+      LEGAL_SEO_TITLES[currentPath] || `${title} · Third Rail Systems`,
     description:
       LEGAL_DESCRIPTIONS[currentPath] ||
       "Legal documentation for Third Rail Systems OÜ, Tallinn, Estonia.",
     canonical: currentPath
       ? `https://thirdrailsystems.ee${currentPath}`
       : undefined,
+    // Legal pages are not search targets — they exist for compliance and
+    // direct linking. Crawlers should follow links from them but should NOT
+    // index them (avoids legal pages competing with marketing routes for
+    // brand-name queries).
+    robots: "noindex, follow",
   });
 
   useJsonLd(

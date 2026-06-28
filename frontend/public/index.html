@@ -25,7 +25,6 @@
         <meta http-equiv="X-Content-Type-Options" content="nosniff" />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="description" content="EU-native compliance platform that resolves the ISO 31030 vs. GDPR catch-22 for marginalised employee travel risk. Built in Tallinn, Estonia." />
-        <link rel="canonical" href="https://thirdrailsystems.ee/" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
         <link rel="icon" href="/favicon.ico" />
@@ -36,7 +35,6 @@
         <meta property="og:site_name" content="Third Rail Systems OÜ" />
         <meta property="og:title" content="Third Rail Systems OÜ · Minimum-Disclosure Travel Risk Compliance" />
         <meta property="og:description" content="The minimum-disclosure compliance layer for enterprise travel risk. ISO 31030, GDPR Article 9, EU AI Act, resolved." />
-        <meta property="og:url" content="https://thirdrailsystems.ee/" />
         <meta property="og:image" content="https://thirdrailsystems.ee/og.png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -161,6 +159,30 @@
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
+        <!--
+          Non-JS internal navigation. Provides real anchor links from every
+          page (including SPA-fallback routes) to the canonical homepage and
+          all key URLs. Crawlers parsing raw HTML without executing JS
+          (Ahrefs default, LinkedIn, Twitter) need these links to discover
+          internal page structure. Without them the homepage had 0 inlinks
+          (Ahrefs issue c64d3d21-d0f4-11e7-8ed1-001e67ed4656, 2026-06-28).
+          Visually hidden so JS-enabled users do not see this duplicated nav
+          (the React Navbar handles their nav), while remaining accessible
+          to screen readers and crawlers. Do not remove the home link here.
+        -->
+        <ul id="trs-static-nav" aria-label="Site navigation" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;list-style:none;padding:0;margin:0;">
+            <li><a href="/" rel="home">Home</a></li>
+            <li><a href="/memo">Strategic Memo</a></li>
+            <li><a href="/catch-22">The Catch-22 of Duty of Care</a></li>
+            <li><a href="/writing">Writing</a></li>
+            <li><a href="/writing/nothing-happened">Nothing Happened, and That Was the Point</a></li>
+            <li><a href="/writing/the-switch">The Switch Someone Else Holds</a></li>
+            <li><a href="/writing/exposure-is-not-democratic">Exposure Is Not Democratic</a></li>
+            <li><a href="/legal/privacy">Privacy Policy</a></li>
+            <li><a href="/legal/terms">Terms of Service</a></li>
+            <li><a href="/legal/cookies">Cookie Policy</a></li>
+            <li><a href="/legal/imprint">Imprint</a></li>
+        </ul>
         <div id="root"></div>
         <!--
       This HTML file is a template.
