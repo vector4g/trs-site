@@ -307,7 +307,7 @@ body.trs-print-mode .reveal {
     transition: none !important;
 }
 body.trs-print-mode * {
-    color-adjust: exact;
+    print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
     animation: none !important;
 }
