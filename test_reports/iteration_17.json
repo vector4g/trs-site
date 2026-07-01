@@ -1,0 +1,52 @@
+{
+  "summary": "Comprehensive frontend testing for Task A (new /beyond-disclosure whitepaper) and Task B (raw-HTML prerender of 5 essay routes). ALL required assertions PASS. Raw HTML build artifacts contain the required H1s, keywords, and in-body internal links; React runtime renders correctly on the preview URL with exactly one visible H1 per route and zero console errors. Sitemap and /writing index card both present.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "/beyond-disclosure (React runtime)",
+        "issues": [
+          "React runtime does not set page-specific og:type/og:image via Helmet: on the live preview og:type='website' and og:image='https://thirdrailsystems.ee/og.png' (site defaults). The RAW build HTML at /app/frontend/build/beyond-disclosure.html DOES set og:type=article and og:image=/og/beyond-disclosure.png correctly, so SEO crawlers reading raw HTML are unaffected. Low priority: only impacts scrapers that execute JS."
+        ]
+      }
+    ]
+  },
+  "test_report_links": ["/app/test_reports/iteration_17.json"],
+  "action_items": [
+    "OPTIONAL/LOW: Consider adding a React Helmet block on BeyondDisclosure.jsx to set og:type='article' and og:image='https://thirdrailsystems.ee/og/beyond-disclosure.png' at runtime, so JS-executing scrapers see the same meta as the prerender."
+  ],
+  "critical_code_review_comments": [
+    "Postbuild prerender injection is well-scoped (sr-only absolute-positioned) so it does not disrupt visual layout for JS users — good pattern.",
+    "H1 uniqueness maintained across all 6 tested routes (Beyond Disclosure, catch-22, memo, the-switch, nothing-happened, exposure-is-not-democratic) — exactly 1 visible h1 per page as required by SEO spec 2026-02-12.",
+    "Runtime Helmet coverage for og:type/og:image missing on /beyond-disclosure — minor gap between raw HTML meta and runtime meta."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A (skipped)", "frontend": "100% required assertions passing; 1 informational runtime meta gap" },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Task A + Task B verified. Raw HTML assertions were run directly against /app/frontend/build/*.html files (5 essays + beyond-disclosure). All required grep checks pass: (a) single sr-only <h1> with exact required text; (b) required in-body keywords present (enshittification, Y2K, diagnostic, ISO 31030, Thesis); (c) internal <a href> links: the-switch→exposure-is-not-democratic, nothing-happened→catch-22, exposure-is-not-democratic→nothing-happened+diagnostic. Raw beyond-disclosure.html meta: title, canonical=thirdrailsystems.ee/beyond-disclosure, og:type=article, og:image=/og/beyond-disclosure.png, og:description present. Preview URL React runtime: whitepaper visible with H1 'Beyond Disclosure', dek, 'Levi Hankins · Founder & CEO', 7 headings (Abstract, 5 numbered, Appendix), zero console errors. /writing index card data-testid='writing-index-card-beyond-disclosure' points to /beyond-disclosure. Sitemap.xml (served by preview) contains https://thirdrailsystems.ee/beyond-disclosure. Only informational finding: React runtime does not override og:type/og:image for beyond-disclosure — cosmetic since crawlers use raw HTML.",
+  "raw_html_build_verification": {
+    "build_directory": "/app/frontend/build",
+    "beyond-disclosure.html": { "h1_count": 1, "h1_text": "Beyond Disclosure", "og:type": "article", "og:image": "https://thirdrailsystems.ee/og/beyond-disclosure.png", "canonical": "https://thirdrailsystems.ee/beyond-disclosure", "title": "Beyond Disclosure · Third Rail Systems", "section_headings_found": ["Abstract","1. The Disclosure Paradox","2. The Threat Landscape","3. The Intersectional and Diagnostic Gaps","4. The Physical Precedent","5. The European Architectural Alternative","Appendix"] },
+    "writing/the-switch.html": { "h1_count": 1, "h1_text": "The Switch Someone Else Holds", "keyword_enshittification": 2, "link_to_exposure": true },
+    "writing/nothing-happened.html": { "h1_count": 1, "h1_text": "Nothing Happened, and That Was the Point", "keyword_Y2K": 6, "link_to_catch22": true },
+    "writing/exposure-is-not-democratic.html": { "h1_count": 1, "h1_text": "Exposure Is Not Democratic", "keyword_diagnostic": 1, "link_to_nothing_happened": true, "link_to_diagnostic": true },
+    "catch-22.html": { "h1_count": 1, "h1_text": "The ISO 31030 and GDPR Article 9 Catch-22", "keyword_ISO_31030": 8 },
+    "memo.html": { "h1_count": 1, "h1_text": "The Strategic Memo", "keyword_Thesis": 1 }
+  },
+  "react_runtime_verification": {
+    "preview_url": "https://eu-travel-risk.preview.emergentagent.com",
+    "routes_tested_smoke": ["/", "/catch-22", "/memo", "/writing/the-switch", "/writing/nothing-happened", "/writing/exposure-is-not-democratic", "/beyond-disclosure", "/writing"],
+    "all_routes_visible_h1_count": 1,
+    "all_routes_console_errors": 0,
+    "beyond-disclosure_dek_visible": true,
+    "beyond-disclosure_author_visible": true,
+    "beyond-disclosure_7_sections_visible": true,
+    "writing_index_card_data_testid_found": true,
+    "sitemap_contains_beyond_disclosure": true
+  },
+  "rca of the issue": "N/A — no failing requirements. Informational only: React runtime for /beyond-disclosure doesn't override site-level og:type/og:image meta tags in Helmet; the raw-HTML prerender (crawler-facing) has correct meta. Fix would be to add page-specific <Helmet> in /app/frontend/src/pages/BeyondDisclosure.jsx setting og:type='article' and og:image='https://thirdrailsystems.ee/og/beyond-disclosure.png'."
+}

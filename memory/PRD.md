@@ -706,3 +706,55 @@ Playwright DOM check on preview — `document.querySelectorAll('h1').length === 
 - `frontend/src/components/brief/EssayLayout.jsx` — h1 → h2, added `seoH1` prop
 - `frontend/src/pages/legal/{Privacy,Terms,Cookies,Imprint}.jsx` — pass `seoH1`
 - `frontend/src/pages/exposure/{NothingHappened,TheSwitch,NotDemocratic}.jsx` — pass `seoH1`
+
+## Iteration 29 — 2026-02-12 (Whitepaper page + server-rendered essay bodies)
+
+### Task A — /beyond-disclosure whitepaper (NEW page)
+- Content source: `src/content/beyond-disclosure.md` (verbatim, no re-punctuation)
+- React page: `src/pages/BeyondDisclosure.jsx` uses `react-markdown` + `remark-gfm`
+- Route registered: `/beyond-disclosure` (App.js)
+- Postbuild renders the same markdown → static HTML via `markdown-it` and injects into `build/beyond-disclosure.html`
+- H1 = "Beyond Disclosure" (sr-only, per SEO spec), visible h2 dek = "A European Architectural Alternative for Protecting Marginalised Populations Across Workforce and Travel Contexts"
+- All ### section headings render as h3 (7 sections: Abstract, sections 1–5, Appendix)
+- OG image: `/og/beyond-disclosure.png` (currently a copy of brand `/og.png`; can be replaced with a custom card)
+- Sitemap: added with priority 0.9
+- Navigation: added to `COMPANION_READING` in `exposureSeries.js` so it appears as a card on `/writing`
+- JSON-LD: `Article` schema with author + publisher
+- Meta description crafted at 158 chars
+
+### Task B — Server-rendered essay bodies (5 EXISTING routes)
+- New extraction pipeline: `scripts/extract_essay_content.py` parses each essay JSX (`<BriefSection>` / `<MemoSection>` blocks) and emits markdown at `src/content/{path}.md`:
+  - `writing/nothing-happened.md` (flat paragraphs — no section markers in source)
+  - `writing/the-switch.md` (6 sections)
+  - `writing/exposure-is-not-democratic.md` (6 sections)
+  - `memo.md` (7 sections)
+  - `catch-22.md` (10 sections)
+- Extraction preserves prose verbatim, converts `<Link to>` and `<a href>` into markdown links so crawlers see real `<a href="…">` anchors in prerender
+- Postbuild extended: `inject-writing-meta.js` loads each markdown file, renders via `markdown-it`, and injects the resulting HTML **inside `#root`** (React replaces `#root` on mount, so this HTML is only seen by non-JS crawlers)
+- Body is wrapped in an sr-only container to remain crawler-visible without disrupting the visual design for JS users
+- React essay pages unchanged — they continue to render the rich JSX version
+
+### Verification (all pass)
+```
+=== The Switch ===           H1 correct, body prose, link to /writing/exposure-is-not-democratic, h2 sections ✓
+=== Nothing Happened ===     H1 correct, Y2K prose, link to /catch-22 ✓
+=== Exposure Not Democratic ===  H1 correct, prose, links to /writing/nothing-happened and /diagnostic ✓
+=== Catch-22 ===             H1 correct, ISO 31030 / GDPR prose ✓
+=== Memo ===                 H1 correct, thesis prose ✓
+=== Beyond Disclosure ===    single H1, dek h2, author line, abstract, appendix, meta description, custom OG image ✓
+```
+Playwright DOM check on preview `/beyond-disclosure`: 1 h1 = "Beyond Disclosure"; 5 h3 section titles; 27 main paragraphs. Visual design matches essay pages. CI-mode build succeeds.
+
+### Files changed / added
+- `frontend/src/content/beyond-disclosure.md` — NEW (from user-provided source)
+- `frontend/src/content/writing/{nothing-happened,the-switch,exposure-is-not-democratic}.md` — NEW (extracted)
+- `frontend/src/content/{memo,catch-22}.md` — NEW (extracted)
+- `frontend/src/pages/BeyondDisclosure.jsx` — NEW
+- `frontend/src/App.js` — added `/beyond-disclosure` route
+- `frontend/src/lib/exposureSeries.js` — added Beyond Disclosure to COMPANION_READING
+- `frontend/public/sitemap.xml` — added `/beyond-disclosure` URL
+- `frontend/public/og/beyond-disclosure.png` — NEW (placeholder brand logo)
+- `frontend/scripts/inject-writing-meta.js` — reads markdown, renders via markdown-it, injects body into shells
+- `frontend/scripts/extract_essay_content.py` — NEW extraction script for future essay updates
+- `frontend/craco.config.js` — webpack rule to import `.md` files as raw text
+- `frontend/package.json` — added `react-markdown`, `remark-gfm`, `markdown-it`

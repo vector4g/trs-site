@@ -127,4 +127,15 @@ export const COMPANION_READING = [
     route: "/catch-22",
     canonical: "https://thirdrailsystems.ee/catch-22",
   },
+  {
+    kind: "companion",
+    slug: "beyond-disclosure",
+    tag: "Whitepaper",
+    title: "Beyond Disclosure",
+    lede:
+      "The founder's whitepaper on why disclosure-based protection fails marginalised populations, and the four architectural principles that resolve it.",
+    readTimeMinutes: 22,
+    route: "/beyond-disclosure",
+    canonical: "https://thirdrailsystems.ee/beyond-disclosure",
+  },
 ];

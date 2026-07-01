@@ -51,6 +51,17 @@ let webpackConfig = {
         ],
       };
 
+      // Allow importing .md files as raw text strings (for the whitepaper
+      // and any future long-form content that also needs a build-time HTML
+      // twin in the prerendered shell). Using asset/source keeps the raw
+      // markdown available synchronously on the client without a fetch()
+      // round trip, so the same source drives both React runtime rendering
+      // (via react-markdown) and postbuild prerender (via markdown-it).
+      webpackConfig.module.rules.push({
+        test: /\.md$/,
+        type: "asset/source",
+      });
+
       // Add health check plugin to webpack if enabled
       if (config.enableHealthCheck && healthPluginInstance) {
         webpackConfig.plugins.push(healthPluginInstance);
