@@ -50,7 +50,7 @@ function setMeta(selector, attribute, value) {
   return prev;
 }
 
-export function useSEO({ title, description, canonical, ogTitle, ogDescription, robots }) {
+export function useSEO({ title, description, canonical, ogTitle, ogDescription, ogType, ogImage, robots }) {
   useEffect(() => {
     const prevTitle = title ? document.title : null;
     if (title) document.title = title;
@@ -66,6 +66,18 @@ export function useSEO({ title, description, canonical, ogTitle, ogDescription, 
     const prevOgUrl =
       canonical !== undefined
         ? setMeta('meta[property="og:url"]', "content", canonical)
+        : null;
+    const prevOgType =
+      ogType !== undefined
+        ? setMeta('meta[property="og:type"]', "content", ogType)
+        : null;
+    const prevOgImage =
+      ogImage !== undefined
+        ? setMeta('meta[property="og:image"]', "content", ogImage)
+        : null;
+    const prevTwImage =
+      ogImage !== undefined
+        ? setMeta('meta[name="twitter:image"]', "content", ogImage)
         : null;
     const prevOgTitle =
       ogTitle !== undefined || title !== undefined
@@ -116,6 +128,12 @@ export function useSEO({ title, description, canonical, ogTitle, ogDescription, 
         setMeta('link[rel="canonical"]', "href", prevCanonical);
       if (prevOgUrl !== null)
         setMeta('meta[property="og:url"]', "content", prevOgUrl);
+      if (prevOgType !== null)
+        setMeta('meta[property="og:type"]', "content", prevOgType);
+      if (prevOgImage !== null)
+        setMeta('meta[property="og:image"]', "content", prevOgImage);
+      if (prevTwImage !== null)
+        setMeta('meta[name="twitter:image"]', "content", prevTwImage);
       if (prevOgTitle !== null)
         setMeta('meta[property="og:title"]', "content", prevOgTitle);
       if (prevOgDesc !== null)
@@ -127,7 +145,7 @@ export function useSEO({ title, description, canonical, ogTitle, ogDescription, 
       if (prevRobots !== null)
         setMeta('meta[name="robots"]', "content", prevRobots);
     };
-  }, [title, description, canonical, ogTitle, ogDescription, robots]);
+  }, [title, description, canonical, ogTitle, ogDescription, ogType, ogImage, robots]);
 }
 
 /**
