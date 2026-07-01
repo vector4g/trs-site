@@ -362,7 +362,7 @@ function main() {
     const whitepaperMeta = {
       title: "Beyond Disclosure · Third Rail Systems",
       description:
-        "A structural analysis of why disclosure-based protection fails marginalised populations across European workforce and travel contexts, and an architectural alternative built on minimum disclosure.",
+        "Why disclosure-based protection fails marginalised populations across European work and travel contexts, and a minimum-disclosure architecture that resolves it.",
       ogImage: `${SITE_ORIGIN}/og/beyond-disclosure.png`,
       h1: wpH1,
       bodyHtml: wpBodyHtml,
