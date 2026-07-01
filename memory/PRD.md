@@ -663,3 +663,46 @@ Downloaded from job assets, normalised to canonical OG dimensions (1200×630 RGB
 - `frontend/public/og/the-switch.png` (NEW, 1200×630, ~471KB)
 - `frontend/public/og/exposure-is-not-democratic.png` (NEW, 1200×630, ~482KB)
 - `frontend/src/lib/writingMeta.json` — added absolute `ogImage` URLs per slug
+
+## Iteration 28 — 2026-02-12 (Server-rendered H1 per route)
+
+**Trigger**: SEO spec requires every route to have exactly one server-rendered `<h1>` with an exact required string. The site was returning zero `<h1>` in raw HTML because all H1s were rendered only after React mounted (same root cause as the earlier OG-tag issue).
+
+### Implementation
+1. **Prerendered HTML shells** — every route's build artefact now contains a visually-hidden `<h1>` inside `<div id="root">` before React mounts. The postbuild script (`scripts/inject-writing-meta.js`) inserts the H1 into each of the 11 shells with the exact required text. React's `createRoot` replaces `#root` content on mount, so the injected H1 vanishes from the live DOM — the matching sr-only `<h1>` rendered by the page component takes over.
+
+2. **React components** — added `<SEOHeading>` wrapper (`src/components/SEOHeading.jsx`) that renders a visually-hidden `<h1>`. Placed at the top of every page render tree so JS-rendered DOM has exactly one H1 with the required text.
+
+3. **Existing visible H1s demoted to H2** — Hero.jsx, StrategicMemo, CatchTwentyTwo, WritingIndex, LegalLayout, EssayLayout all now use `<h2>` for their visible marketing/section headline (identical styling; only the semantic tag changed). This ensures the total H1 count in both raw HTML and live DOM is exactly 1 per route.
+
+4. **Prerender coverage extended** — `TOP_PAGES` in the postbuild script now includes `/writing`, `/legal/privacy`, `/legal/terms`, `/legal/cookies`, `/legal/imprint` in addition to the existing `/memo`, `/catch-22`. Homepage `/` is handled by a separate rewrite step on `build/index.html`. Total: 11 prerendered shells (up from 6).
+
+### Verification (all pass)
+Local build `curl` test — each of the 11 URLs' raw HTML contains exactly one `<h1>` with the exact required string:
+- `/` → "Minimum-Disclosure Travel Risk Compliance"
+- `/memo` → "The Strategic Memo"
+- `/catch-22` → "The ISO 31030 and GDPR Article 9 Catch-22"
+- `/writing` → "Writing"
+- `/writing/nothing-happened` → "Nothing Happened, and That Was the Point"
+- `/writing/the-switch` → "The Switch Someone Else Holds"
+- `/writing/exposure-is-not-democratic` → "Exposure Is Not Democratic"
+- `/legal/privacy` → "Privacy Policy"
+- `/legal/terms` → "Terms of Use"
+- `/legal/cookies` → "Cookie Policy"
+- `/legal/imprint` → "Imprint"
+
+Playwright DOM check on preview — `document.querySelectorAll('h1').length === 1` on /memo, /catch-22, /legal/privacy with correct text. ESLint clean.
+
+### Files changed
+- `frontend/scripts/inject-writing-meta.js` — H1 injection + 5 new TOP_PAGES + homepage rewrite
+- `frontend/src/lib/writingMeta.json` — added `h1` field per essay
+- `frontend/src/components/SEOHeading.jsx` — NEW shared sr-only H1 component
+- `frontend/src/pages/LandingPage.jsx` — added `<SEOHeading>`
+- `frontend/src/pages/StrategicMemo.jsx` — h1 → h2 + `<SEOHeading>`
+- `frontend/src/pages/CatchTwentyTwo.jsx` — h1 → h2 + `<SEOHeading>`
+- `frontend/src/pages/WritingIndex.jsx` — h1 → h2 + `<SEOHeading>`
+- `frontend/src/components/landing/Hero.jsx` — h1 → h2
+- `frontend/src/components/legal/LegalLayout.jsx` — h1 → h2, added `seoH1` prop
+- `frontend/src/components/brief/EssayLayout.jsx` — h1 → h2, added `seoH1` prop
+- `frontend/src/pages/legal/{Privacy,Terms,Cookies,Imprint}.jsx` — pass `seoH1`
+- `frontend/src/pages/exposure/{NothingHappened,TheSwitch,NotDemocratic}.jsx` — pass `seoH1`

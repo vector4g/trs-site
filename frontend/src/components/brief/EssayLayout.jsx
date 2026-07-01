@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Check, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import SEOHeading from "@/components/SEOHeading";
 import {
   Eyebrow,
   useReveal,
@@ -67,6 +68,7 @@ export default function EssayLayout({
   canonical,
   eyebrow,
   title,
+  seoH1,
   lede,
   backLinks = [],
   toc,
@@ -176,6 +178,7 @@ export default function EssayLayout({
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
+      {seoH1 && <SEOHeading>{seoH1}</SEOHeading>}
       {!isPrint && <Navbar />}
 
       <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-24">
@@ -187,12 +190,12 @@ export default function EssayLayout({
             data-testid={`essay-${eventKey}-root`}
           >
             <Eyebrow index={eyebrow}>Exposure series</Eyebrow>
-            <h1
+            <h2
               className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl"
               data-testid={`essay-${eventKey}-title`}
             >
               {title}
-            </h1>
+            </h2>
             {lede && (
               <p className="mt-6 text-lg leading-relaxed text-slate-300 sm:text-xl">
                 {lede}

@@ -71,6 +71,7 @@ export default function NothingHappened() {
       canonical={CANONICAL}
       eyebrow="Exposure · Part One"
       title="Nothing happened, and that was the point"
+      seoH1="Nothing Happened, and That Was the Point"
       lede={null}
       backLinks={[]}
       toc={[]}

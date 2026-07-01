@@ -56,14 +56,14 @@ export default function Hero({ onPrimary, onSecondary }) {
             Resolving the Duty-of-Care Data Trap
           </div>
 
-          <h1
+          <h2
             className="mt-6 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
             data-testid="hero-headline"
           >
             Travel risk systems that account for{" "}
             <span className="text-cyan-400">real people</span>, not generic
             averages.
-          </h1>
+          </h2>
 
           <p
             className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg"

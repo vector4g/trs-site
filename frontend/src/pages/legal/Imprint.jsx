@@ -12,6 +12,7 @@ export default function Imprint() {
   return (
     <LegalLayout
       title="Legal / Imprint"
+      seoH1="Imprint"
       eyebrow="Imprint"
       version="v0.1"
       lastUpdated="2026-04-20"

@@ -12,6 +12,7 @@ export default function Privacy() {
   return (
     <LegalLayout
       title="Privacy Notice"
+      seoH1="Privacy Policy"
       eyebrow="Privacy"
       version="v0.1"
       lastUpdated="2026-04-20"

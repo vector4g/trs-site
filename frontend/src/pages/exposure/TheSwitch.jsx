@@ -77,6 +77,7 @@ export default function TheSwitch() {
       canonical={CANONICAL}
       eyebrow="Exposure · Part Two"
       title="The Switch Someone Else Holds"
+      seoH1="The Switch Someone Else Holds"
       lede="On 12 June 2026 a single federal directive disabled a frontier model worldwide overnight. The kill switch was the acute version of a much slower decay. The defence is the same for both."
       backLinks={[
         { to: "/writing/nothing-happened", label: "Part One · Nothing Happened" },

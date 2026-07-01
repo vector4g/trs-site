@@ -11,6 +11,7 @@ export default function Cookies() {
   return (
     <LegalLayout
       title="Cookie & Tracking Notice"
+      seoH1="Cookie Policy"
       eyebrow="Cookies"
       version="v0.1"
       lastUpdated="2026-04-20"

@@ -43,6 +43,12 @@ const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og.png`;
  * scrapers (LinkedIn, Twitter, Ahrefs) on the canonical URL. Title +
  * description below MUST stay in sync with the page's useSEO() call.
  *
+ * `h1` is the exact H1 text required per route by the SEO spec
+ * (2026-02-12). Every prerendered shell now carries a server-visible
+ * <h1 class="sr-only"> inside #root so crawlers see it before JS runs;
+ * once React mounts and replaces #root, the matching sr-only <h1> in the
+ * page component takes over so the DOM never has zero or duplicate h1s.
+ *
  * Sources (as of 2026-02-11):
  *   /memo     → src/pages/StrategicMemo.jsx useSEO
  *   /catch-22 → src/pages/CatchTwentyTwo.jsx useSEO
@@ -54,6 +60,7 @@ const TOP_PAGES = [
     description:
       "A founding-team paper on why duty-of-care and GDPR Article 9 collide, and how a minimum-disclosure architecture makes that collision obsolete.",
     ogImage: null,
+    h1: "The Strategic Memo",
   },
   {
     path: "/catch-22",
@@ -61,8 +68,54 @@ const TOP_PAGES = [
     description:
       "Duty-of-care obligations under ISO 31030 can collide with GDPR Article 9 protection for special-category data. What a minimum-disclosure approach changes.",
     ogImage: null,
+    h1: "The ISO 31030 and GDPR Article 9 Catch-22",
+  },
+  {
+    path: "/writing",
+    title: "Writing · Third Rail Systems",
+    description:
+      "The Exposure series and companion long-form pieces on dependency, accumulation, and minimum disclosure.",
+    ogImage: null,
+    h1: "Writing",
+  },
+  {
+    path: "/legal/privacy",
+    title: "Privacy Policy · Third Rail Systems",
+    description:
+      "How Third Rail Systems handles personal data, in line with the GDPR.",
+    ogImage: null,
+    h1: "Privacy Policy",
+  },
+  {
+    path: "/legal/terms",
+    title: "Terms of Service · Third Rail Systems",
+    description:
+      "Terms governing use of the Third Rail Systems website and services.",
+    ogImage: null,
+    h1: "Terms of Use",
+  },
+  {
+    path: "/legal/cookies",
+    title: "Cookie Policy · Third Rail Systems",
+    description:
+      "How this site uses cookies. Analytics are disabled by design.",
+    ogImage: null,
+    h1: "Cookie Policy",
+  },
+  {
+    path: "/legal/imprint",
+    title: "Imprint · Third Rail Systems",
+    description:
+      "Company details for Third Rail Systems OÜ, registered in Tallinn, Estonia.",
+    ogImage: null,
+    h1: "Imprint",
   },
 ];
+
+/**
+ * Homepage H1 — used when we rewrite build/index.html itself.
+ */
+const HOMEPAGE_H1 = "Minimum-Disclosure Travel Risk Compliance";
 
 function escapeHtml(s) {
   return String(s)
@@ -187,6 +240,22 @@ function injectRouteMeta(html, url, meta) {
     `<meta name="twitter:image" content="${escapedImg}" />`,
   );
 
+  // <h1> inside #root — required for non-JS crawlers to see a
+  // server-rendered H1 per route (SEO spec 2026-02-12). React's createRoot
+  // will replace #root's children on mount, so this H1 vanishes from the
+  // live DOM once JS runs; the matching sr-only <h1> in the page component
+  // takes over from there so the DOM always has exactly one h1 with the
+  // required text. Text sits inside a visually-hidden wrapper so the H1 is
+  // announced by screen readers but does not disrupt the visual design.
+  if (meta.h1) {
+    const escapedH1 = escapeHtml(meta.h1);
+    const h1Markup = `<h1 style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">${escapedH1}</h1>`;
+    out = out.replace(
+      /<div id="root">\s*<\/div>/,
+      `<div id="root">${h1Markup}</div>`,
+    );
+  }
+
   return out;
 }
 
@@ -253,6 +322,24 @@ function main() {
   // confirmed (2026-02-11) that the static-serving layer does not honour
   // Netlify-style _redirects rules. Flat .html files above achieve the
   // same effect via the platform's native path-to-file mapping.
+
+  // Homepage H1 — rewrite build/index.html in place. The homepage is not a
+  // "route" in TOP_PAGES because it uses the base HTML directly (no
+  // per-route meta override). We only need to inject an H1 into #root so
+  // non-JS crawlers see it at "/".
+  const homepageHtml = fs.readFileSync(SOURCE_HTML, "utf-8");
+  const homepageH1Markup = `<h1 style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">${escapeHtml(HOMEPAGE_H1)}</h1>`;
+  const rewritten = homepageHtml.replace(
+    /<div id="root">\s*<\/div>/,
+    `<div id="root">${homepageH1Markup}</div>`,
+  );
+  if (rewritten !== homepageHtml) {
+    fs.writeFileSync(SOURCE_HTML, rewritten, "utf-8");
+    console.log(`[inject-writing-meta] wrote index.html (H1 injected)`);
+    count++;
+  } else {
+    console.warn(`[inject-writing-meta] index.html: #root not found in expected form; H1 NOT injected`);
+  }
 
   console.log(`[inject-writing-meta] Done. Generated ${count} prerendered HTML files.`);
 }

@@ -11,6 +11,7 @@ import ComplianceSection from "@/components/landing/ComplianceSection";
 import ValidationSection from "@/components/landing/ValidationSection";
 import AboutSection from "@/components/landing/AboutSection";
 import Footer from "@/components/landing/Footer";
+import SEOHeading from "@/components/SEOHeading";
 import { useReveal, scrollToId } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
 
@@ -67,6 +68,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200" data-testid="landing-root">
+      <SEOHeading>Minimum-Disclosure Travel Risk Compliance</SEOHeading>
       <Navbar onCtaClick={scrollToContact} />
       <main>
         <Hero onPrimary={scrollToContact} onSecondary={openMemo} />

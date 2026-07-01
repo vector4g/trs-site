@@ -40,6 +40,7 @@ import {
   DiagnosticQuestion,
 } from "@/components/brief";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
+import SEOHeading from "@/components/SEOHeading";
 import { devLog } from "@/lib/debug";
 
 // LinkedIn glyph — lucide-react has no LinkedIn icon, so use a tiny inline SVG.
@@ -291,6 +292,7 @@ export default function CatchTwentyTwo() {
       className="min-h-screen bg-slate-950 text-slate-200"
       data-testid="catch22-root"
     >
+      <SEOHeading>The ISO 31030 and GDPR Article 9 Catch-22</SEOHeading>
       {!isPrint && <Navbar onCtaClick={() => navigate("/#contact")} />}
 
       {/* Hero */}
@@ -339,13 +341,13 @@ export default function CatchTwentyTwo() {
             Companion essay on LinkedIn
           </a>
 
-          <h1
+          <h2
             className="mt-5 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
             data-testid="catch22-title"
           >
             The Shadow HR{" "}
             <span className="text-cyan-400">Liability</span>.
-          </h1>
+          </h2>
 
           <p className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg">
             Why every multinational with a diverse workforce is sitting on the

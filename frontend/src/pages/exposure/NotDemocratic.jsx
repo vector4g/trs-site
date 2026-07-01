@@ -80,6 +80,7 @@ export default function NotDemocratic() {
       canonical={CANONICAL}
       eyebrow="Exposure · Part Three"
       title="Exposure Is Not Democratic"
+      seoH1="Exposure Is Not Democratic"
       lede="The price of being legible. Dependency and accumulation are two forms of the same thing: exposure. The durable defence against both is the same move: need less, hold less."
       backLinks={[
         { to: "/writing/nothing-happened", label: "Part One · Nothing Happened" },

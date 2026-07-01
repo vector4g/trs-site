@@ -30,6 +30,7 @@ import {
   openExternal,
 } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
+import SEOHeading from "@/components/SEOHeading";
 import { devLog } from "@/lib/debug";
 
 function LinkedInGlyph({ className = "h-4 w-4" }) {
@@ -259,6 +260,7 @@ export default function StrategicMemo() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200" data-testid="memo-root">
+      <SEOHeading>The Strategic Memo</SEOHeading>
       <Navbar onCtaClick={() => navigate("/#contact")} />
 
       {/* Hero */}
@@ -286,13 +288,13 @@ export default function StrategicMemo() {
             <Eyebrow index="MEMO · 2026">Strategic</Eyebrow>
           </div>
 
-          <h1
+          <h2
             className="mt-5 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
             data-testid="memo-title"
           >
             The Strategic Memo: Resolving the{" "}
             <span className="text-cyan-400">ISO 31030 Catch-22</span>.
-          </h1>
+          </h2>
 
           <p className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg">
             A founding-team paper on why duty-of-care and GDPR collide, and how

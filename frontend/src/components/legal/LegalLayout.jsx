@@ -4,6 +4,7 @@ import { ArrowLeft, AlertTriangle } from "lucide-react";
 
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import SEOHeading from "@/components/SEOHeading";
 import { Eyebrow, useReveal } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
 
@@ -41,6 +42,7 @@ const LEGAL_DESCRIPTIONS = {
 
 export default function LegalLayout({
   title,
+  seoH1,
   eyebrow,
   version = "v0.1",
   lastUpdated = "2026-04-20",
@@ -102,6 +104,7 @@ export default function LegalLayout({
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200" data-testid="legal-root">
+      {seoH1 && <SEOHeading>{seoH1}</SEOHeading>}
       <Navbar onCtaClick={() => (window.location.href = "/#contact")} />
 
       <header className="relative isolate overflow-hidden pt-32 sm:pt-40">
@@ -119,12 +122,12 @@ export default function LegalLayout({
           <div className="mt-8">
             <Eyebrow index="LEGAL">{eyebrow}</Eyebrow>
           </div>
-          <h1
+          <h2
             className="mt-5 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl"
             data-testid="legal-title"
           >
             {title}
-          </h1>
+          </h2>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 mono text-[11px] uppercase tracking-[0.2em] text-slate-500">
             <span>Version {version}</span>

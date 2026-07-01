@@ -11,6 +11,7 @@ export default function Terms() {
   return (
     <LegalLayout
       title="Website Terms of Use"
+      seoH1="Terms of Use"
       eyebrow="Terms"
       version="v0.1"
       lastUpdated="2026-04-20"

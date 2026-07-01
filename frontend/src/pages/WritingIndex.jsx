@@ -6,6 +6,7 @@ import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Eyebrow } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
+import SEOHeading from "@/components/SEOHeading";
 import { EXPOSURE_SERIES, COMPANION_READING, SERIES_LIVE } from "@/lib/exposureSeries";
 
 const CANONICAL = "https://thirdrailsystems.ee/writing";
@@ -88,16 +89,17 @@ export default function WritingIndex() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
+      <SEOHeading>Writing</SEOHeading>
       <Navbar />
 
       <main className="mx-auto max-w-4xl px-5 py-16 sm:px-8 sm:py-24 lg:py-32">
         <Eyebrow index="Series">Exposure</Eyebrow>
-        <h1
+        <h2
           className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl"
           data-testid="writing-index-title"
         >
           Three essays on who holds the leverage
-        </h1>
+        </h2>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
           A three-part series on dependency, accumulation, and minimum
           disclosure. Each essay holds on its own, but the argument compounds
