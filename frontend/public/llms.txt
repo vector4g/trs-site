@@ -9,6 +9,8 @@ Third Rail Systems OÜ is a deep-tech compliance company building the architectu
 - [Homepage](https://thirdrailsystems.ee/): platform overview, architecture, validation, and pilot contact form.
 - [The Shadow HR Liability Brief](https://thirdrailsystems.ee/catch-22): long-form analytical brief explaining why every multinational with a diverse workforce is exposed to the same regulatory pattern, the H&M and Hamburg DPA precedents, and the architectural pattern that resolves it.
 - [The Strategic Memo](https://thirdrailsystems.ee/memo): founder's operational thesis on minimum-disclosure compliance architecture, KTH IRL 5 validation, and why the EU's catch-22 is solvable from Tallinn.
+- [Beyond Disclosure (whitepaper)](https://thirdrailsystems.ee/beyond-disclosure): a European architectural alternative for protecting marginalised populations across workforce and travel contexts. The founder's long-form paper on why disclosure-based protection fails and the four architectural principles that resolve it.
+- [Source list and citation library](https://thirdrailsystems.ee/beyond-disclosure/sources): forty verified claims across four research modules supporting the whitepaper, with primary sources, exact quotations, credibility assessments, and documented corrections.
 - [Diagnostic intake](https://thirdrailsystems.ee/diagnostic): confidential 60-minute architectural diagnostic for security and GRC teams at multinational enterprises. No HRIS integration required.
 
 ## Legal

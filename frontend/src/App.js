@@ -30,6 +30,7 @@ const TheSwitch = lazy(() => import("@/pages/exposure/TheSwitch"));
 const NotDemocratic = lazy(() => import("@/pages/exposure/NotDemocratic"));
 const WritingIndex = lazy(() => import("@/pages/WritingIndex"));
 const BeyondDisclosure = lazy(() => import("@/pages/BeyondDisclosure"));
+const SourcesLibrary = lazy(() => import("@/pages/SourcesLibrary"));
 
 // Hoisted to module scope so React doesn't create a new object reference per
 // render of <App />. Inline-prop objects break referential-equality memoisation
@@ -96,6 +97,7 @@ function App() {
             <Route path="/catch-22" element={<CatchTwentyTwo />} />
             <Route path="/duty-of-care" element={<CatchTwentyTwo />} />
             <Route path="/beyond-disclosure" element={<BeyondDisclosure />} />
+            <Route path="/beyond-disclosure/sources" element={<SourcesLibrary />} />
             <Route path="/diagnostic" element={<DiagnosticIntake />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />

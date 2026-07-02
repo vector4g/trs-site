@@ -30,6 +30,7 @@
 const fs = require("fs");
 const path = require("path");
 const MarkdownIt = require("markdown-it");
+const markdownItAttrs = require("markdown-it-attrs");
 
 const BUILD_DIR = path.resolve(__dirname, "..", "build");
 const SOURCE_HTML = path.join(BUILD_DIR, "index.html");
@@ -38,10 +39,14 @@ const CONTENT_DIR = path.resolve(__dirname, "..", "src", "content");
 const SITE_ORIGIN = "https://thirdrailsystems.ee";
 const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og.png`;
 
-// markdown-it instance shared across the file. `html: false` because the
-// source markdown is trusted (we author it), but we still want to be strict
-// about accidental HTML slipping into the prerender output.
-const md = new MarkdownIt({ html: false, linkify: true, typographer: false });
+// markdown-it with the `attrs` plugin so headings authored as
+// `### Heading {#anchor}` render as `<h3 id="anchor">Heading</h3>`. Used by
+// the citation library page (/beyond-disclosure/sources) which needs 44
+// deep-linkable claim/library anchors in the prerendered HTML.
+const md = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(
+  markdownItAttrs,
+  { allowedAttributes: ["id", "class"] },
+);
 
 /**
  * Top-level pages that need prerendered flat HTML shells with their own
@@ -226,6 +231,18 @@ function injectRouteMeta(html, url, meta) {
     `<meta property="og:image" content="${escapedImg}" />`,
   );
 
+  // og:locale — override per-route when meta.ogLocale is set. The static
+  // /public/index.html defaults to en_EU; individual routes (notably the
+  // whitepaper family, which are authored in British English) can override
+  // to en_GB.
+  if (meta.ogLocale) {
+    out = replaceTag(
+      out,
+      /<meta\s+property="og:locale"\s+content="[^"]*"\s*\/?>/,
+      `<meta property="og:locale" content="${escapeHtml(meta.ogLocale)}" />`,
+    );
+  }
+
   // twitter:title
   out = replaceTag(
     out,
@@ -350,10 +367,7 @@ function main() {
   }
 
   // Whitepaper: /beyond-disclosure gets its own shell with the full body
-  // rendered from src/content/beyond-disclosure.md. Unlike other routes the
-  // markdown's first `#` line encodes BOTH the H1 ("Beyond Disclosure") and
-  // the dek ("A European Architectural..."); split them so the H1 stays a
-  // single required string and the dek becomes an <h2> subtitle.
+  // rendered from src/content/beyond-disclosure.md.
   const whitepaperMdPath = path.join(CONTENT_DIR, "beyond-disclosure.md");
   if (fs.existsSync(whitepaperMdPath)) {
     const whitepaperMd = fs.readFileSync(whitepaperMdPath, "utf-8");
@@ -364,6 +378,7 @@ function main() {
       description:
         "Why disclosure-based protection fails marginalised populations across European work and travel contexts, and a minimum-disclosure architecture that resolves it.",
       ogImage: `${SITE_ORIGIN}/og/beyond-disclosure.png`,
+      ogLocale: "en_GB",
       h1: wpH1,
       bodyHtml: wpBodyHtml,
     };
@@ -375,6 +390,37 @@ function main() {
     count++;
   } else {
     console.warn(`[inject-writing-meta] Whitepaper markdown not found at ${whitepaperMdPath}`);
+  }
+
+  // Whitepaper sources / citation library: /beyond-disclosure/sources.
+  // Renders the full 40-claim + 4-library citation library into a flat
+  // shell at build/beyond-disclosure/sources.html. Claim headings carry
+  // stable anchor IDs (lgbtq-claim-1 … crenshaw-claim-10, library-1 …
+  // library-4) via markdown-it-attrs so direct links land on the claim.
+  const sourcesMdPath = path.join(CONTENT_DIR, "beyond-disclosure", "sources.md");
+  if (fs.existsSync(sourcesMdPath)) {
+    const sourcesMd = fs.readFileSync(sourcesMdPath, "utf-8");
+    const { h1: srcH1, body: srcBody } = splitFirstH1(sourcesMd);
+    const sourcesBodyHtml = md.render(srcBody);
+    const sourcesMeta = {
+      title: "Beyond Disclosure: Source List and Citation Library · Third Rail Systems",
+      description:
+        "Forty verified claims across four research modules supporting the Beyond Disclosure whitepaper. Primary sources, exact quotations, credibility assessments, and documented corrections. Verified June 2026.",
+      ogImage: `${SITE_ORIGIN}/og/beyond-disclosure.png`,
+      ogLocale: "en_GB",
+      h1: srcH1,
+      bodyHtml: sourcesBodyHtml,
+    };
+    const url = `${SITE_ORIGIN}/beyond-disclosure/sources`;
+    const html = injectRouteMeta(baseHtml, url, sourcesMeta);
+    const outDir = path.join(BUILD_DIR, "beyond-disclosure");
+    fs.mkdirSync(outDir, { recursive: true });
+    const outPath = path.join(outDir, "sources.html");
+    fs.writeFileSync(outPath, html, "utf-8");
+    console.log(`[inject-writing-meta] wrote beyond-disclosure/sources.html (+body, ${Math.round(sourcesBodyHtml.length / 1024)}KB)`);
+    count++;
+  } else {
+    console.warn(`[inject-writing-meta] Sources markdown not found at ${sourcesMdPath}`);
   }
 
   // Homepage H1 — rewrite build/index.html in place.
@@ -412,6 +458,22 @@ function splitWhitepaperTitle(markdown) {
   const dek = colon > 0 ? full.slice(colon + 1).trim() : "";
   const body = lines.slice(idx + 1).join("\n").replace(/^\s+/, "");
   return { h1, dek, body };
+}
+
+/**
+ * Split a markdown source into { h1, body } where h1 is the full first
+ * `# Heading` line (unmodified — colons in the title are preserved) and
+ * body is everything after it. Used by pages whose full title IS the
+ * required H1 (e.g. /beyond-disclosure/sources: "Beyond Disclosure: Source
+ * List and Citation Library"), where we do not want to colon-split.
+ */
+function splitFirstH1(markdown) {
+  const lines = markdown.split("\n");
+  const idx = lines.findIndex((l) => l.startsWith("# "));
+  if (idx === -1) return { h1: "", body: markdown };
+  const h1 = lines[idx].replace(/^#\s+/, "").trim();
+  const body = lines.slice(idx + 1).join("\n").replace(/^\s+/, "");
+  return { h1, body };
 }
 
 main();

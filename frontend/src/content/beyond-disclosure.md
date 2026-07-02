@@ -70,7 +70,7 @@ A technical reader will raise three practical objections to the principles above
 
 ### References
 
-Full source detail is provided in the Beyond Disclosure source list, comprising Part A (library-verified sources) and Part B (wider-pattern sources pending primary-source verification), maintained alongside the Third Rail Systems consolidated citation library.
+Full source detail is provided in the [Beyond Disclosure source list](/beyond-disclosure/sources), comprising Part A (library-verified sources) and Part B (wider-pattern sources pending primary-source verification), maintained alongside the Third Rail Systems consolidated citation library.
 
 ---
 
