@@ -146,7 +146,7 @@ export default function BeyondDisclosure() {
           )}
         </div>
 
-        <article className="prose-invert reveal mt-12" data-testid="beyond-body">
+        <article className="prose-invert mt-12" data-testid="beyond-body">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
             {body}
           </ReactMarkdown>

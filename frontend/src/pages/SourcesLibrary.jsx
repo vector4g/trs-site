@@ -321,7 +321,7 @@ export default function SourcesLibrary() {
         </nav>
 
         <article
-          className="prose-invert reveal mt-12"
+          className="prose-invert mt-12"
           data-testid="sources-body"
         >
           <ReactMarkdown
