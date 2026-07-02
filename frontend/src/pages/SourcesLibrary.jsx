@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { Children, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { Link } from "react-router-dom";
+import { Check, Link2 } from "lucide-react";
+import { toast } from "sonner";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SEOHeading from "@/components/SEOHeading";
@@ -43,6 +45,82 @@ function preprocessAnchors(md) {
   );
 }
 
+/**
+ * Walk the ReactMarkdown children tree for the first descendant `<span>`
+ * that carries an `id` attribute — that's the anchor id emitted by
+ * preprocessAnchors() for `{#anchor-id}` suffixes on the source markdown
+ * heading. Non-recursive by design: the wrapper span is always the
+ * outermost child of the heading element.
+ */
+function extractAnchorId(children) {
+  const arr = Children.toArray(children);
+  for (const child of arr) {
+    if (child && typeof child === "object" && child.props && child.props.id) {
+      return child.props.id;
+    }
+  }
+  return null;
+}
+
+/**
+ * Small clipboard button rendered next to each claim H3 on the citation
+ * library. Copies the fully-qualified anchor URL (origin + pathname +
+ * "#" + id) so researchers can cite an individual claim by its stable
+ * anchor. Client-side only — the postbuild prerender emits the raw H3
+ * without this button, so non-JS crawlers still see clean heading HTML.
+ */
+function CopyClaimButton({ anchorId }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#${anchorId}`;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // Older browsers: fall back to a hidden textarea + execCommand.
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "absolute";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      // Keep the URL current in the address bar so a subsequent share
+      // (right-click "Copy link", browser share menu) resolves to the same
+      // anchor without a page jump.
+      window.history.replaceState(null, "", `#${anchorId}`);
+      setCopied(true);
+      toast.success("Citation link copied", {
+        description: `#${anchorId}`,
+      });
+      setTimeout(() => setCopied(false), 1600);
+    } catch (err) {
+      toast.error("Could not copy citation link");
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      aria-label={`Copy citation link for ${anchorId}`}
+      title="Copy citation link"
+      data-testid={`copy-claim-${anchorId}`}
+      className="ml-3 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-slate-700 bg-slate-900/60 text-slate-400 transition hover:border-cyan-400/60 hover:text-cyan-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 align-middle"
+    >
+      {copied ? (
+        <Check className="h-3.5 w-3.5" aria-hidden="true" />
+      ) : (
+        <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
+      )}
+    </button>
+  );
+}
+
 const markdownComponents = {
   h1: () => null,
   h2: ({ node, ...props }) => (
@@ -51,12 +129,18 @@ const markdownComponents = {
       {...props}
     />
   ),
-  h3: ({ node, ...props }) => (
-    <h3
-      className="mt-10 scroll-mt-28 text-lg font-semibold tracking-tight text-white sm:text-xl"
-      {...props}
-    />
-  ),
+  h3: ({ node, children, ...props }) => {
+    const anchorId = extractAnchorId(children);
+    return (
+      <h3
+        className="group mt-10 flex scroll-mt-28 items-baseline text-lg font-semibold tracking-tight text-white sm:text-xl"
+        {...props}
+      >
+        <span className="flex-1">{children}</span>
+        {anchorId ? <CopyClaimButton anchorId={anchorId} /> : null}
+      </h3>
+    );
+  },
   h4: ({ node, ...props }) => (
     <h4
       className="mt-8 text-base font-semibold tracking-tight text-slate-100"

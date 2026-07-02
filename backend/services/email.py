@@ -105,6 +105,16 @@ def build_notification_html(req: PilotRequest) -> str:
         )
     intake_label = "Catch-22 Diagnostic Request" if req.request_type == "diagnostic" else "Pilot Assessment Request"
     intake_title = "New Catch-22 diagnostic intake" if req.request_type == "diagnostic" else "New enterprise pilot intake"
+    # SEC-002: every lead-supplied field MUST be HTML-escaped before
+    # interpolation into the notification body. Without this, a submission
+    # such as first_name='<script>…' would render as active markup in the
+    # operator's inbox — enabling phishing (crafted mailto: links) and
+    # trivial content spoofing in the alert email. Numeric / server-derived
+    # values (req.id, submitted_at) are trusted and interpolated raw.
+    safe_first = escape_html(req.first_name)
+    safe_last = escape_html(req.last_name)
+    safe_email = escape_html(req.corporate_email)
+    safe_role = escape_html(req.role)
     return f"""
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
       <tr><td align="center">
@@ -115,10 +125,10 @@ def build_notification_html(req: PilotRequest) -> str:
           </td></tr>
           <tr><td style="padding-top:20px;">
             <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
-              <tr><td style="padding:8px 0;color:#94a3b8;width:160px;">First name</td><td style="color:#e2e8f0;">{req.first_name}</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Last name</td><td style="color:#e2e8f0;">{req.last_name}</td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Corporate email</td><td style="color:#e2e8f0;"><a href="mailto:{req.corporate_email}" style="color:#22d3ee;text-decoration:none;">{req.corporate_email}</a></td></tr>
-              <tr><td style="padding:8px 0;color:#94a3b8;">Role</td><td style="color:#e2e8f0;">{req.role}</td></tr>
+              <tr><td style="padding:8px 0;color:#94a3b8;width:160px;">First name</td><td style="color:#e2e8f0;">{safe_first}</td></tr>
+              <tr><td style="padding:8px 0;color:#94a3b8;">Last name</td><td style="color:#e2e8f0;">{safe_last}</td></tr>
+              <tr><td style="padding:8px 0;color:#94a3b8;">Corporate email</td><td style="color:#e2e8f0;"><a href="mailto:{safe_email}" style="color:#22d3ee;text-decoration:none;">{safe_email}</a></td></tr>
+              <tr><td style="padding:8px 0;color:#94a3b8;">Role</td><td style="color:#e2e8f0;">{safe_role}</td></tr>
               {diag_rows}
               <tr><td style="padding:8px 0;color:#94a3b8;">Request ID</td><td style="color:#64748b;font-family:monospace;">{req.id}</td></tr>
               <tr><td style="padding:8px 0;color:#94a3b8;">Submitted</td><td style="color:#64748b;font-family:monospace;">{req.submitted_at.isoformat()}</td></tr>
@@ -135,6 +145,11 @@ def build_notification_html(req: PilotRequest) -> str:
 
 def build_prospect_confirmation_html(req: PilotRequest) -> str:
     """Prospect-facing confirmation email — system tone, Reply-To routes to Levi."""
+    # Escape lead-supplied fields — same rationale as build_notification_html:
+    # never interpolate untrusted content into HTML raw. req.id is a
+    # server-generated UUID and safe.
+    safe_first = escape_html(req.first_name)
+    safe_id_short = escape_html(req.id[:8])
     return f"""
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f14;padding:32px 0;font-family:Inter,Arial,sans-serif;color:#e2e8f0;">
       <tr><td align="center">
@@ -144,8 +159,8 @@ def build_prospect_confirmation_html(req: PilotRequest) -> str:
             Pilot request received.
           </td></tr>
           <tr><td style="padding-top:18px;font-size:14px;line-height:1.7;color:#cbd5e1;">
-            Hi {req.first_name},<br/><br/>
-            This is an automated confirmation from the Third Rail Systems platform. Your pilot assessment request has been logged under reference <span style="font-family:monospace;color:#22d3ee;">{req.id[:8]}</span>.<br/><br/>
+            Hi {safe_first},<br/><br/>
+            This is an automated confirmation from the Third Rail Systems platform. Your pilot assessment request has been logged under reference <span style="font-family:monospace;color:#22d3ee;">{safe_id_short}</span>.<br/><br/>
             A founding-team operator will reach out within one business day with a 20-minute architecture fit-call slot. No HRIS integration is required for the pilot.<br/><br/>
             In the meantime, you may find the published liability brief useful for your CSO / DPO conversations:
           </td></tr>

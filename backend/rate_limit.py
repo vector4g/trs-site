@@ -9,7 +9,10 @@ the limiter falls back to an in-process deque so dev/test environments without
 Redis still get protection (cleared on process restart, but that's acceptable
 for short-lived abuse windows).
 
-`get_client_ip(request)` honours X-Forwarded-For / X-Real-IP first.
+`get_client_ip(request)` returns the origin IP as seen through TRUSTED_PROXIES
+reverse-proxy hops (default 1 — the Kubernetes ingress). It never trusts the
+leftmost X-Forwarded-For value because that segment is caller-controlled and
+can be spoofed to bypass the limiter (SEC-001).
 """
 from __future__ import annotations
 
@@ -29,6 +32,24 @@ PILOT_WINDOW_S = 15 * 60
 
 BRIEF_PDF_MAX = 4
 BRIEF_PDF_WINDOW_S = 15 * 60
+
+# Number of trusted reverse-proxy hops in front of the app (Kubernetes ingress
+# = 1 by default). Configurable via env so a Cloudflare/CDN deploy (which adds
+# a second hop) can bump this to 2 without a code change. Values <= 0 disable
+# XFF trust entirely and force use of the direct connection IP.
+try:
+    TRUSTED_PROXIES = int(os.environ.get("TRUSTED_PROXIES", "1"))
+except ValueError:
+    TRUSTED_PROXIES = 1
+
+# Test-suite escape hatch. When TEST_TRUSTED_IP_SECRET is set (dev/staging
+# only — MUST be unset in production), requests that present the secret in
+# an ``X-Test-Secret`` header are permitted to attribute themselves to an
+# arbitrary IP via the leftmost ``X-Forwarded-For`` entry, mirroring the
+# pre-fix behaviour that the rate-limit test suite depends on to simulate
+# distinct clients. Without the secret this path is inert, so an attacker
+# in production cannot influence the IP used for rate-limiting (SEC-001).
+TEST_TRUSTED_IP_SECRET = os.environ.get("TEST_TRUSTED_IP_SECRET", "").strip()
 
 # --- Backends ------------------------------------------------------------------
 _pilot_buckets: dict[str, deque] = {}
@@ -109,10 +130,50 @@ def check_brief_pdf_rate(ip: str) -> tuple[bool, int]:
 
 
 def get_client_ip(request: Request) -> str:
-    """Resolve the originating IP. Honours X-Forwarded-For / X-Real-IP first."""
-    fwd = request.headers.get("x-forwarded-for") or request.headers.get("x-real-ip")
-    if fwd:
-        return fwd.split(",")[0].strip()
+    """Resolve the originating client IP through trusted reverse-proxy hops.
+
+    Security note (SEC-001): the *leftmost* X-Forwarded-For entry is
+    caller-controlled — any client can send ``X-Forwarded-For: 1.2.3.4`` and
+    have it appear as the leftmost hop. Trusting it lets an attacker rotate
+    that value per-request to bypass per-IP rate limits entirely, exhausting
+    the Resend quota via ``/api/pilot-requests``.
+
+    The correct model: assume the app sits behind N trusted reverse proxies
+    (Kubernetes ingress = 1). Each trusted proxy appends the connection
+    remote address as it forwards, so the *rightmost* TRUSTED_PROXIES entries
+    of ``X-Forwarded-For`` are proxy-inserted and trustworthy. Everything to
+    the left of that band is client-supplied and MUST be ignored for
+    rate-limit purposes.
+
+    We pick the entry ``TRUSTED_PROXIES`` from the right end of the header —
+    that is the true origin IP as observed by the outermost trusted proxy.
+    If the header is missing, malformed, or has fewer entries than expected,
+    we fall back to ``request.client.host`` (the direct connection IP).
+
+    Test-only override: when ``TEST_TRUSTED_IP_SECRET`` is configured (dev
+    only) and the request presents the secret in ``X-Test-Secret``, the
+    leftmost ``X-Forwarded-For`` entry is honoured (pre-fix behaviour) so
+    the rate-limit test suite can attribute requests to distinct IPs
+    without re-introducing the vulnerability the check protects against.
+    """
+    # Dev/test bypass — gated on a shared secret that is never set in prod.
+    if TEST_TRUSTED_IP_SECRET:
+        provided = request.headers.get("x-test-secret", "").strip()
+        if provided and provided == TEST_TRUSTED_IP_SECRET:
+            fwd = request.headers.get("x-forwarded-for") or ""
+            if fwd:
+                parts = [p.strip() for p in fwd.split(",") if p.strip()]
+                if parts:
+                    return parts[0]
+    if TRUSTED_PROXIES > 0:
+        fwd = request.headers.get("x-forwarded-for") or ""
+        if fwd:
+            parts = [p.strip() for p in fwd.split(",") if p.strip()]
+            # parts[-TRUSTED_PROXIES] = the origin IP as recorded by the
+            # outermost trusted proxy. If the chain is shorter than expected
+            # we treat the header as untrustworthy and fall back below.
+            if len(parts) >= TRUSTED_PROXIES:
+                return parts[-TRUSTED_PROXIES]
     return request.client.host if request.client else "unknown"
 
 
@@ -132,4 +193,5 @@ __all__ = [
     "PILOT_WINDOW_S",
     "BRIEF_PDF_MAX",
     "BRIEF_PDF_WINDOW_S",
+    "TRUSTED_PROXIES",
 ]

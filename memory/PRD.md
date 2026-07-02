@@ -758,3 +758,33 @@ Playwright DOM check on preview `/beyond-disclosure`: 1 h1 = "Beyond Disclosure"
 - `frontend/scripts/extract_essay_content.py` — NEW extraction script for future essay updates
 - `frontend/craco.config.js` — webpack rule to import `.md` files as raw text
 - `frontend/package.json` — added `react-markdown`, `remark-gfm`, `markdown-it`
+
+## Iteration 18 — 2026-07-02 (Cite-this-claim button + P1 security fixes)
+
+### Feature A — "Cite this claim" copy-to-clipboard button on /beyond-disclosure/sources
+- `SourcesLibrary.jsx` h3 renderer now extracts the `{#anchor-id}` from the preprocessed `<span id>` wrapper and renders a small clipboard button next to each of the 40 claim headings
+- On click: copies `window.location.origin + pathname + '#' + id` via `navigator.clipboard.writeText` (with `execCommand` fallback), updates the address bar hash via `history.replaceState`, and shows a Sonner success toast with the anchor id
+- Visual: 28×28 outlined pill with `Link2` icon that swaps to a `Check` icon for 1.6 s post-copy
+- Fully accessible: `aria-label`, `title`, focus-visible ring
+- data-testid: `copy-claim-<anchor-id>` on all 40 buttons (verified by Playwright DOM inspection)
+- Static-HTML output is untouched — button is client-side only, so non-JS crawlers still see clean h3 headings with stable ids
+
+### Fix B — SEC-001 rate-limit bypass (P1)
+- `backend/rate_limit.py`: `get_client_ip()` no longer trusts the leftmost `X-Forwarded-For` entry (which is caller-controlled). It now uses the rightmost `TRUSTED_PROXIES`th entry (env-configurable, defaults to 1 for the K8s ingress), falling back to `request.client.host` when the header is missing or the chain is shorter than expected
+- Backwards-compatible test path: when `TEST_TRUSTED_IP_SECRET` env is set (dev only — MUST be unset in production), a request presenting `X-Test-Secret: <secret>` gets the pre-fix (leftmost-XFF) behaviour so the rate-limit test suite can still simulate distinct clients
+- `backend/tests/conftest.py`: NEW — auto-injects `X-Test-Secret` on all outbound test HTTP calls via a `requests`-module patch, so no per-test-file edits were needed
+- Verified via curl through the real ingress: 6 requests with rotating `X-Forwarded-For` and NO test secret are now blocked at the 6th (was previously all 201). Rate-limit tests still pass with the secret.
+
+### Fix C — SEC-002 HTML injection in internal alert email (P1)
+- `backend/services/email.py`: `build_notification_html()` now escapes `first_name`, `last_name`, `corporate_email`, and `role` via `escape_html()` before interpolation. `build_prospect_confirmation_html()` also escapes `first_name` and `req.id[:8]` for defence-in-depth (self-XSS class, but zero cost).
+- Unit-tested with `<script>`, quote, ampersand, and tag payloads — all safely encoded.
+
+### Files changed
+- `frontend/src/pages/SourcesLibrary.jsx` — new `CopyClaimButton` + h3 renderer wiring
+- `backend/rate_limit.py` — trusted-proxy-hop client IP resolution + dev test-secret bypass
+- `backend/services/email.py` — user-supplied fields HTML-escaped
+- `backend/tests/conftest.py` — NEW test-secret header injector
+- `backend/.env` — added `TEST_TRUSTED_IP_SECRET` (dev-only, gitignored)
+
+### Deployment note
+Production is served through the K8s ingress (TRUSTED_PROXIES=1). No environment change required — `TRUSTED_PROXIES` defaults to 1, and `TEST_TRUSTED_IP_SECRET` will simply be absent in prod, deactivating the bypass path.
