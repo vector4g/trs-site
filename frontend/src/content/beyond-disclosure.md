@@ -71,7 +71,3 @@ A technical reader will raise three practical objections to the principles above
 ### References
 
 Full source detail is provided in the [Beyond Disclosure source list](/beyond-disclosure/sources), comprising Part A (library-verified sources) and Part B (wider-pattern sources pending primary-source verification), maintained alongside the Third Rail Systems consolidated citation library.
-
----
-
-*Third Rail Systems OÜ, Tallinn, Estonia. Registry 17488655. This whitepaper and all intellectual property described in it are held by Third Rail Systems OÜ.*

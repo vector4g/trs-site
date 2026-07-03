@@ -152,6 +152,47 @@ export default function BeyondDisclosure() {
           </ReactMarkdown>
         </article>
 
+        {/* Closing CTA — sits after the References section (which is the
+            terminal block of the markdown body) and before the imprint
+            footer. Styling mirrors the existing bordered-card idiom used
+            elsewhere on this page (cf. the corrections/imprint block
+            below) rather than introducing a new design language. */}
+        <aside
+          className="reveal mt-14 rounded-lg border border-slate-800 bg-slate-900/40 p-6 sm:p-8"
+          data-testid="beyond-closing-cta"
+          aria-labelledby="beyond-closing-cta-heading"
+        >
+          <h3
+            id="beyond-closing-cta-heading"
+            className="text-xl font-semibold tracking-tight text-white sm:text-2xl"
+          >
+            Assess your own exposure
+          </h3>
+          <p className="mt-4 text-[15.5px] leading-[1.75] text-slate-300">
+            <a
+              href="https://check.thirdrailsystems.ee/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+              data-testid="beyond-cta-exposure-check-link"
+            >
+              The Exposure Check
+            </a>{" "}
+            is twelve questions, five minutes, no data collected.
+          </p>
+          <p className="mt-3 text-[15.5px] leading-[1.75] text-slate-300">
+            For a confidential, no-cost diagnostic, see the{" "}
+            <Link
+              to="/diagnostic"
+              className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+              data-testid="beyond-cta-diagnostic-link"
+            >
+              diagnostic brief
+            </Link>
+            .
+          </p>
+        </aside>
+
         <div className="reveal mt-16 border-t border-slate-800 pt-10 text-sm text-slate-500">
           <p>
             <em>

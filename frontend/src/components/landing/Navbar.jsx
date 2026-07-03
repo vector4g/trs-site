@@ -76,6 +76,13 @@ export default function Navbar({ onCtaClick }) {
             </button>
           ))}
           <Link
+            to="/beyond-disclosure"
+            className="rounded-md px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800/60 hover:text-white"
+            data-testid="nav-link-beyond-disclosure"
+          >
+            Beyond Disclosure
+          </Link>
+          <Link
             to={SERIES_LIVE ? "/writing" : "/memo"}
             className="rounded-md px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800/60 hover:text-white"
             data-testid={SERIES_LIVE ? "nav-link-insights" : "nav-link-memo"}
@@ -129,6 +136,14 @@ export default function Navbar({ onCtaClick }) {
                     {l.label}
                   </button>
                 ))}
+                <Link
+                  to="/beyond-disclosure"
+                  onClick={() => setOpen(false)}
+                  className="border-b border-slate-800 py-4 text-left text-base text-slate-200 hover:text-cyan-400"
+                  data-testid="mobile-nav-link-beyond-disclosure"
+                >
+                  Beyond Disclosure
+                </Link>
                 <Link
                   to={SERIES_LIVE ? "/writing" : "/memo"}
                   onClick={() => setOpen(false)}

@@ -232,9 +232,8 @@ function injectRouteMeta(html, url, meta) {
   );
 
   // og:locale — override per-route when meta.ogLocale is set. The static
-  // /public/index.html defaults to en_EU; individual routes (notably the
-  // whitepaper family, which are authored in British English) can override
-  // to en_GB.
+  // /public/index.html defaults to en_GB; individual routes may still
+  // override via meta.ogLocale if a specific locale is needed.
   if (meta.ogLocale) {
     out = replaceTag(
       out,

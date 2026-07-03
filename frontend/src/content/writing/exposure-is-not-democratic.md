@@ -14,7 +14,7 @@ Medications containing amphetamine or methylphenidate, such as Adderall or Rital
 
 To travel legally, an individual must frequently disclose their neurodivergence to border and health authorities, exposing themselves to scrutiny, potential detention, or severe legal penalties if the paperwork is deemed insufficient. The collected attribute, a medical prescription meant to aid the individual, is transformed by the state into a criminal liability.
 
-## III.
+## III. The Physical Space: Disability and the "Fire Hazard"
 
 The danger of legibility also extends to physical space, where an assistive device is documented and flagged as a risk to the majority.
 
@@ -50,6 +50,6 @@ The operational resolution to this imbalance is strict data minimisation. Legall
 
 By refusing to collect the data, we refuse to build the weapon. Minimum disclosure ensures that we do not pre-abstract vulnerable people into targets. Systems that protect the most exposed individuals inherently protect everyone.
 
-<a href={EXPOSURE_CHECK_URL} target="_blank" rel="noopener noreferrer" className="underline decoration-cyan-500/40 underline-offset-8 hover:decoration-cyan-300" > The safest data is the data we never collect. </a>
+<a href="https://check.thirdrailsystems.ee/" target="_blank" rel="noopener noreferrer" className="underline decoration-cyan-500/40 underline-offset-8 hover:decoration-cyan-300" > The safest data is the data we never collect. </a>
 
 If this describes your organisation's exposure, the architectural fix is closer than the policy debate suggests. We do confidential 60-minute diagnostics under NDA, with no HRIS integration required. [Request a diagnostic →](/diagnostic)
