@@ -17,5 +17,13 @@
     "description": "Collected data lands hardest on the most exposed. The capstone of the Exposure series, on the unequal distribution of disclosure risk.",
     "ogImage": "https://thirdrailsystems.ee/og/exposure-is-not-democratic.png",
     "h1": "Exposure Is Not Democratic"
+  },
+  "by-direction": {
+    "title": "By Direction: The Agent Needs a Mandate, Not Your Identity · Third Rail Systems",
+    "description": "Who authorised the act, within what scope, and who answers for it. That was always the question, and it has an old answer.",
+    "ogImage": "https://thirdrailsystems.ee/og/by-direction.png",
+    "ogLocale": "en_GB",
+    "robots": "noindex, nofollow",
+    "h1": "By Direction: The Agent Needs a Mandate, Not Your Identity"
   }
 }

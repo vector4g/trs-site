@@ -185,6 +185,19 @@ function injectRouteMeta(html, url, meta) {
     `<meta name="description" content="${description}" />`,
   );
 
+  // <meta name="robots"> — INSERT if absent, only when the route defines
+  // a robots directive (e.g. "noindex, nofollow" for staged/unpublished
+  // essays). Public routes leave the tag absent so the crawler default
+  // (index, follow) applies. This is what makes the by-direction essay
+  // undiscoverable to search engines while it lives at its direct URL.
+  if (meta.robots) {
+    out = upsertHeadTag(
+      out,
+      /<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/,
+      `<meta name="robots" content="${escapeHtml(meta.robots)}" />`,
+    );
+  }
+
   // <link rel="canonical"> — INSERT if absent (it is intentionally omitted
   // from the static /public/index.html to prevent SPA-fallback routes from
   // erroneously canonicalising to "/"; each prerendered shell needs its
