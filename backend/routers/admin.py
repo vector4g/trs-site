@@ -15,10 +15,12 @@ cookie or the legacy `X-Admin-Token` header).
 """
 from __future__ import annotations
 
+import hmac
 import logging
+import re
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
@@ -32,6 +34,12 @@ from auth import (
 from brandfetch import domain_from_email, fetch_brand
 from database import db
 from models import BriefingGenerateRequest, BriefingPreview
+from rate_limit import (
+    check_admin_login_locked,
+    clear_admin_login_failures,
+    get_client_ip,
+    record_admin_login_failure,
+)
 from services.briefings import render_briefing
 from services.email import send_briefing_to_lead
 
@@ -45,19 +53,38 @@ class AdminLoginRequest(BaseModel):
 
 
 @router.post("/admin/login")
-async def admin_login(payload: AdminLoginRequest):
+async def admin_login(payload: AdminLoginRequest, request: Request):
     """Exchange the shared admin secret for an httpOnly session cookie.
 
     The body's `token` is the static `ADMIN_TOKEN` env value. On success the
     response sets a signed JWT in `trs_admin_session` and the client never
     sees the secret again — subsequent requests just need
     `credentials: "include"` on fetch/axios.
+
+    SEC-003 hardening: per-IP lockout after 5 failed attempts in 15 minutes
+    (429 + Retry-After), and constant-time token comparison.
     """
     if not ADMIN_TOKEN:
         # Admin surface is disabled — mirror require_admin's fail-closed behaviour.
         raise HTTPException(status_code=404, detail="Not found")
-    if (payload.token or "").strip() != ADMIN_TOKEN:
+
+    ip = get_client_ip(request)
+    locked, retry_after = check_admin_login_locked(ip)
+    if locked:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many failed login attempts. Try again later.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    supplied = (payload.token or "").strip()
+    if not supplied or not hmac.compare_digest(
+        supplied.encode("utf-8"), ADMIN_TOKEN.encode("utf-8")
+    ):
+        record_admin_login_failure(ip)
         raise HTTPException(status_code=401, detail="Invalid token")
+
+    clear_admin_login_failures(ip)
 
     session_jwt = create_session_token()
     response = JSONResponse({"ok": True})
@@ -108,11 +135,13 @@ async def admin_list_pilot_requests(
     if status:
         query["email_status"] = status
     if role:
-        query["role"] = {"$regex": f"^{role}", "$options": "i"}
+        # re.escape (SEC-003): user input must never reach $regex raw — crafted
+        # patterns like (a+)+$ cause catastrophic backtracking (ReDoS).
+        query["role"] = {"$regex": f"^{re.escape(role)}", "$options": "i"}
     if request_type in ("pilot", "diagnostic"):
         query["request_type"] = request_type
     if q:
-        qr = {"$regex": q, "$options": "i"}
+        qr = {"$regex": re.escape(q), "$options": "i"}
         query["$or"] = [
             {"first_name": qr},
             {"last_name": qr},

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from typing import Optional, Tuple
 
 import httpx
@@ -14,6 +15,13 @@ import httpx
 logger = logging.getLogger(__name__)
 
 BRANDFETCH_ENDPOINT = "https://api.brandfetch.io/v2/brands"
+
+# RFC 1035-shaped hostname. Rejects anything that could smuggle path segments,
+# query strings, userinfo or ports into the Brandfetch URL (SEC-003).
+_DOMAIN_RE = re.compile(
+    r"^(?=.{4,253}$)[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?"
+    r"(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$"
+)
 
 
 def _api_key() -> str:
@@ -41,7 +49,10 @@ def domain_from_email(email: str) -> Optional[str]:
     parts = email.lower().rsplit("@", 1)
     if len(parts) != 2 or not parts[1]:
         return None
-    return parts[1].strip()
+    domain = parts[1].strip()
+    if not _DOMAIN_RE.match(domain):
+        return None
+    return domain
 
 
 async def fetch_brand(domain: str) -> Tuple[Optional[str], Optional[str]]:
@@ -51,7 +62,7 @@ async def fetch_brand(domain: str) -> Tuple[Optional[str], Optional[str]]:
     if not _api_key():
         logger.info("Brandfetch key not set; skipping lookup")
         return (None, None)
-    if not domain or domain in FREE_MAIL_DOMAINS:
+    if not domain or domain in FREE_MAIL_DOMAINS or not _DOMAIN_RE.match(domain):
         return (None, None)
 
     url = f"{BRANDFETCH_ENDPOINT}/{domain}"

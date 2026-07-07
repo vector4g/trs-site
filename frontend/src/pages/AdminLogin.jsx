@@ -46,6 +46,10 @@ export default function AdminLogin() {
         });
       } else if (code === 401) {
         toast.error("Invalid token.");
+      } else if (code === 429) {
+        toast.error("Too many failed attempts.", {
+          description: "Login is temporarily locked. Try again in a few minutes.",
+        });
       } else {
         toast.error("Network error.", { description: err?.message });
       }

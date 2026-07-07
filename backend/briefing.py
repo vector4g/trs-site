@@ -7,11 +7,14 @@ Uses Playwright (Chromium) to render an HTML template to PDF. Two variants:
 from __future__ import annotations
 
 import base64
+import ipaddress
 import logging
 import os
+import socket
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
+from urllib.parse import urlparse
 
 # Point Playwright at the container's pre-installed browser cache before
 # importing the driver. Supervisor does not forward this env var automatically.
@@ -69,18 +72,66 @@ async def _fetch_as_data_url(url: str, timeout: float = 6.0) -> Optional[str]:
     """Download an image and return it as a data: URL for embedding in the
     template. This avoids network races at PDF render time and guarantees the
     logo renders even if the remote is slow.
+
+    SSRF guard (SEC-003): the URL is admin-supplied (logo override) or comes
+    from the Brandfetch API — either way it is external input fetched
+    server-side. We require https, resolve the host and reject any address
+    that is not globally routable (blocks 127.0.0.1, 10/8, 169.254.169.254
+    metadata, etc.), follow redirects manually re-validating every hop, cap
+    the payload at 2 MB, and only accept image content types.
     """
     if not url:
         return None
+
+    def _is_safe(u: str) -> bool:
+        try:
+            parsed = urlparse(u)
+        except ValueError:
+            return False
+        if parsed.scheme != "https" or not parsed.hostname:
+            return False
+        try:
+            infos = socket.getaddrinfo(parsed.hostname, None)
+        except socket.gaierror:
+            return False
+        if not infos:
+            return False
+        for info in infos:
+            try:
+                ip = ipaddress.ip_address(info[4][0])
+            except ValueError:
+                return False
+            if not ip.is_global:
+                return False
+        return True
+
+    max_bytes = 2 * 1024 * 1024
     try:
-        async with httpx.AsyncClient(timeout=timeout, follow_redirects=True) as client:
-            resp = await client.get(url)
-        if resp.status_code != 200 or not resp.content:
+        current = url
+        resp = None
+        async with httpx.AsyncClient(timeout=timeout, follow_redirects=False) as client:
+            for _ in range(4):
+                if not _is_safe(current):
+                    logger.warning(f"Blocked unsafe logo URL: {current}")
+                    return None
+                resp = await client.get(current)
+                if resp.status_code in (301, 302, 303, 307, 308):
+                    location = resp.headers.get("location")
+                    if not location:
+                        return None
+                    current = str(httpx.URL(current).join(location))
+                    resp = None
+                    continue
+                break
+        if resp is None or resp.status_code != 200 or not resp.content:
+            return None
+        if len(resp.content) > max_bytes:
+            logger.warning(f"Logo too large ({len(resp.content)} bytes): {current}")
             return None
         content_type = resp.headers.get("content-type", "").split(";")[0].strip()
         if not content_type:
             # Infer from extension
-            ext = Path(url.split("?")[0]).suffix.lower().lstrip(".")
+            ext = Path(current.split("?")[0]).suffix.lower().lstrip(".")
             content_type = {
                 "svg": "image/svg+xml",
                 "png": "image/png",
@@ -88,6 +139,9 @@ async def _fetch_as_data_url(url: str, timeout: float = 6.0) -> Optional[str]:
                 "jpeg": "image/jpeg",
                 "webp": "image/webp",
             }.get(ext, "application/octet-stream")
+        if not content_type.startswith("image/"):
+            logger.warning(f"Rejected non-image logo content-type {content_type}: {current}")
+            return None
         b64 = base64.b64encode(resp.content).decode("ascii")
         return f"data:{content_type};base64,{b64}"
     except Exception as exc:  # noqa: BLE001

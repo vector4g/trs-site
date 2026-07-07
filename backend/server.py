@@ -277,12 +277,24 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
 app.add_middleware(SecurityHeadersMiddleware)
 
+# SEC-003: explicit origin allowlist — wildcard is rejected because the API
+# sets credentials (admin session cookie) and browsers refuse `*` with
+# credentials anyway; failing fast here surfaces misconfiguration at boot.
+_cors_origins = [
+    o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()
+]
+if not _cors_origins or "*" in _cors_origins:
+    raise RuntimeError(
+        "CORS_ORIGINS must be an explicit comma-separated origin allowlist; "
+        "wildcard '*' is not permitted."
+    )
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_cors_origins,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "X-Admin-Token", "X-Test-Secret"],
 )
 
 

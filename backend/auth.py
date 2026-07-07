@@ -19,6 +19,7 @@ Behaviour:
 """
 from __future__ import annotations
 
+import hmac
 import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -76,7 +77,11 @@ def require_admin(request: Request) -> str:
     header_token = request.headers.get("x-admin-token") or request.headers.get(
         "X-Admin-Token"
     )
-    if header_token and header_token == ADMIN_TOKEN:
+    # Constant-time comparison (SEC-003) — plain `==` short-circuits on the
+    # first differing byte and leaks token prefixes through timing.
+    if header_token and hmac.compare_digest(
+        header_token.encode("utf-8"), ADMIN_TOKEN.encode("utf-8")
+    ):
         return "admin"
 
     raise HTTPException(status_code=401, detail="Unauthorized")

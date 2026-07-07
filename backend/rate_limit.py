@@ -123,6 +123,69 @@ def check_pilot_rate(ip: str) -> tuple[bool, int]:
     return _check(ip, "rl:pilot", PILOT_MAX, PILOT_WINDOW_S, _pilot_buckets)
 
 
+# --- Admin login lockout (SEC-003) ----------------------------------------------
+# Tracks FAILED login attempts only. 5 failures within 15 minutes locks the IP
+# out of POST /api/admin/login until the window slides. A successful login
+# clears the counter. Split check/record/clear (unlike _check, which records on
+# every call) so successful logins never consume quota.
+ADMIN_LOGIN_MAX_FAILURES = 5
+ADMIN_LOGIN_WINDOW_S = 15 * 60
+
+_admin_login_buckets: dict[str, deque] = {}
+
+
+def check_admin_login_locked(ip: str) -> tuple[bool, int]:
+    """Return (locked, retry_after_seconds) without recording anything."""
+    now = time.time()
+    if _redis_client is not None:
+        key = f"rl:adminlogin:{ip}"
+        try:
+            pipe = _redis_client.pipeline()
+            pipe.zremrangebyscore(key, 0, now - ADMIN_LOGIN_WINDOW_S)
+            pipe.zcard(key)
+            pipe.zrange(key, 0, 0, withscores=True)
+            _, count, oldest = pipe.execute()
+            if count >= ADMIN_LOGIN_MAX_FAILURES:
+                first_score = oldest[0][1] if oldest else now
+                retry_after = int(ADMIN_LOGIN_WINDOW_S - (now - first_score)) + 1
+                return True, max(retry_after, 1)
+            return False, 0
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Redis admin-login check failed (%s) — in-memory fallback", exc)
+    bucket = _admin_login_buckets.setdefault(ip, deque())
+    while bucket and now - bucket[0] > ADMIN_LOGIN_WINDOW_S:
+        bucket.popleft()
+    if len(bucket) >= ADMIN_LOGIN_MAX_FAILURES:
+        retry_after = int(ADMIN_LOGIN_WINDOW_S - (now - bucket[0])) + 1
+        return True, max(retry_after, 1)
+    return False, 0
+
+
+def record_admin_login_failure(ip: str) -> None:
+    now = time.time()
+    if _redis_client is not None:
+        key = f"rl:adminlogin:{ip}"
+        try:
+            member = f"{now}:{uuid.uuid4().hex[:8]}".encode()
+            pipe = _redis_client.pipeline()
+            pipe.zadd(key, {member: now})
+            pipe.expire(key, ADMIN_LOGIN_WINDOW_S + 60)
+            pipe.execute()
+            return
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Redis admin-login record failed (%s) — in-memory fallback", exc)
+    _admin_login_buckets.setdefault(ip, deque()).append(now)
+
+
+def clear_admin_login_failures(ip: str) -> None:
+    if _redis_client is not None:
+        try:
+            _redis_client.delete(f"rl:adminlogin:{ip}")
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Redis admin-login clear failed (%s)", exc)
+    _admin_login_buckets.pop(ip, None)
+
+
 def check_brief_pdf_rate(ip: str) -> tuple[bool, int]:
     return _check(
         ip, "rl:briefpdf", BRIEF_PDF_MAX, BRIEF_PDF_WINDOW_S, _brief_pdf_buckets

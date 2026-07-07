@@ -896,3 +896,16 @@ NEW ReferenceIndex.jsx at /reference: 6 reference cards (SCD, DPIA, medication, 
 
 ## Iteration 27b — 2026-07-07 (/reference production verification — LIVE)
 Production verified: /reference shell (title/desc/canonical/h1), 6 cards all 200, CollectionPage ItemList=6, footer "Reference Library" link live, llms.txt line + sitemap lastmod 2026-07-07. ENTIRE reference cluster now shipped: hub + 6 references + catch-22 retrofit + whitepaper/sources + glossary, fully interlinked with stable anchors. Pending user actions: RRT runs on medication-at-borders/assistance-codes/catch-22 (+reference), GSC indexing requests.
+
+## Iteration 28 — 2026-07-07 (Meta description production verification — ALL LIVE)
+Production verified all 4 routes (/medication-at-borders, /assistance-codes, /civil-society, /reference): SERP description = new short strings (142-160 chars); og:description + twitter:description byte-identical to originals. 12/12 checks passed.
+
+## Iteration 29 — 2026-07-07 (SEC-003 Security hardening — COMPLETE, preview verified)
+1. SSRF (briefing.py `_fetch_as_data_url`): https-only, DNS-resolve + reject non-global IPs (blocks 127.x, 10/8, 169.254.169.254 metadata, ::1), manual redirect following (max 3 hops, each re-validated), 2MB payload cap, image/* content-type required. brandfetch.py: RFC-1035 domain regex in `domain_from_email` + `fetch_brand` blocks path/query/port smuggling into the Brandfetch URL.
+2. CORS allowlist (server.py): wildcard rejected at boot (RuntimeError); explicit origins in backend/.env CORS_ORIGINS (thirdrailsystems.ee, www, preview); methods GET/POST/OPTIONS; explicit header allowlist. NOTE: preview/Cloudflare edge answers OPTIONS preflight itself with `*` — app-level CORS verified correct via localhost:8001.
+3. Admin login lockout (rate_limit.py + routers/admin.py): 5 FAILED attempts / 15 min per IP → 429 + Retry-After; success clears counter; Redis-backed with in-memory fallback. AdminLogin.jsx shows 429 toast.
+4. Constant-time comparison: hmac.compare_digest in admin_login and require_admin header path.
+5. ReDoS: re.escape() on `q` and `role` before $regex in admin_list_pilot_requests.
+6. CSP hardening: inline PostHog stub + error-guard externalised to /public/js/*.js; INLINE_RUNTIME_CHUNK=false in frontend/.env; inject-writing-meta.js `hardenCsp()` strips 'unsafe-inline' 'unsafe-eval' from script-src in ALL production build HTML (index + 20 flat files). Dev index.html keeps them (webpack needs eval). True per-request nonces impossible on static hosting — externalisation is the equivalent control. Prod build tested locally: renders fully, posthog stub loads, zero inline executable scripts.
+Testing: curl (lockout 401×5→429 w/ Retry-After 900, good login 200, ReDoS query fast-200), python unit checks (6 SSRF URLs blocked, legit image passes, 6 domain cases), pytest admin/cookie/diagnostic suites 22 passed (3 failures are STALE tests pre-existing: `rejected` stats key removed long ago, sitemap legal URLs intentionally absent, root message string — confirmed pre-existing via git stash). Prod-build + dev screenshots clean.
+AWAITING DEPLOY for production verification (CSP header on flat files, lockout on prod).

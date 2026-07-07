@@ -377,6 +377,21 @@ function injectRouteMeta(html, url, meta) {
   return out;
 }
 
+/**
+ * SEC-003: production builds contain no inline executable scripts — the
+ * PostHog stub and error guard live in /js/*.js, and CRA's runtime chunk is
+ * kept external via INLINE_RUNTIME_CHUNK=false — so 'unsafe-inline' and
+ * 'unsafe-eval' are dropped from script-src at build time. The dev
+ * public/index.html keeps them because webpack-dev-server needs eval'd
+ * source maps and inline HMR bootstrapping.
+ */
+function hardenCsp(html) {
+  return html.replace(
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    "script-src 'self'",
+  );
+}
+
 function main() {
   if (!fs.existsSync(BUILD_DIR)) {
     console.log("[inject-writing-meta] No build/ directory; skipping.");
@@ -391,7 +406,7 @@ function main() {
     process.exit(1);
   }
 
-  const baseHtml = fs.readFileSync(SOURCE_HTML, "utf-8");
+  const baseHtml = hardenCsp(fs.readFileSync(SOURCE_HTML, "utf-8"));
   const config = JSON.parse(fs.readFileSync(META_CONFIG, "utf-8"));
 
   /**
@@ -509,8 +524,8 @@ function main() {
     console.warn(`[inject-writing-meta] Sources markdown not found at ${sourcesMdPath}`);
   }
 
-  // Homepage H1 — rewrite build/index.html in place.
-  const homepageHtml = fs.readFileSync(SOURCE_HTML, "utf-8");
+  // Homepage H1 — rewrite build/index.html in place (also hardens its CSP).
+  const homepageHtml = hardenCsp(fs.readFileSync(SOURCE_HTML, "utf-8"));
   const homepageH1Markup = `<h1 style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">${escapeHtml(HOMEPAGE_H1)}</h1>`;
   const rewritten = homepageHtml.replace(
     /<div id="root">\s*<\/div>/,
