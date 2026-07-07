@@ -875,3 +875,11 @@ Verified: shell h2 ids exact (build), runtime anchors + deep-link scroll + citat
 
 ## Iteration 24c — 2026-07-07 (Addendum production verification — ALL LIVE)
 Production verified: all 7 stable anchors in shell + runtime (exact order, heading text intact); deep-link scroll works; citation block renders verbatim; llms.txt line live. RRT (user-run, id 25DKD9RpBUNM9rVCa588lA): 3 valid items — Articles ✓ (non-critical only), Breadcrumbs ✓ clean, Organization ✓; no FAQPage; zero errors. JOB 2 + addendum fully closed.
+
+## Iteration 25 — 2026-07-07 (Three new reference routes: /civil-society, /travel-risk-dpia, /glossary)
+- NEW shared component `components/ReferenceArticle.jsx` (SCD treatment: hero, cite block, {#anchor} H2s from md, diagnostic CTA, Article+Breadcrumb JSON-LD only, no keywords). Three thin pages: CivilSociety.jsx (trailing pilot-pricing line rendered AFTER CTA, in md as final para for shell), TravelRiskDpia.jsx, Glossary.jsx.
+- Content md files byte-identical to spec (verified via /tmp/verify_bodies.py): civil-society (7 H2s, 6 links), travel-risk-dpia (6 H2s, 5 links), glossary (10 H2s, 10 links incl. externals ERR + khan6 + check.thirdrailsystems.ee — all 200).
+- TOP_PAGES entries ×3 (shells verified: exact titles, desc, canonical, en_GB, article, og.png, h1, anchors in order). App.js routes. sitemap ×3 lastmod 2026-07-07.
+- Cross-links: SCD got NEW related-links row (scd-related-links: /travel-risk-dpia + /glossary) — SCD had no related component, flagged to user; catch-22 Further-reading + /travel-risk-dpia; BeyondDisclosure bottom row + /civil-society.
+- llms.txt: 3 lines under Core pages, [H1](url): <spec description verbatim, capitalisation preserved>.
+Preview verified: titles, anchors, cite blocks, JSON-LD dateModified 2026-07-07, CTAs, trailing line, cross-links, llms lines. AWAITING DEPLOY → production verification + user RRT runs on 3 routes.

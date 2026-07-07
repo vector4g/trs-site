@@ -92,6 +92,30 @@ const TOP_PAGES = [
     h1: "Special category data in employee travel",
   },
   {
+    path: "/civil-society",
+    title: "Duty of Care for Human Rights Defenders: The File Problem",
+    description:
+      "Monitoring and evacuation protect people in the field. Almost nothing protects them from the file built to qualify them for protection. A reference for casework and security leads.",
+    ogImage: null,
+    h1: "Duty of care for human rights defenders: the file problem",
+  },
+  {
+    path: "/travel-risk-dpia",
+    title: "Does Travel Risk Management Require a DPIA?",
+    description:
+      "Article 35, the criteria supervisory authorities apply, and what an honest DPIA of a travel risk programme usually finds. A working reference for DPOs.",
+    ogImage: null,
+    h1: "Does travel risk management require a DPIA?",
+  },
+  {
+    path: "/glossary",
+    title: "Glossary: Shadow HR, Minimum Disclosure and Related Terms",
+    description:
+      "The vocabulary of minimum-disclosure architecture, defined once and citable by stable anchor. Terms coined elsewhere are credited to their authors.",
+    ogImage: null,
+    h1: "Glossary",
+  },
+  {
     path: "/writing",
     title: "Writing · Third Rail Systems",
     description:

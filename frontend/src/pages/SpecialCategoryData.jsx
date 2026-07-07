@@ -253,6 +253,27 @@ export default function SpecialCategoryData() {
             <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
+
+        {/* Related reading — same link-row pattern as /beyond-disclosure */}
+        <div
+          className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-[15px]"
+          data-testid="scd-related-links"
+        >
+          <Link
+            to="/travel-risk-dpia"
+            className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+            data-testid="scd-link-travel-risk-dpia"
+          >
+            Does travel risk management require a DPIA? →
+          </Link>
+          <Link
+            to="/glossary"
+            className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+            data-testid="scd-link-glossary"
+          >
+            Glossary of terms →
+          </Link>
+        </div>
       </main>
 
       <Footer />

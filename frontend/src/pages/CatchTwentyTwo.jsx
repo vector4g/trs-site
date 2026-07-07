@@ -1227,6 +1227,15 @@ export default function CatchTwentyTwo() {
                   Special category data in employee travel: the Article 9 reference →
                 </Link>
               </p>
+              <p className="mt-3">
+                <Link
+                  to="/travel-risk-dpia"
+                  className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+                  data-testid="catch22-link-travel-risk-dpia"
+                >
+                  Does travel risk management require a DPIA? →
+                </Link>
+              </p>
             </BriefSection>
 
             <BriefSection

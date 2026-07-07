@@ -230,6 +230,13 @@ export default function BeyondDisclosure() {
             >
               Special category data: what Article 9 prohibits and ISO 31030 requires →
             </Link>
+            <Link
+              to="/civil-society"
+              className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+              data-testid="beyond-link-civil-society"
+            >
+              Duty of care for human rights defenders: the file problem →
+            </Link>
           </div>
         </div>
       </main>

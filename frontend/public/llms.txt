@@ -12,6 +12,9 @@ Third Rail Systems OÜ is a deep-tech compliance company building the architectu
 - [Beyond Disclosure (whitepaper)](https://thirdrailsystems.ee/beyond-disclosure): a European architectural alternative for protecting marginalised populations across workforce and travel contexts. The founder's long-form paper on why disclosure-based protection fails and the four architectural principles that resolve it.
 - [Source list and citation library](https://thirdrailsystems.ee/beyond-disclosure/sources): forty verified claims across four research modules supporting the whitepaper, with primary sources, exact quotations, credibility assessments, and documented corrections.
 - [Special category data in employee travel](https://thirdrailsystems.ee/special-category-data): what GDPR Article 9 prohibits, what ISO 31030 requires, and the architectural resolution. Question-structured reference with stable anchors and sourced claims.
+- [Duty of care for human rights defenders: the file problem](https://thirdrailsystems.ee/civil-society): Duty of care for human rights defenders and field staff: why the protection file is itself the risk, and the architecture for protection without registration. Question-structured, stable anchors, sourced claims.
+- [Does travel risk management require a DPIA?](https://thirdrailsystems.ee/travel-risk-dpia): Whether travel risk management requires a DPIA under GDPR Article 35, what the assessment usually finds, and minimisation as the mitigation. Question-structured, stable anchors, sourced claims.
+- [Glossary](https://thirdrailsystems.ee/glossary): Definitions of Shadow HR, minimum disclosure, stateless synthesis, target inventory, mandate, and related terms, each citable by stable anchor, with external coinages credited.
 - [Diagnostic intake](https://thirdrailsystems.ee/diagnostic): confidential 60-minute architectural diagnostic for security and GRC teams at multinational enterprises. No HRIS integration required.
 
 ## Documents
