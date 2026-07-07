@@ -832,3 +832,6 @@ Verified on https://thirdrailsystems.ee after user redeploy:
 - /writing: heading "Essays on who holds the leverage", new intro, card eyebrow "New · agency lens · 12 min read", card order/links unchanged (7 cards).
 - Homepage: all 4 copy edits render, old strings gone, Insights card href=/writing.
 Remaining optional: JSON-LD "three-part" alignment on /writing (held for approval); IndexNow/GSC submission of the new URL (user action).
+
+## Iteration 22 — 2026-07-07 (/writing CollectionPage JSON-LD alignment)
+`WritingIndex.jsx` CollectionPage schema updated (user-approved): name → "Essays on who holds the leverage" (mirrors page heading), description → "A series on dependency, accumulation, and minimum disclosure: the opening trilogy plus the newest essay on AI agents acting on your behalf.", itemListElement now [by-direction, nothing-happened, the-switch, exposure-is-not-democratic] (page order), numberOfItems=4. itemListOrder + BreadcrumbList untouched. Verified in preview runtime. AWAITING USER DEPLOY.

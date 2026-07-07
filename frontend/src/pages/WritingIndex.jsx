@@ -56,17 +56,21 @@ export default function WritingIndex() {
   );
 
   // CollectionPage schema makes the index legible to Google as a curated
-  // series rather than a generic blog roll. itemListElement lists only the
-  // published parts so we don't promise URLs that aren't yet live.
-  const publishedItems = EXPOSURE_SERIES.filter((e) => e.published);
+  // series rather than a generic blog roll. itemListElement lists the
+  // standalone essays plus the published trilogy parts, in the page's
+  // rendered order (newest first, then the trilogy's reading order).
+  const publishedItems = [
+    ...STANDALONE_ESSAYS,
+    ...EXPOSURE_SERIES.filter((e) => e.published),
+  ];
   useJsonLd(
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      name: "Exposure: a three-part series",
+      name: "Essays on who holds the leverage",
       url: CANONICAL,
       description:
-        "Three essays on dependency, accumulation, and minimum disclosure.",
+        "A series on dependency, accumulation, and minimum disclosure: the opening trilogy plus the newest essay on AI agents acting on your behalf.",
       isPartOf: {
         "@type": "WebSite",
         name: "Third Rail Systems OÜ",
