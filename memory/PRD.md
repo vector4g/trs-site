@@ -872,3 +872,6 @@ Preview verified: rendered title/H1/desc/canonical/JSON-LD, all 7 links 200 + an
 - llms.txt: new Core pages line for /special-category-data (verbatim description).
 - JSON-LD: Article kept, dateModified 2026-07-07 with comment mandating bump on every content change; NO FAQPage (per instruction).
 Verified: shell h2 ids exact (build), runtime anchors + deep-link scroll + citation block + llms.txt in preview. AWAITING DEPLOY → production verification incl. RRT re-run (user must run RRT; tool needs Google login).
+
+## Iteration 24c — 2026-07-07 (Addendum production verification — ALL LIVE)
+Production verified: all 7 stable anchors in shell + runtime (exact order, heading text intact); deep-link scroll works; citation block renders verbatim; llms.txt line live. RRT (user-run, id 25DKD9RpBUNM9rVCa588lA): 3 valid items — Articles ✓ (non-critical only), Breadcrumbs ✓ clean, Organization ✓; no FAQPage; zero errors. JOB 2 + addendum fully closed.
