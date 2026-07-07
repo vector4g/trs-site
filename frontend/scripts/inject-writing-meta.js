@@ -77,10 +77,19 @@ const TOP_PAGES = [
   {
     path: "/catch-22",
     title: "The ISO 31030 and GDPR Article 9 Catch-22 · Third Rail Systems",
+    titleTag: "The Shadow HR Liability: the H&M €35.3M GDPR Fine Pattern",
     description:
       "Duty-of-care obligations under ISO 31030 can collide with GDPR Article 9 protection for special-category data. What a minimum-disclosure approach changes.",
     ogImage: null,
     h1: "The ISO 31030 and GDPR Article 9 Catch-22",
+  },
+  {
+    path: "/special-category-data",
+    title: "Special Category Data in Employee Travel · GDPR Article 9",
+    description:
+      "What GDPR Article 9 prohibits, what ISO 31030 requires, and why most travel risk programmes are caught between the two. A reference for DPOs and security leads.",
+    ogImage: null,
+    h1: "Special category data in employee travel",
   },
   {
     path: "/writing",

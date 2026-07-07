@@ -111,7 +111,8 @@ export default function CatchTwentyTwo() {
   // Article JSON-LD adds E-E-A-T signals for Google: author + publish date +
   // publisher. Critical for thought-leadership ranking.
   useSEO({
-    title: "The ISO 31030 and GDPR Article 9 Catch-22 · Third Rail Systems",
+    title: "The Shadow HR Liability: the H&M €35.3M GDPR Fine Pattern",
+    ogTitle: "The ISO 31030 and GDPR Article 9 Catch-22 · Third Rail Systems",
     description:
       "Duty-of-care obligations under ISO 31030 can collide with GDPR Article 9 protection for special-category data. What a minimum-disclosure approach changes.",
     canonical: "https://thirdrailsystems.ee/catch-22",
@@ -1217,6 +1218,15 @@ export default function CatchTwentyTwo() {
                   </Link>
                 </li>
               </ul>
+              <p className="mt-6">
+                <Link
+                  to="/special-category-data"
+                  className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+                  data-testid="catch22-link-special-category-data"
+                >
+                  Special category data in employee travel: the Article 9 reference →
+                </Link>
+              </p>
             </BriefSection>
 
             <BriefSection

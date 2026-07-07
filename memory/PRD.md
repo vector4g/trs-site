@@ -855,3 +855,13 @@ Verified: static build shells + preview runtime all pass. AWAITING USER DEPLOY, 
 
 ## Iteration 23c — 2026-07-07 (Follow-up batch production verification — ALL LIVE)
 Production verified: all 5 khan6 hrefs at trailing-slash finals (0 slashless remain); " →" glyph renders on all four new anchors (3 essays + whitepaper); llms.txt "## Documents" section live with both first-party assets; /writing/by-direction 200. Audit fully closed. Known minor: static host serves /assets/* as application/octet-stream (download-not-inline for the PDF); would need platform-level MIME config.
+
+## Iteration 24 — 2026-07-07 (JOB 1: /catch-22 title; JOB 2: new /special-category-data page)
+JOB 1: /catch-22 <title> → "The Shadow HR Liability: the H&M €35.3M GDPR Fine Pattern" via titleTag (TOP_PAGES) + useSEO title/ogTitle. og:title, H1, body untouched.
+JOB 2: NEW route /special-category-data:
+- /app/frontend/src/content/special-category-data.md — verbatim spec body (verified byte-identical after link-syntax strip), 7 inline links (4× sources anchors, /catch-22, /beyond-disclosure), dek as first paragraph, ## per question.
+- /app/frontend/src/pages/SpecialCategoryData.jsx — renders FROM the md (single source of truth), catch-22 hero treatment, BriefSection-style H2 typography, diagnostic CTA box + Request Diagnostic button (data-testid scd-cta-diagnostic / scd-cta-contact). Article JSON-LD (catch-22 pattern, datePublished 2026-07-07) + BreadcrumbList. useSEO: title "Special Category Data in Employee Travel · GDPR Article 9", spec description, canonical, ogType article, og:image site default.
+- App.js route + lazy import; TOP_PAGES prerender entry (shell verified: title/desc/canonical/og.png/en_GB/article/h1/7 H2s).
+- Inbound links: catch-22 Further-reading section ("Special category data in employee travel: the Article 9 reference →", testid catch22-link-special-category-data); BeyondDisclosure bottom links ("Special category data: what Article 9 prohibits and ISO 31030 requires →", testid beyond-link-special-category-data).
+- sitemap: added /special-category-data lastmod 2026-07-07 priority 0.8; /catch-22 lastmod → 2026-07-07.
+Preview verified: rendered title/H1/desc/canonical/JSON-LD, all 7 links 200 + anchors exist, both inbound links, catch-22 title + og:title. AWAITING DEPLOY → production verification.

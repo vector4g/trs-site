@@ -223,6 +223,13 @@ export default function BeyondDisclosure() {
             >
               By Direction: the whitepaper's argument applied to AI agents →
             </Link>
+            <Link
+              to="/special-category-data"
+              className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+              data-testid="beyond-link-special-category-data"
+            >
+              Special category data: what Article 9 prohibits and ISO 31030 requires →
+            </Link>
           </div>
         </div>
       </main>
