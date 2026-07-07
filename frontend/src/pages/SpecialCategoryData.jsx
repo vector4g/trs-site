@@ -30,16 +30,46 @@ function splitDek(md) {
   return { dek: md.slice(0, i).trim(), body: md.slice(i).trimStart() };
 }
 
+/**
+ * The H2 questions are authored with `{#anchor-id}` suffixes in the
+ * markdown source (same convention as the sources page), so the stable
+ * anchors live in one place and survive rebuilds unchanged. The prerender
+ * side (markdown-it-attrs in scripts/inject-writing-meta.js) turns them
+ * into `<h2 id="…">` automatically; here we strip the suffix and keep a
+ * text → id map that the h2 renderer below applies at runtime.
+ */
+function extractAnchors(md) {
+  const anchors = {};
+  const cleaned = md.replace(
+    /^## (.+?)\s*\{#([a-z0-9-]+)\}\s*$/gm,
+    (_, text, id) => {
+      anchors[text.trim()] = id;
+      return `## ${text.trim()}`;
+    },
+  );
+  return { anchors, cleaned };
+}
+
+const { anchors: H2_ANCHORS, cleaned: CLEANED_MD } = extractAnchors(scdMarkdown);
+
 // Typography mapped to the /catch-22 brief treatment: each `##` question
 // renders as an H2 with the BriefSection heading style and section rhythm;
 // paragraphs use the brief body style; links use the site's cyan underline.
 const markdownComponents = {
-  h2: ({ node, ...props }) => (
-    <h2
-      className="mt-16 scroll-mt-24 border-t border-slate-900 pt-16 text-3xl font-semibold tracking-tight text-white first:mt-0 first:border-t-0 first:pt-0 sm:text-4xl"
-      {...props}
-    />
-  ),
+  h2: ({ node, children, ...props }) => {
+    const text = Array.isArray(children)
+      ? children.join("")
+      : String(children);
+    return (
+      <h2
+        id={H2_ANCHORS[text.trim()]}
+        className="mt-16 scroll-mt-24 border-t border-slate-900 pt-16 text-3xl font-semibold tracking-tight text-white first:mt-0 first:border-t-0 first:pt-0 sm:text-4xl"
+        {...props}
+      >
+        {children}
+      </h2>
+    );
+  },
   p: ({ node, ...props }) => (
     <p
       className="mt-6 text-[15px] leading-relaxed text-slate-300 sm:text-base"
@@ -86,6 +116,8 @@ export default function SpecialCategoryData() {
         },
       },
       datePublished: "2026-07-07",
+      // dateModified MUST be bumped (ISO format) on every content change
+      // to this route.
       dateModified: "2026-07-07",
       mainEntityOfPage: CANONICAL,
       image: "https://thirdrailsystems.ee/og.png",
@@ -122,7 +154,7 @@ export default function SpecialCategoryData() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { dek, body } = splitDek(scdMarkdown);
+  const { dek, body } = splitDek(CLEANED_MD);
 
   return (
     <div
@@ -166,6 +198,24 @@ export default function SpecialCategoryData() {
           <p className="mt-6 max-w-2xl text-base text-slate-400 sm:text-lg">
             {dek}
           </p>
+
+          {/* Machine citation layer — same component styling as the
+              sources page's "How to cite this library" block. */}
+          <section
+            className="mt-8 rounded-lg border border-slate-800 bg-slate-900/40 p-5 text-[15px] leading-[1.7] text-slate-300"
+            data-testid="scd-citation-block"
+          >
+            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-100">
+              How to cite this page
+            </h3>
+            <p className="mt-3">
+              {"Cite individual answers by their stable anchor, e.g. "}
+              <code className="mx-1 rounded bg-slate-800 px-1.5 py-0.5 text-[13px] text-cyan-300">
+                thirdrailsystems.ee/special-category-data#can-consent-close-the-gap
+              </code>
+              {". Definitions and legal characterisations on this page are sourced; each links to its entry in the Beyond Disclosure citation library. Verified July 2026."}
+            </p>
+          </section>
         </div>
       </header>
 

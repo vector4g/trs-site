@@ -11,6 +11,7 @@ Third Rail Systems OÜ is a deep-tech compliance company building the architectu
 - [The Strategic Memo](https://thirdrailsystems.ee/memo): founder's operational thesis on minimum-disclosure compliance architecture, KTH IRL 5 validation, and why the EU's catch-22 is solvable from Tallinn.
 - [Beyond Disclosure (whitepaper)](https://thirdrailsystems.ee/beyond-disclosure): a European architectural alternative for protecting marginalised populations across workforce and travel contexts. The founder's long-form paper on why disclosure-based protection fails and the four architectural principles that resolve it.
 - [Source list and citation library](https://thirdrailsystems.ee/beyond-disclosure/sources): forty verified claims across four research modules supporting the whitepaper, with primary sources, exact quotations, credibility assessments, and documented corrections.
+- [Special category data in employee travel](https://thirdrailsystems.ee/special-category-data): what GDPR Article 9 prohibits, what ISO 31030 requires, and the architectural resolution. Question-structured reference with stable anchors and sourced claims.
 - [Diagnostic intake](https://thirdrailsystems.ee/diagnostic): confidential 60-minute architectural diagnostic for security and GRC teams at multinational enterprises. No HRIS integration required.
 
 ## Documents
