@@ -140,7 +140,7 @@ export default function CatchTwentyTwo() {
         },
       },
       datePublished: "2026-05-01",
-      dateModified: "2026-06-05",
+      dateModified: "2026-07-07",
       mainEntityOfPage: "https://thirdrailsystems.ee/catch-22",
       image: "https://thirdrailsystems.ee/og.png",
       inLanguage: "en",
@@ -356,6 +356,23 @@ export default function CatchTwentyTwo() {
             resolves it.
           </p>
 
+          {/* Machine citation layer — same block as /special-category-data. */}
+          <section
+            className="mt-8 max-w-2xl rounded-lg border border-slate-800 bg-slate-900/40 p-5 text-[15px] leading-[1.7] text-slate-300"
+            data-testid="catch22-citation-block"
+          >
+            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-100">
+              How to cite this page
+            </h3>
+            <p className="mt-3">
+              {"Cite individual sections by their stable anchor. Claims in this brief are sourced; the consolidated library is at "}
+              <code className="mx-1 rounded bg-slate-800 px-1.5 py-0.5 text-[13px] text-cyan-300">
+                thirdrailsystems.ee/beyond-disclosure/sources
+              </code>
+              {". Verified June 2026."}
+            </p>
+          </section>
+
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-slate-500 mono uppercase tracking-[0.18em]">
             <span className="flex items-center gap-2">
               <MapPin className="h-3.5 w-3.5 text-cyan-400" />
@@ -456,7 +473,7 @@ export default function CatchTwentyTwo() {
             id="brief-article-root"
             data-testid="catch22-article"
           >
-            <BriefSection id="summary" number="—" title="Executive Summary">
+            <BriefSection id="summary" number="—" title="Executive Summary" headingId="executive-summary">
               <p>
                 In October 2020, the Hamburg Data Protection Authority fined
                 H&amp;M <span className="text-white">€35.3&nbsp;million</span>{" "}
@@ -498,7 +515,7 @@ export default function CatchTwentyTwo() {
               </p>
             </BriefSection>
 
-            <BriefSection id="precedent" number="Part 1" title="The H&M Precedent">
+            <BriefSection id="precedent" number="Part 1" title="The H&M Precedent" headingId="the-h-m-precedent">
               <p>
                 The H&amp;M Hennes &amp; Mauritz fine, issued on{" "}
                 <span className="text-white">1 October 2020</span> by the
@@ -569,6 +586,7 @@ export default function CatchTwentyTwo() {
               id="pattern"
               number="Part 2"
               title="The Shadow HR Pattern, Named"
+              headingId="the-shadow-hr-pattern-named"
             >
               <p>
                 The H&amp;M case names a pattern that exists in most
@@ -646,6 +664,7 @@ export default function CatchTwentyTwo() {
               id="disclosure"
               number="Part 3"
               title="The Disclosure-Collapse Multiplier"
+              headingId="the-disclosure-collapse-multiplier"
             >
               <p>
                 Shadow HR would be a static problem if voluntary employee
@@ -742,6 +761,7 @@ export default function CatchTwentyTwo() {
               id="enforcement"
               number="Part 4"
               title="The Enforcement Trajectory"
+              headingId="the-enforcement-trajectory"
             >
               <p>
                 The argument that the H&amp;M case was an outlier requires
@@ -806,6 +826,7 @@ export default function CatchTwentyTwo() {
               id="architecture"
               number="Part 5"
               title="The Architectural Resolution"
+              headingId="the-architectural-resolution"
             >
               <p>
                 The Shadow HR problem cannot be solved by policy. Stronger
@@ -901,6 +922,7 @@ export default function CatchTwentyTwo() {
               id="questions"
               number="Part 6"
               title="Five Diagnostic Questions"
+              headingId="five-diagnostic-questions"
             >
               <p>
                 A General Counsel, Chief Privacy Officer, or Chief Security
@@ -985,6 +1007,7 @@ export default function CatchTwentyTwo() {
               id="diagnostic"
               number="—"
               title="If This Brief Maps to Your Organisation"
+              headingId="if-this-brief-maps-to-your-organisation"
             >
               <p>
                 The Shadow HR pattern is recognizable once named. Most
@@ -1153,6 +1176,7 @@ export default function CatchTwentyTwo() {
               id="further-reading"
               number="—"
               title="Further reading: the Exposure series"
+              headingId="further-reading-the-exposure-series"
             >
               <p className="text-base leading-relaxed text-slate-300">
                 Three essays on the same architectural principle, viewed
@@ -1242,6 +1266,7 @@ export default function CatchTwentyTwo() {
               id="sources"
               number="—"
               title="Sources & Citations"
+              headingId="sources-citations"
             >
               <ul className="space-y-3 pl-1 text-sm leading-relaxed text-slate-400">
                 {[

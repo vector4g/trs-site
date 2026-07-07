@@ -23,6 +23,13 @@ export default function CivilSociety() {
       citeTail=". Claims on this page link to their entries in the Beyond Disclosure citation library. Verified July 2026."
       trailingLine={TRAILING_LINE}
       dateModified="2026-07-07"
+      relatedLinks={[
+        {
+          to: "/medication-at-borders",
+          label: "Prescription medication at borders →",
+          testid: "civil-society-link-medication-at-borders",
+        },
+      ]}
     />
   );
 }

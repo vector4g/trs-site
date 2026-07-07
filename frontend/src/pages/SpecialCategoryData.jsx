@@ -273,6 +273,20 @@ export default function SpecialCategoryData() {
           >
             Glossary of terms →
           </Link>
+          <Link
+            to="/medication-at-borders"
+            className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+            data-testid="scd-link-medication-at-borders"
+          >
+            Prescription medication at borders →
+          </Link>
+          <Link
+            to="/assistance-codes"
+            className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+            data-testid="scd-link-assistance-codes"
+          >
+            What airline assistance codes disclose →
+          </Link>
         </div>
       </main>
 

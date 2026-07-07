@@ -116,6 +116,15 @@ export default function Footer() {
               </Link>
             </li>
             <li>
+              <Link
+                to="/glossary"
+                className="hover:text-cyan-400"
+                data-testid="footer-glossary-link"
+              >
+                Glossary
+              </Link>
+            </li>
+            <li>
               <a
                 href="/#contact"
                 className="hover:text-cyan-400"

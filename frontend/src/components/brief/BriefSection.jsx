@@ -5,7 +5,7 @@
  * The cyan-line motif (`.trs-section-line`) draws in when the parent `.reveal`
  * gains `.is-visible` — purely CSS, no per-component state.
  */
-export function BriefSection({ id, number, title, children }) {
+export function BriefSection({ id, number, title, children, headingId }) {
   return (
     <section
       id={id}
@@ -16,7 +16,13 @@ export function BriefSection({ id, number, title, children }) {
         <span>{number}</span>
         <span className="trs-section-line" aria-hidden="true" />
       </div>
-      <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+      {/* `headingId` adds a stable machine-citation anchor on the heading
+          itself (kebab-case of the heading text), independent of the
+          section wrapper id used by the TOC. */}
+      <h2
+        id={headingId}
+        className="mt-4 scroll-mt-24 text-3xl font-semibold tracking-tight text-white sm:text-4xl"
+      >
         {title}
       </h2>
       <div className="mt-6 space-y-5 text-[15px] leading-relaxed text-slate-300 sm:text-base">

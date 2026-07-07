@@ -85,6 +85,7 @@ export default function ReferenceArticle({
   citeExample,
   citeTail,
   trailingLine = null,
+  relatedLinks = null,
   dateModified,
 }) {
   const navigate = useNavigate();
@@ -254,6 +255,24 @@ export default function ReferenceArticle({
           >
             {trailingLine}
           </p>
+        )}
+
+        {relatedLinks && (
+          <div
+            className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-[15px]"
+            data-testid={`${slug}-related-links`}
+          >
+            {relatedLinks.map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
+                data-testid={l.testid}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
         )}
       </main>
 

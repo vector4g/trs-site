@@ -116,6 +116,22 @@ const TOP_PAGES = [
     h1: "Glossary",
   },
   {
+    path: "/medication-at-borders",
+    title: "Prescription Medication at Borders: The Employer Problem",
+    description:
+      "Lawful prescriptions are controlled substances in some jurisdictions. Why medication is a travel risk, why asking about it is an Article 9 problem, and the architecture that resolves both.",
+    ogImage: null,
+    h1: "Prescription medication at borders: the employer problem",
+  },
+  {
+    path: "/assistance-codes",
+    title: "What Airline Assistance Codes Disclose: WCHR, WCHS, WCHC",
+    description:
+      "Requesting assistance transmits a standardised disability category through the reservation ecosystem. Who sees an SSR code, why it is special category data, and what employers should not hold.",
+    ogImage: null,
+    h1: "What airline assistance codes disclose",
+  },
+  {
     path: "/writing",
     title: "Writing · Third Rail Systems",
     description:

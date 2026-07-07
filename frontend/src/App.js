@@ -35,6 +35,8 @@ const SpecialCategoryData = lazy(() => import("@/pages/SpecialCategoryData"));
 const CivilSociety = lazy(() => import("@/pages/CivilSociety"));
 const TravelRiskDpia = lazy(() => import("@/pages/TravelRiskDpia"));
 const Glossary = lazy(() => import("@/pages/Glossary"));
+const MedicationAtBorders = lazy(() => import("@/pages/MedicationAtBorders"));
+const AssistanceCodes = lazy(() => import("@/pages/AssistanceCodes"));
 const ByDirection = lazy(() => import("@/pages/writing/ByDirection"));
 
 // Hoisted to module scope so React doesn't create a new object reference per
@@ -107,6 +109,8 @@ function App() {
             <Route path="/civil-society" element={<CivilSociety />} />
             <Route path="/travel-risk-dpia" element={<TravelRiskDpia />} />
             <Route path="/glossary" element={<Glossary />} />
+            <Route path="/medication-at-borders" element={<MedicationAtBorders />} />
+            <Route path="/assistance-codes" element={<AssistanceCodes />} />
             <Route path="/diagnostic" element={<DiagnosticIntake />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
