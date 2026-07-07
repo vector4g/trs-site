@@ -1,5 +1,11 @@
 # By Direction — Launch Flip Checklist
 
+> **STATUS: EXECUTED 2026-07-07** (launch date / lastmod = 2026-07-07, read
+> time 12 min, card at top of /writing via `STANDALONE_ESSAYS` in
+> `exposureSeries.js`). Kept for reference. Remaining post-deploy step:
+> submit `https://thirdrailsystems.ee/writing/by-direction` to
+> IndexNow / Google Search Console after the user redeploys.
+
 Single-instruction launch flip for `/writing/by-direction`. Run these
 edits in one commit when the user says "publish By Direction".
 

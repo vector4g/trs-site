@@ -192,10 +192,6 @@ export default function ByDirection() {
     canonical: CANONICAL,
     ogType: "article",
     ogImage: OG_IMAGE,
-    // Staging state — this page is reachable only by direct URL until
-    // the launch flip. See the launch checklist in
-    // /app/memory/BY_DIRECTION_LAUNCH.md.
-    robots: "noindex, nofollow",
   });
 
   useJsonLd(
@@ -216,10 +212,7 @@ export default function ByDirection() {
         url: "https://thirdrailsystems.ee/",
         logo: { "@type": "ImageObject", url: "https://thirdrailsystems.ee/og.png" },
       },
-      // Placeholder — confirm and replace at launch. Leaving as "" so
-      // Google's structured-data parser sees the field but no false
-      // date is asserted while the essay is unpublished.
-      datePublished: "",
+      datePublished: "2026-07-07",
       mainEntityOfPage: CANONICAL,
       image: OG_IMAGE,
       inLanguage: "en-GB",

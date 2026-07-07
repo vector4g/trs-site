@@ -104,6 +104,29 @@ export function essayRobots(slug) {
  * NOTE: keep `kind: "companion"` on these so the card renderer can tweak
  * the eyebrow label (no "Part X", different tag).
  */
+/**
+ * Standalone essays — long-form pieces outside the Exposure trilogy.
+ * Rendered at the TOP of the /writing index (newest first), ahead of the
+ * trilogy's reading order. Same card treatment as a published essay card;
+ * the eyebrow swaps "Part X · lens" for the tag and publish date.
+ */
+export const STANDALONE_ESSAYS = [
+  {
+    kind: "standalone",
+    slug: "by-direction",
+    tag: "Essay",
+    title: "By Direction: The Agent Needs a Mandate, Not Your Identity",
+    lede:
+      "Who authorised the act, within what scope, and who answers for it. That was always the question, and it has an old answer.",
+    readTimeMinutes: 12,
+    route: "/writing/by-direction",
+    canonical: "https://thirdrailsystems.ee/writing/by-direction",
+    published: true,
+    publishedAt: "2026-07-07",
+    publishedAtLabel: "7 July 2026",
+  },
+];
+
 export const COMPANION_READING = [
   {
     kind: "companion",

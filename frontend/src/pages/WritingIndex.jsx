@@ -7,7 +7,7 @@ import Footer from "@/components/landing/Footer";
 import { Eyebrow } from "@/components/landing/shared";
 import { useSEO, useJsonLd } from "@/lib/useSEO";
 import SEOHeading from "@/components/SEOHeading";
-import { EXPOSURE_SERIES, COMPANION_READING, SERIES_LIVE } from "@/lib/exposureSeries";
+import { EXPOSURE_SERIES, COMPANION_READING, SERIES_LIVE, STANDALONE_ESSAYS } from "@/lib/exposureSeries";
 
 const CANONICAL = "https://thirdrailsystems.ee/writing";
 
@@ -111,6 +111,11 @@ export default function WritingIndex() {
           data-testid="writing-index-list"
           aria-label="Reading room: the Exposure series plus companion long-form pieces"
         >
+          {STANDALONE_ESSAYS.map((essay) => (
+            <li key={essay.slug}>
+              <StandaloneEssayCard essay={essay} />
+            </li>
+          ))}
           {EXPOSURE_SERIES.map((essay) => (
             <li key={essay.slug}>
               <EssayCard essay={essay} />
@@ -201,6 +206,43 @@ function EssayCard({ essay }) {
         Forthcoming in this series
       </div>
     </div>
+  );
+}
+
+/**
+ * Card for standalone essays outside the Exposure trilogy (newest first, at
+ * the top of the reading room). Same visual treatment as a published essay
+ * card; the eyebrow swaps "Part X · lens" for the tag and publish date.
+ */
+function StandaloneEssayCard({ essay }) {
+  return (
+    <Link
+      to={essay.route}
+      data-testid={`writing-index-card-${essay.slug}`}
+      data-standalone="true"
+      className="group block rounded-lg border border-slate-800 bg-slate-900/60 p-6 transition-colors hover:border-cyan-500/50 hover:bg-slate-900/80"
+    >
+      <div className="mono flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+        <span>{essay.tag}</span>
+        <span aria-hidden="true">·</span>
+        <span>{essay.publishedAtLabel}</span>
+        <span aria-hidden="true">·</span>
+        <span className="inline-flex items-center">
+          <Clock className="mr-1 h-3 w-3" />
+          {essay.readTimeMinutes} min read
+        </span>
+      </div>
+      <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+        {essay.title}
+      </h2>
+      <p className="mt-3 text-[15px] leading-relaxed text-slate-300">
+        {essay.lede}
+      </p>
+      <div className="mt-5 inline-flex items-center text-sm font-medium text-cyan-400 transition-transform group-hover:translate-x-0.5">
+        Read the essay
+        <ArrowRight className="ml-1 h-4 w-4" />
+      </div>
+    </Link>
   );
 }
 

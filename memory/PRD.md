@@ -788,3 +788,24 @@ Playwright DOM check on preview `/beyond-disclosure`: 1 h1 = "Beyond Disclosure"
 
 ### Deployment note
 Production is served through the K8s ingress (TRUSTED_PROXIES=1). No environment change required — `TRUSTED_PROXIES` defaults to 1, and `TEST_TRUSTED_IP_SECRET` will simply be absent in prod, deactivating the bypass path.
+
+## Iteration 19 — 2026-07-07 (By Direction: launch flip + three body edits)
+
+### By Direction LAUNCHED (was stealth). Launch date / lastmod: 2026-07-07
+Executed the full flip per `/app/memory/BY_DIRECTION_LAUNCH.md` PLUS three user-specified verbatim body edits:
+1. `by-direction.md` "The alibi": "recovered a few hundred dollars" → "recovered just over eight hundred Canadian dollars, most of it the fare difference."
+2. `by-direction.md` Sources block: added the word "jointly" ("worked out jointly in a public LinkedIn exchange").
+3. `by-direction.md` "The honest limit": inserted new verbatim paragraph ("One limit remains to be stated just as plainly. Decay handles age, not theft. …") between the paragraph ending "…honest trust system has ever offered." and the "What to build, whatever we call it" heading.
+
+### Launch flip changes
+- `writingMeta.json`: removed `robots` from by-direction entry (prerendered shell no longer emits noindex)
+- `ByDirection.jsx`: removed `robots` from useSEO; JSON-LD `datePublished: "2026-07-07"`
+- `exposureSeries.js`: NEW `STANDALONE_ESSAYS` export (by-direction, tag "Essay", 12 min read, 7 July 2026)
+- `WritingIndex.jsx`: NEW `StandaloneEssayCard` rendered at TOP of the /writing list (data-testid `writing-index-card-by-direction`)
+- `sitemap.xml`: added `/writing/by-direction`, lastmod 2026-07-07, priority 0.8
+
+### Verification (local build + preview runtime)
+- Prerendered `build/writing/by-direction.html`: title/desc/canonical/og:*/JSON-LD byte-identical to pre-edit production capture; ONLY diff = robots meta removed. All three edits render in correct order as proper `<p>`.
+- Other three essay shells byte-identical to production (meta + prerendered body).
+- Runtime: card first on /writing, no robots meta, datePublished 2026-07-07, all edits render.
+- AWAITING USER DEPLOY (Save to GitHub → redeploy), then post-deploy production verification + IndexNow/GSC submission of the URL.
