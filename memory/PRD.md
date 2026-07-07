@@ -852,3 +852,6 @@ Verified: static build shells + preview runtime all pass. AWAITING USER DEPLOY, 
 
 ## Iteration 23b — 2026-07-07 (Audit follow-ups, user-approved)
 (a) Trailing " →" glyph added to the new Read-also anchor (EssayLayout) AND the whitepaper companion link (same convention, flagged). (b) nothing-happened Read-also accepted as shipped. (c) All 3 body khan6.com hrefs in by-direction.md updated to trailing-slash finals (slash-only diff verified); all 5 site khan6 links now final URLs. llms.txt: new "## Documents" section with /assets/isi-architecture-diagram.pdf + /assets/kth-irl-evidence-report-third-rail-systems.docx. Preview + build verified. AWAITING DEPLOY → production verification incl. body-link routes + glyph rendering.
+
+## Iteration 23c — 2026-07-07 (Follow-up batch production verification — ALL LIVE)
+Production verified: all 5 khan6 hrefs at trailing-slash finals (0 slashless remain); " →" glyph renders on all four new anchors (3 essays + whitepaper); llms.txt "## Documents" section live with both first-party assets; /writing/by-direction 200. Audit fully closed. Known minor: static host serves /assets/* as application/octet-stream (download-not-inline for the PDF); would need platform-level MIME config.
