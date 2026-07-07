@@ -359,7 +359,7 @@ export default function EssayLayout({
                           className="text-slate-300 hover:text-cyan-300"
                           data-testid={`essay-${eventKey}-read-also-by-direction`}
                         >
-                          By Direction: The Agent Needs a Mandate, Not Your Identity
+                          By Direction: The Agent Needs a Mandate, Not Your Identity →
                         </Link>
                       </li>
                     )}

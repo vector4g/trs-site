@@ -13,6 +13,11 @@ Third Rail Systems OÜ is a deep-tech compliance company building the architectu
 - [Source list and citation library](https://thirdrailsystems.ee/beyond-disclosure/sources): forty verified claims across four research modules supporting the whitepaper, with primary sources, exact quotations, credibility assessments, and documented corrections.
 - [Diagnostic intake](https://thirdrailsystems.ee/diagnostic): confidential 60-minute architectural diagnostic for security and GRC teams at multinational enterprises. No HRIS integration required.
 
+## Documents
+
+- [ISI Architecture Diagram (PDF)](https://thirdrailsystems.ee/assets/isi-architecture-diagram.pdf): the Information Sanitisation Infrastructure layer diagram referenced on the homepage architecture section.
+- [KTH IRL Evidence Report (DOCX)](https://thirdrailsystems.ee/assets/kth-irl-evidence-report-third-rail-systems.docx): the KTH Royal Institute of Technology Innovation Readiness Level evidence report cited in the validation section.
+
 ## Legal
 
 - [Privacy notice](https://thirdrailsystems.ee/legal/privacy)

@@ -221,7 +221,7 @@ export default function BeyondDisclosure() {
               className="text-cyan-400 underline decoration-cyan-400/40 underline-offset-4 hover:decoration-cyan-400"
               data-testid="beyond-link-by-direction"
             >
-              By Direction: the whitepaper's argument applied to AI agents
+              By Direction: the whitepaper's argument applied to AI agents →
             </Link>
           </div>
         </div>

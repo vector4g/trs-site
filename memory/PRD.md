@@ -849,3 +849,6 @@ Remaining optional: JSON-LD "three-part" alignment on /writing (held for approva
 8. sitemap.xml: lastmod → 2026-07-07 on touched routes (/, /beyond-disclosure, /beyond-disclosure/sources, 3 exposure essays; by-direction already 2026-07-07). Nothing else changed.
 LESSON: never issue two search_replace edits to the SAME file in one parallel batch (SourcesLibrary useSEO edit was clobbered by the const edit; re-applied sequentially).
 Verified: static build shells + preview runtime all pass. AWAITING USER DEPLOY, then production verification.
+
+## Iteration 23b — 2026-07-07 (Audit follow-ups, user-approved)
+(a) Trailing " →" glyph added to the new Read-also anchor (EssayLayout) AND the whitepaper companion link (same convention, flagged). (b) nothing-happened Read-also accepted as shipped. (c) All 3 body khan6.com hrefs in by-direction.md updated to trailing-slash finals (slash-only diff verified); all 5 site khan6 links now final URLs. llms.txt: new "## Documents" section with /assets/isi-architecture-diagram.pdf + /assets/kth-irl-evidence-report-third-rail-systems.docx. Preview + build verified. AWAITING DEPLOY → production verification incl. body-link routes + glyph rendering.
