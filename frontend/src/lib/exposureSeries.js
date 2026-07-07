@@ -108,13 +108,14 @@ export function essayRobots(slug) {
  * Standalone essays — long-form pieces outside the Exposure trilogy.
  * Rendered at the TOP of the /writing index (newest first), ahead of the
  * trilogy's reading order. Same card treatment as a published essay card;
- * the eyebrow swaps "Part X · lens" for the tag and publish date.
+ * the eyebrow swaps "Part X · lens" for the tag and a middle label slot
+ * (`publishedAtLabel`, currently the essay's lens).
  */
 export const STANDALONE_ESSAYS = [
   {
     kind: "standalone",
     slug: "by-direction",
-    tag: "Essay",
+    tag: "New",
     title: "By Direction: The Agent Needs a Mandate, Not Your Identity",
     lede:
       "Who authorised the act, within what scope, and who answers for it. That was always the question, and it has an old answer.",
@@ -123,7 +124,7 @@ export const STANDALONE_ESSAYS = [
     canonical: "https://thirdrailsystems.ee/writing/by-direction",
     published: true,
     publishedAt: "2026-07-07",
-    publishedAtLabel: "7 July 2026",
+    publishedAtLabel: "agency lens",
   },
 ];
 

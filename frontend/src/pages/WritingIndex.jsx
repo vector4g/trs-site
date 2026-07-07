@@ -98,12 +98,13 @@ export default function WritingIndex() {
           className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl"
           data-testid="writing-index-title"
         >
-          Three essays on who holds the leverage
+          Essays on who holds the leverage
         </h2>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300">
-          A three-part series on dependency, accumulation, and minimum
-          disclosure. Each essay holds on its own, but the argument compounds
-          across the three. Read in order.
+          A series on dependency, accumulation, and minimum disclosure. Each
+          essay holds on its own, but the argument compounds. The opening
+          trilogy, Parts One to Three, reads best in order; the newest essay
+          extends the argument to AI agents acting on your behalf.
         </p>
 
         <ol

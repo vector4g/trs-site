@@ -809,3 +809,11 @@ Executed the full flip per `/app/memory/BY_DIRECTION_LAUNCH.md` PLUS three user-
 - Other three essay shells byte-identical to production (meta + prerendered body).
 - Runtime: card first on /writing, no robots meta, datePublished 2026-07-07, all edits render.
 - AWAITING USER DEPLOY (Save to GitHub → redeploy), then post-deploy production verification + IndexNow/GSC submission of the URL.
+
+## Iteration 20 — 2026-07-07 (/writing index copy edits)
+Three verbatim copy edits, no layout/component/metadata changes:
+1. Heading: "Three essays on who holds the leverage" → "Essays on who holds the leverage" (`WritingIndex.jsx`)
+2. Intro para → "A series on dependency, accumulation, and minimum disclosure. Each essay holds on its own, but the argument compounds. The opening trilogy, Parts One to Three, reads best in order; the newest essay extends the argument to AI agents acting on your behalf." (`WritingIndex.jsx`)
+3. By Direction card eyebrow: "Essay · 7 July 2026 · 12 min read" → "New · agency lens · 12 min read" (values only, in `exposureSeries.js` STANDALONE_ESSAYS: tag="New", publishedAtLabel="agency lens"; NOTE: `publishedAtLabel` field now carries the lens label, comment updated)
+Head check (point 4): /writing prerendered title "Writing · Third Rail Systems", description "The Exposure series and companion long-form pieces…"; runtime useSEO description "Essays on disclosure, identity and travel risk…". Neither contains "three" — no metadata change made. FYI flagged to user (unchanged, held for approval): CollectionPage JSON-LD on /writing still says name "Exposure: a three-part series" / description "Three essays on dependency…".
+Verified in preview: all 3 edits render, card order + hrefs unchanged (by-direction, nothing-happened, the-switch, exposure-is-not-democratic, memo, catch-22, beyond-disclosure). AWAITING USER DEPLOY for production verification.
