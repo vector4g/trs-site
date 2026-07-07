@@ -87,12 +87,16 @@ export default function ReferenceArticle({
   trailingLine = null,
   relatedLinks = null,
   dateModified,
+  // Optional SERP-only meta description. When set, the <meta name="description">
+  // uses it while og:description / twitter:description keep `description`.
+  seoDescription = null,
 }) {
   const navigate = useNavigate();
 
   useSEO({
     title: titleTag,
-    description,
+    description: seoDescription || description,
+    ogDescription: description,
     canonical,
     ogType: "article",
   });

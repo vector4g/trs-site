@@ -9,6 +9,7 @@ export default function MedicationAtBorders() {
       titleTag="Prescription Medication at Borders: The Employer Problem"
       description="Lawful prescriptions are controlled substances in some jurisdictions. Why medication is a travel risk, why asking about it is an Article 9 problem, and the architecture that resolves both."
       canonical="https://thirdrailsystems.ee/medication-at-borders"
+      seoDescription="Lawful prescriptions can be controlled substances abroad. Why medication is a travel risk, why asking is an Article 9 problem, and how to resolve both."
       markdown={MARKDOWN}
       citeIntro="Cite individual answers by their stable anchor, e.g. "
       citeExample="thirdrailsystems.ee/medication-at-borders#why-is-medication-a-border-risk"

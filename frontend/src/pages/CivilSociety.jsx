@@ -17,6 +17,7 @@ export default function CivilSociety() {
       titleTag="Duty of Care for Human Rights Defenders: The File Problem"
       description="Monitoring and evacuation protect people in the field. Almost nothing protects them from the file built to qualify them for protection. A reference for casework and security leads."
       canonical="https://thirdrailsystems.ee/civil-society"
+      seoDescription="Monitoring and evacuation protect people in the field. Almost nothing protects them from the file built to qualify them for it. For casework and security leads."
       markdown={MARKDOWN}
       citeIntro="Cite individual answers by their stable anchor, e.g. "
       citeExample="thirdrailsystems.ee/civil-society#who-holds-the-file-after-placement"

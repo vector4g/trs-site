@@ -11,6 +11,9 @@ const CANONICAL = "https://thirdrailsystems.ee/reference";
 const H1 = "Reference library";
 const META_DESCRIPTION =
   "Machine-citable references on minimum-disclosure duty of care: special category data, travel risk DPIAs, medication at borders, assistance codes, civil-society casework, and the glossary. Every page carries stable section anchors.";
+// SERP-only meta description; og/twitter keep META_DESCRIPTION.
+const SEO_DESCRIPTION =
+  "Machine-citable references on minimum-disclosure duty of care: special category data, travel-risk DPIAs, border medication, SSR codes, and casework.";
 
 // Titles and descriptions mirror each page's H1 and meta description.
 const REFERENCE_PAGES = [
@@ -57,7 +60,8 @@ export default function ReferenceIndex() {
 
   useSEO({
     title: "Reference Library · Third Rail Systems",
-    description: META_DESCRIPTION,
+    description: SEO_DESCRIPTION,
+    ogDescription: META_DESCRIPTION,
     canonical: CANONICAL,
   });
 

@@ -9,6 +9,7 @@ export default function AssistanceCodes() {
       titleTag="What Airline Assistance Codes Disclose: WCHR, WCHS, WCHC"
       description="Requesting assistance transmits a standardised disability category through the reservation ecosystem. Who sees an SSR code, why it is special category data, and what employers should not hold."
       canonical="https://thirdrailsystems.ee/assistance-codes"
+      seoDescription="Requesting assistance transmits a disability category across the reservation ecosystem. Who sees an SSR code, why it is special category data."
       markdown={MARKDOWN}
       citeIntro="Cite individual answers by their stable anchor, e.g. "
       citeExample="thirdrailsystems.ee/assistance-codes#who-sees-an-assistance-code"

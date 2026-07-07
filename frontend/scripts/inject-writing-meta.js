@@ -95,6 +95,8 @@ const TOP_PAGES = [
     path: "/civil-society",
     title: "Duty of Care for Human Rights Defenders: The File Problem",
     description:
+      "Monitoring and evacuation protect people in the field. Almost nothing protects them from the file built to qualify them for it. For casework and security leads.",
+    ogDescription:
       "Monitoring and evacuation protect people in the field. Almost nothing protects them from the file built to qualify them for protection. A reference for casework and security leads.",
     ogImage: null,
     h1: "Duty of care for human rights defenders: the file problem",
@@ -119,6 +121,8 @@ const TOP_PAGES = [
     path: "/medication-at-borders",
     title: "Prescription Medication at Borders: The Employer Problem",
     description:
+      "Lawful prescriptions can be controlled substances abroad. Why medication is a travel risk, why asking is an Article 9 problem, and how to resolve both.",
+    ogDescription:
       "Lawful prescriptions are controlled substances in some jurisdictions. Why medication is a travel risk, why asking about it is an Article 9 problem, and the architecture that resolves both.",
     ogImage: null,
     h1: "Prescription medication at borders: the employer problem",
@@ -127,6 +131,8 @@ const TOP_PAGES = [
     path: "/assistance-codes",
     title: "What Airline Assistance Codes Disclose: WCHR, WCHS, WCHC",
     description:
+      "Requesting assistance transmits a disability category across the reservation ecosystem. Who sees an SSR code, why it is special category data.",
+    ogDescription:
       "Requesting assistance transmits a standardised disability category through the reservation ecosystem. Who sees an SSR code, why it is special category data, and what employers should not hold.",
     ogImage: null,
     h1: "What airline assistance codes disclose",
@@ -135,6 +141,8 @@ const TOP_PAGES = [
     path: "/reference",
     title: "Reference Library · Third Rail Systems",
     description:
+      "Machine-citable references on minimum-disclosure duty of care: special category data, travel-risk DPIAs, border medication, SSR codes, and casework.",
+    ogDescription:
       "Machine-citable references on minimum-disclosure duty of care: special category data, travel risk DPIAs, medication at borders, assistance codes, civil-society casework, and the glossary. Every page carries stable section anchors.",
     ogImage: null,
     h1: "Reference library",
