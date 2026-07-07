@@ -835,3 +835,17 @@ Remaining optional: JSON-LD "three-part" alignment on /writing (held for approva
 
 ## Iteration 22 — 2026-07-07 (/writing CollectionPage JSON-LD alignment)
 `WritingIndex.jsx` CollectionPage schema updated (user-approved): name → "Essays on who holds the leverage" (mirrors page heading), description → "A series on dependency, accumulation, and minimum disclosure: the opening trilogy plus the newest essay on AI agents acting on your behalf.", itemListElement now [by-direction, nothing-happened, the-switch, exposure-is-not-democratic] (page order), numberOfItems=4. itemListOrder + BreadcrumbList untouched. Verified in preview runtime. AWAITING USER DEPLOY.
+
+## Iteration 23 — 2026-07-07 (Site audit: titles, description, internal links, khan6 hrefs, assets, RRT)
+1. Title tags decoupled from og:title via new `titleTag` support in inject-writing-meta.js + `ogTitle` in useSEO calls:
+   - /writing/by-direction <title> = "By Direction: The Agent Needs a Mandate, Not Your Identity" (og:title/twitter:title keep suffix; shareTitle untouched)
+   - /beyond-disclosure/sources <title> = "Beyond Disclosure: Source List and Citation Library"
+2. /beyond-disclosure/sources meta description → 145-char version ("Forty verified claims behind…Verified June 2026."). og:description/twitter:description keep old 203-char text via new `ogDescription` support (SourcesLibrary.jsx SEO_DESCRIPTION const + sourcesMeta in inject script). Dataset JSON-LD description unchanged.
+3. Read-also: By Direction link FIRST in EssayLayout "Read also" card (guarded eventKey !== "by-direction"), anchor verbatim (no trailing arrow glyph — flagged to user). NOTE: nothing-happened had toc={[]} so the sidebar never rendered; changed EssayLayout aside condition to !isPrint with Contents gated on toc.length — nothing-happened now shows only the Read-also card, article col-span-8 unchanged. BeyondDisclosure.jsx: third companion link "By Direction: the whitepaper's argument applied to AI agents" → /writing/by-direction.
+4. by-direction.md sources block (line 71) ONLY: khan6 hrefs → trailing-slash finals (…phone-home/, …not-a-credential/), both 200 on khan6.com, 1 hop. Body occurrences (lines 21/43/49) left unchanged per "sources block" scope — flagged to user. Surrounding text byte-identical.
+5. CanLII link untouched.
+6. RRT (user-run, result id TJkTYTkPkqa-8XJqDYXqhg): SoftwareApplication = 1 VALID item, only non-critical: Missing "offers" (optional), Missing "aggregateRating" (optional). Decision rule branches NOT triggered → block left byte-identical. Organization also valid.
+7. Assets migrated: /assets/isi-architecture-diagram.pdf (50KB) + /assets/kth-irl-evidence-report-third-rail-systems.docx (105KB) in public/; ArchitectureDiagram.jsx + ValidationSection.jsx consts now relative paths. Both 200 with correct content-types in preview.
+8. sitemap.xml: lastmod → 2026-07-07 on touched routes (/, /beyond-disclosure, /beyond-disclosure/sources, 3 exposure essays; by-direction already 2026-07-07). Nothing else changed.
+LESSON: never issue two search_replace edits to the SAME file in one parallel batch (SourcesLibrary useSEO edit was clobbered by the const edit; re-applied sequentially).
+Verified: static build shells + preview runtime all pass. AWAITING USER DEPLOY, then production verification.
