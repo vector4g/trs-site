@@ -132,6 +132,14 @@ const TOP_PAGES = [
     h1: "What airline assistance codes disclose",
   },
   {
+    path: "/reference",
+    title: "Reference Library · Third Rail Systems",
+    description:
+      "Machine-citable references on minimum-disclosure duty of care: special category data, travel risk DPIAs, medication at borders, assistance codes, civil-society casework, and the glossary. Every page carries stable section anchors.",
+    ogImage: null,
+    h1: "Reference library",
+  },
+  {
     path: "/writing",
     title: "Writing · Third Rail Systems",
     description:

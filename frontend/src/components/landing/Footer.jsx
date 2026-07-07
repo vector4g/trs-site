@@ -117,6 +117,15 @@ export default function Footer() {
             </li>
             <li>
               <Link
+                to="/reference"
+                className="hover:text-cyan-400"
+                data-testid="footer-reference-link"
+              >
+                Reference Library
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/glossary"
                 className="hover:text-cyan-400"
                 data-testid="footer-glossary-link"
