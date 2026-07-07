@@ -817,3 +817,11 @@ Three verbatim copy edits, no layout/component/metadata changes:
 3. By Direction card eyebrow: "Essay · 7 July 2026 · 12 min read" → "New · agency lens · 12 min read" (values only, in `exposureSeries.js` STANDALONE_ESSAYS: tag="New", publishedAtLabel="agency lens"; NOTE: `publishedAtLabel` field now carries the lens label, comment updated)
 Head check (point 4): /writing prerendered title "Writing · Third Rail Systems", description "The Exposure series and companion long-form pieces…"; runtime useSEO description "Essays on disclosure, identity and travel risk…". Neither contains "three" — no metadata change made. FYI flagged to user (unchanged, held for approval): CollectionPage JSON-LD on /writing still says name "Exposure: a three-part series" / description "Three essays on dependency…".
 Verified in preview: all 3 edits render, card order + hrefs unchanged (by-direction, nothing-happened, the-switch, exposure-is-not-democratic, memo, catch-22, beyond-disclosure). AWAITING USER DEPLOY for production verification.
+
+## Iteration 21 — 2026-07-07 (Homepage copy edits ×4)
+Verbatim replacements only, homepage-only, no layout/metadata changes:
+1. `ProblemSection.jsx` Insights heading: "Three essays on dependency…" → "Essays on dependency, accumulation, and who holds the leverage."
+2. `ProblemSection.jsx` Insights copy: → "Long-form pieces from the founder. Start with the newest, on AI agents and mandates, or pick the lens that matches your concern: agency, data, platform, or human."
+3. `PersonasSection.jsx` For DPOs bullet: "Enforce absolute data decentralization…" → "Enforce strict data decentralisation for special-category traits." (British spelling)
+4. `shared.jsx` LINKEDIN_ARTICLES founder-note title: → 'What twenty years under "Don't Ask, Don't Tell" taught me…' (straight double quotes, matching StrategicMemo/NotDemocratic style; escaped \" in JS string). Consumed only by AboutSection.jsx → LandingPage.jsx (homepage-only, verified).
+Verified in preview: all 4 render, old strings gone, Insights card href=/writing intact. AWAITING USER DEPLOY for production verification (now three pending batches: By Direction launch+edits, /writing index copy, homepage copy).

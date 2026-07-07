@@ -117,12 +117,12 @@ export default function ProblemSection() {
                   Insights · the Exposure series
                 </div>
                 <div className="mt-1 text-base font-semibold text-white sm:text-lg">
-                  Three essays on dependency, accumulation, and who holds the leverage.
+                  Essays on dependency, accumulation, and who holds the leverage.
                 </div>
                 <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
-                  Long-form pieces from the founder. Read in order, or pick
-                  the lens that matches your concern: data, platform, or
-                  human.
+                  Long-form pieces from the founder. Start with the newest, on
+                  AI agents and mandates, or pick the lens that matches your
+                  concern: agency, data, platform, or human.
                 </p>
               </div>
             </div>

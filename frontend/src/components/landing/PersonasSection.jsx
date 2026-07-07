@@ -15,7 +15,7 @@ const PERSONAS = [
     tag: "For DPOs",
     Icon: Lock,
     points: [
-      "Enforce absolute data decentralization for special-category traits.",
+      "Enforce strict data decentralisation for special-category traits.",
       "Utilise a pre-audited AI architecture built to EU AI Act high-risk obligations.",
       "Maintain full EU-sovereign data flows.",
     ],

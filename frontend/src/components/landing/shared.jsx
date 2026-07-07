@@ -26,7 +26,7 @@ export const LINKEDIN_ARTICLES = [
   {
     id: "dadt-founder-note",
     title:
-      "What twenty years under Don't Ask Don't Tell taught me about building Third Rail Systems.",
+      "What twenty years under \"Don't Ask, Don't Tell\" taught me about building Third Rail Systems.",
     url: "https://www.linkedin.com/pulse/what-twenty-years-under-dont-ask-tell-taught-me-building-levi-hankins-q0mlc",
     tag: "Founder note",
     date: "Jun 2026",
