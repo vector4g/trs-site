@@ -825,3 +825,10 @@ Verbatim replacements only, homepage-only, no layout/metadata changes:
 3. `PersonasSection.jsx` For DPOs bullet: "Enforce absolute data decentralization…" → "Enforce strict data decentralisation for special-category traits." (British spelling)
 4. `shared.jsx` LINKEDIN_ARTICLES founder-note title: → 'What twenty years under "Don't Ask, Don't Tell" taught me…' (straight double quotes, matching StrategicMemo/NotDemocratic style; escaped \" in JS string). Consumed only by AboutSection.jsx → LandingPage.jsx (homepage-only, verified).
 Verified in preview: all 4 render, old strings gone, Insights card href=/writing intact. AWAITING USER DEPLOY for production verification (now three pending batches: By Direction launch+edits, /writing index copy, homepage copy).
+
+## Iteration 21b — 2026-07-07 (Post-deploy production verification — ALL PASSED)
+Verified on https://thirdrailsystems.ee after user redeploy:
+- By Direction: 3 body edits render, new <p> exactly between "…offered." and "What to build" heading, nothing in between. Title/desc/canonical/og:image identical to pre-edit; robots meta ABSENT (launch); runtime Article JSON-LD datePublished=2026-07-07. Other 3 essay shells byte-identical (meta + prerendered body). Sitemap has /writing/by-direction lastmod=2026-07-07, all other entries untouched.
+- /writing: heading "Essays on who holds the leverage", new intro, card eyebrow "New · agency lens · 12 min read", card order/links unchanged (7 cards).
+- Homepage: all 4 copy edits render, old strings gone, Insights card href=/writing.
+Remaining optional: JSON-LD "three-part" alignment on /writing (held for approval); IndexNow/GSC submission of the new URL (user action).
