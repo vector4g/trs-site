@@ -1,0 +1,5 @@
+# Third Rail Systems OÜ — vulnerability disclosure (RFC 9116)
+Contact: mailto:levi@thirdrailsystems.ee
+Expires: 2027-07-07T00:00:00.000Z
+Canonical: https://thirdrailsystems.ee/.well-known/security.txt
+Preferred-Languages: en
