@@ -893,3 +893,6 @@ Preview verified: titles, anchors, cite blocks, JSON-LD dateModified 2026-07-07,
 
 ## Iteration 27 — 2026-07-07 (/reference hub)
 NEW ReferenceIndex.jsx at /reference: 6 reference cards (SCD, DPIA, medication, assistance, civil-society, glossary — titles/descriptions mirror each page's H1/meta), CollectionPage + Breadcrumb JSON-LD, also-links row (catch-22, sources). Footer gained "Reference Library" link (footer-reference-link) alongside Glossary. TOP_PAGES entry (shell h1-only + meta, like /writing), sitemap lastmod 2026-07-07, llms.txt line at top of Core pages. Preview + shell verified. AWAITING DEPLOY (together with iteration 26 batch).
+
+## Iteration 27b — 2026-07-07 (/reference production verification — LIVE)
+Production verified: /reference shell (title/desc/canonical/h1), 6 cards all 200, CollectionPage ItemList=6, footer "Reference Library" link live, llms.txt line + sitemap lastmod 2026-07-07. ENTIRE reference cluster now shipped: hub + 6 references + catch-22 retrofit + whitepaper/sources + glossary, fully interlinked with stable anchors. Pending user actions: RRT runs on medication-at-borders/assistance-codes/catch-22 (+reference), GSC indexing requests.
