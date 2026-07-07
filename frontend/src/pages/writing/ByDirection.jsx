@@ -187,7 +187,8 @@ const sourcesMarkdownComponents = {
 
 export default function ByDirection() {
   useSEO({
-    title: TITLE_TAG,
+    title: H1,
+    ogTitle: TITLE_TAG,
     description: META_DESCRIPTION,
     canonical: CANONICAL,
     ogType: "article",

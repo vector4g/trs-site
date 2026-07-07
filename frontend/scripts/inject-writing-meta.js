@@ -164,8 +164,14 @@ function upsertHeadTag(html, regex, replacement) {
 
 function injectRouteMeta(html, url, meta) {
   const ogImage = meta.ogImage || DEFAULT_OG_IMAGE;
+  // `titleTag` lets a route use a shorter <title> (SERP title) while the
+  // og:title / twitter:title keep the full suffixed form.
+  const titleTag = escapeHtml(meta.titleTag || meta.title);
   const title = escapeHtml(meta.title);
   const description = escapeHtml(meta.description);
+  // `ogDescription` lets a route keep its social-card description while the
+  // SERP meta description differs.
+  const ogDescription = escapeHtml(meta.ogDescription || meta.description);
   const escapedUrl = escapeHtml(url);
   const escapedImg = escapeHtml(ogImage);
 
@@ -175,7 +181,7 @@ function injectRouteMeta(html, url, meta) {
   out = replaceTag(
     out,
     /<title>[\s\S]*?<\/title>/,
-    `<title>${title}</title>`,
+    `<title>${titleTag}</title>`,
   );
 
   // <meta name="description">
@@ -226,7 +232,7 @@ function injectRouteMeta(html, url, meta) {
   out = replaceTag(
     out,
     /<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/,
-    `<meta property="og:description" content="${description}" />`,
+    `<meta property="og:description" content="${ogDescription}" />`,
   );
 
   // og:url — INSERT if absent (also omitted from static /public/index.html
@@ -266,7 +272,7 @@ function injectRouteMeta(html, url, meta) {
   out = replaceTag(
     out,
     /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/,
-    `<meta name="twitter:description" content="${description}" />`,
+    `<meta name="twitter:description" content="${ogDescription}" />`,
   );
 
   // twitter:image
@@ -416,7 +422,10 @@ function main() {
     const sourcesBodyHtml = md.render(srcBody);
     const sourcesMeta = {
       title: "Beyond Disclosure: Source List and Citation Library · Third Rail Systems",
+      titleTag: "Beyond Disclosure: Source List and Citation Library",
       description:
+        "Forty verified claims behind the Beyond Disclosure whitepaper: primary sources, exact quotations, and documented corrections. Verified June 2026.",
+      ogDescription:
         "Forty verified claims across four research modules supporting the Beyond Disclosure whitepaper. Primary sources, exact quotations, credibility assessments, and documented corrections. Verified June 2026.",
       ogImage: `${SITE_ORIGIN}/og/beyond-disclosure.png`,
       ogLocale: "en_GB",

@@ -319,31 +319,50 @@ export default function EssayLayout({
             </div>
           </article>
 
-          {/* Sticky TOC */}
-          {toc && toc.length > 0 && !isPrint && (
+          {/* Sticky TOC + Read also. The aside renders whenever not in print
+              view; the Contents list inside it still requires a non-empty
+              toc (essays without a TOC, e.g. Part One, get only the Read
+              also card). The article column is a fixed lg:col-span-8, so
+              the aside's presence never reflows the essay body. */}
+          {!isPrint && (
             <aside className="hidden lg:col-span-4 lg:block">
               <div className="sticky top-24">
-                <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
-                  Contents
-                </div>
-                <ul className="mt-4 space-y-2 border-l border-slate-800 pl-4">
-                  {toc.map((item) => (
-                    <li key={item.id}>
-                      <button
-                        onClick={() => handleTocClick(item.id)}
-                        className="text-left text-[13px] leading-relaxed text-slate-400 transition-colors hover:text-cyan-300"
-                        data-testid={`essay-${eventKey}-toc-${item.id}`}
-                      >
-                        {item.label}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                {toc && toc.length > 0 && (
+                  <>
+                    <div className="mono text-[10px] uppercase tracking-[0.22em] text-slate-500">
+                      Contents
+                    </div>
+                    <ul className="mt-4 space-y-2 border-l border-slate-800 pl-4">
+                      {toc.map((item) => (
+                        <li key={item.id}>
+                          <button
+                            onClick={() => handleTocClick(item.id)}
+                            className="text-left text-[13px] leading-relaxed text-slate-400 transition-colors hover:text-cyan-300"
+                            data-testid={`essay-${eventKey}-toc-${item.id}`}
+                          >
+                            {item.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
                 <div className="mt-8 rounded-md border border-slate-800 bg-slate-900/60 p-4">
                   <div className="mono text-[10px] uppercase tracking-[0.22em] text-cyan-300">
                     Read also
                   </div>
                   <ul className="mt-3 space-y-2 text-[13px]">
+                    {eventKey !== "by-direction" && (
+                      <li>
+                        <Link
+                          to="/writing/by-direction"
+                          className="text-slate-300 hover:text-cyan-300"
+                          data-testid={`essay-${eventKey}-read-also-by-direction`}
+                        >
+                          By Direction: The Agent Needs a Mandate, Not Your Identity
+                        </Link>
+                      </li>
+                    )}
                     <li>
                       <Link
                         to="/catch-22"

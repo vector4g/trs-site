@@ -1,8 +1,7 @@
 import { Download, FileBadge, Layers, ArrowDown } from "lucide-react";
 import { SectionHeader, openExternal } from "./shared";
 
-const ISI_DIAGRAM_URL =
-  "https://customer-assets.emergentagent.com/job_eu-travel-risk/artifacts/6113hgwr_ISI%20Architecture%20Diagram.pdf";
+const ISI_DIAGRAM_URL = "/assets/isi-architecture-diagram.pdf";
 
 const LAYERS = [
   {

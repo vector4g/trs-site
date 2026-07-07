@@ -1,8 +1,7 @@
 import { ShieldCheck, FileCheck2, ExternalLink } from "lucide-react";
 import { SectionHeader, openExternal } from "./shared";
 
-const KTH_REPORT_URL =
-  "https://customer-assets.emergentagent.com/job_eu-travel-risk/artifacts/d4unbyo0_KTH%20IRL%20Evidence%20Report%20Third%20Rail%20Systems.docx";
+const KTH_REPORT_URL = "/assets/kth-irl-evidence-report-third-rail-systems.docx";
 
 // Scores recorded in the KTH Innovation Readiness Level (IRL) Evidence Report.
 // Each entry mirrors the verbatim 1-line evaluator finding from the report.

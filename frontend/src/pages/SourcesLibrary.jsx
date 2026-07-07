@@ -17,6 +17,10 @@ const OG_IMAGE = "https://thirdrailsystems.ee/og/beyond-disclosure.png";
 const PUBLISH_DATE = "2026-07-01";
 const META_DESCRIPTION =
   "Forty verified claims across four research modules supporting the Beyond Disclosure whitepaper. Primary sources, exact quotations, credibility assessments, and documented corrections. Verified June 2026.";
+// SERP meta description (shorter). Social-card og/twitter descriptions keep
+// META_DESCRIPTION above.
+const SEO_DESCRIPTION =
+  "Forty verified claims behind the Beyond Disclosure whitepaper: primary sources, exact quotations, and documented corrections. Verified June 2026.";
 
 /**
  * Strip the first `# Heading` line from the markdown so we can render it as
@@ -179,8 +183,10 @@ export default function SourcesLibrary() {
   useReveal();
 
   useSEO({
-    title: `${H1_TEXT} · Third Rail Systems`,
-    description: META_DESCRIPTION,
+    title: H1_TEXT,
+    ogTitle: `${H1_TEXT} · Third Rail Systems`,
+    description: SEO_DESCRIPTION,
+    ogDescription: META_DESCRIPTION,
     canonical: CANONICAL,
     ogType: "article",
     ogImage: OG_IMAGE,
