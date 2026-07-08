@@ -127,8 +127,9 @@
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
           media="print"
-          onload="this.media='all'"
         />
+        <!-- media swap to 'all' happens in /js/error-guard.js (CSP-safe;
+             inline onload handlers are blocked by the production CSP). -->
         <noscript>
           <link
             rel="stylesheet"
