@@ -912,3 +912,6 @@ AWAITING DEPLOY for production verification (CSP header on flat files, lockout o
 
 ## Iteration 30 — 2026-07-07 (security.txt)
 RFC 9116 vulnerability disclosure file added at /.well-known/security.txt + /security.txt root fallback (frontend/public). Contact: levi@thirdrailsystems.ee (user choice b), Expires 2027-07-07, Canonical, Preferred-Languages: en. Both verified 200 on preview. AWAITING DEPLOY.
+
+## Iteration 29b/30b — 2026-07-08 (SEC-003 + security.txt production verification — ALL LIVE)
+Deploy initially failed: prod CORS_ORIGINS secret was "*" and the new fail-fast guard crashed backend at boot (by design). User updated the deployment secret to the explicit allowlist and redeployed. Production verified: security.txt live at both paths (correct text/plain content), CSP script-src hardened (no unsafe-inline/unsafe-eval) on index + flat files, inline posthog gone, /js/*.js served as application/javascript, login lockout live (5×401 → 429 + Retry-After 900), homepage renders fully (root text 11215 chars, posthog stub loads). SEC-003 CLOSED.
