@@ -19,6 +19,7 @@ Third Rail Systems OÜ is a deep-tech compliance company building the architectu
 - [Prescription medication at borders: the employer problem](https://thirdrailsystems.ee/medication-at-borders): Why lawful prescriptions are a border arrest risk, why asking travellers about medication is an Article 9 problem, and assessment without disclosure as the resolution. Question-structured, stable anchors, sourced claims.
 - [What airline assistance codes disclose](https://thirdrailsystems.ee/assistance-codes): What SSR assistance codes (WCHR, WCHS, WCHC) disclose, who sees them across the reservation and PNR ecosystem, and what employers should and should not retain. Question-structured, stable anchors, sourced claims.
 - [Diagnostic intake](https://thirdrailsystems.ee/diagnostic): confidential 60-minute architectural diagnostic for security and GRC teams at multinational enterprises. No HRIS integration required.
+- [Security and data handling](https://thirdrailsystems.ee/security): transport and application controls, retention posture, RFC 9116 vulnerability disclosure, and explicit non-claims. Every statement verifiable by the reader.
 
 ## Documents
 

@@ -21,6 +21,7 @@ const LEGAL_LINKS = [
   { to: "/legal/privacy", label: "Privacy" },
   { to: "/legal/terms", label: "Terms" },
   { to: "/legal/cookies", label: "Cookies" },
+  { to: "/security", label: "Security" },
   { to: "/legal/imprint", label: "Legal / Imprint" },
 ];
 

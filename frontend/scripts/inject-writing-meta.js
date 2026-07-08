@@ -148,6 +148,14 @@ const TOP_PAGES = [
     h1: "Reference library",
   },
   {
+    path: "/security",
+    title: "Security and Data Handling · Third Rail Systems",
+    description:
+      "How Third Rail Systems secures its site and platform, what we retain and what we refuse to, and how to reach us about a vulnerability. Every claim verifiable.",
+    ogImage: null,
+    h1: "Security and data handling",
+  },
+  {
     path: "/writing",
     title: "Writing · Third Rail Systems",
     description:
